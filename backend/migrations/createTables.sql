@@ -39,3 +39,29 @@ CREATE TABLE IF NOT EXISTS recipe_categories (
   CONSTRAINT fk_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  bio TEXT,
+  avatar_url VARCHAR(255),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  recipe_id INT NOT NULL,
+  user_id INT NOT NULL,
+  comment TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ratings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  recipe_id INT NOT NULL,
+  user_id INT NOT NULL,
+  ratings INT NOT NULL CHECK (ratings >= 1 AND ratings <= 5),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

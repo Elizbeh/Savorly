@@ -12,3 +12,5 @@ node_modules/
 
 # Ignore npm debug log files
 npm-debug.log*
+
+package-lock.json

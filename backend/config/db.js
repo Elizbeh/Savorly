@@ -1,14 +1,21 @@
 import { createPool } from 'mysql2';
-import 'dotenv/config'; // Load environment variables from .env file
+import 'dotenv/config';
 
-// Create a MySQL connection
 const pool = createPool({
-  host: process.env.DB_HOST,   // Database host (localhost)
-  user: process.env.DB_USER,   // Database user
-  password: process.env.DB_PASSWORD, // Database password
-  database: process.env.DB_NAME,    // Database name
-  
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 }).promise();
 
-// Export the connection pool for use in other parts of the application
+// Test the connection
+pool.getConnection()
+  .then((connection) => {
+    console.log("Database connected successfully!");
+    connection.release(); // Release the connection back to the pool
+  })
+  .catch((err) => {
+    console.error("Error connecting to the database:", err);
+  });
+
 export default pool;

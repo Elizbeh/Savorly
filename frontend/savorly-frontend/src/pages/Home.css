@@ -1,0 +1,128 @@
+/* General Styling */
+.home-page {
+  font-family: 'Arial', sans-serif;
+  color: #333; /* Neutral text color */
+  background-color: #f9f5f0; /* Soft background tone */
+  padding: 0;
+  margin: 0;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ff6f3c; /* Savorly's primary orange */
+  padding: 10px 20px;
+  color: white;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  margin: 0 10px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #ffe5d1; /* Lightened tone for hover */
+}
+
+/* Categories Section */
+.categories {
+  padding: 20px;
+  background-color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.category-list {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.category-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffdab9; /* Pastel orange */
+  color: #333;
+  border-radius: 8px;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.category-card:hover {
+  background-color: #ffb185; /* Darkened tone for hover */
+}
+
+/* Recipes Section */
+.recipe-list {
+  padding: 20px;
+}
+
+.recipes {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.recipe-card {
+  width: calc(33.333% - 10px); /* Three cards per row */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.recipe-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.recipe-card h3 {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.recipe-card p {
+  font-size: 14px;
+  margin: 0 10px 10px;
+  color: #666;
+}
+
+.view-button {
+  background-color: #ff6f3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-button:hover {
+  background-color: #e65b2a;
+}

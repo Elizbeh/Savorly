@@ -10,6 +10,8 @@ export const validateRegister = (req,res, next) => {
     });
 
     const {error} = schema.validate(req.body);
+    console.log("Request body:", req.body);
+    
     if (error) {
         console.log("Validation Error:", error.details[0].message);
         return res.status(400).json({message: error.details[0].message});
@@ -24,9 +26,11 @@ export const validateLogin = (req, res, next) => {
         password: Joi.string().required(),
     });
 
-    const {error} = schema.validate(req.body);
+    const { error } = schema.validate(req.body);
+    console.log("Request body:", req.body);
     if (error) {
-        return res.status(400).json({message: error.details[0].message});
-    }
+      console.log("Validation Error:", error.details);
+      return res.status(400).json({ message: error.details[0].message });
+    }    
     next();
 };

@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS recipes (
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS recipe_ingredients (
+  recipe_id INT NOT NULL,
+  ingredient_name VARCHAR(255) NOT NULL,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+);
+
 
 -- Create the categories table if it doesn't already exist
 CREATE TABLE IF NOT EXISTS categories (
@@ -39,7 +45,6 @@ CREATE TABLE IF NOT EXISTS recipe_categories (
   CONSTRAINT fk_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS user_profiles (
   id INT AUTO_INCREMENT PRIMARY KEY,

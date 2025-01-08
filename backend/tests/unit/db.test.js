@@ -1,5 +1,6 @@
-import pool from '../config/db.js';
+import pool from '../../config/db.js'; // Import the pool from your db config
 
+// Database test function
 const dbTest = async () => {
   try {
     console.log('Testing database connection and queries...');
@@ -9,9 +10,7 @@ const dbTest = async () => {
     console.log('Connection successful. Test query result:', rows[0].result);
 
     // 2. Check if a table exists
-    const [usersTable] = await pool.query(`
-      SHOW TABLES LIKE 'users';
-    `);
+    const [usersTable] = await pool.query('SHOW TABLES LIKE "users"');
     if (usersTable.length > 0) {
       console.log('Users table exists.');
     } else {
@@ -44,5 +43,7 @@ const dbTest = async () => {
   }
 };
 
-// Run the test script
-dbTest();
+// Jest test
+it('should perform an async database test', async () => {
+  await dbTest(); // Running the async db test function
+});

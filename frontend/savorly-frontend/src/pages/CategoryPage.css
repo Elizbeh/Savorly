@@ -1,0 +1,82 @@
+.category-page {
+  padding: 20px;
+  max-width: 1200px; /* Optional: Limit the width for a more contained layout */
+  margin: 0 auto; /* Centers the page */
+  height: 100vh;
+  width: 100vw;
+  margin-top: 80px;
+}
+
+.category-info h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.category-info p {
+  font-size: 1.2rem;
+}
+
+.recipes-list h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.recipe-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Flexibly adjusts based on screen size */
+  gap: 20px;
+  grid-auto-rows: 1fr; /* Ensures equal row heights */
+}
+
+.recipe-card {
+  background-color: #fff; /* Ensure cards have a background color */
+  border-radius: 8px;
+  overflow: hidden; /* Ensures no overflow outside the card */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-card img {
+  width: 100%;
+  height: 200px; /* Set a fixed height for images to maintain uniformity */
+  object-fit: cover;
+}
+
+.recipe-card .recipe-info {
+  padding: 15px;
+}
+
+.recipe-card .recipe-info h3 {
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+.recipe-card .recipe-info p {
+  font-size: 1rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .recipe-cards {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .category-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .category-info p {
+    font-size: 1rem;
+  }
+
+  .recipes-list h2 {
+    font-size: 1.5rem;
+  }
+}

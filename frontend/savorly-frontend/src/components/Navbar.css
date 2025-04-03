@@ -1,0 +1,169 @@
+/* General Navbar Styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #2C3E50, #34495E);
+  padding: 15px 40px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  height: 80px;
+}
+
+/* Logo Styling */
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-icon {
+  height: 45px;
+  margin-right: 12px;
+}
+
+.logo-text {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #ff8c42;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Navbar Links */
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #ECF0F1;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: color 0.3s ease, transform 0.3s ease;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.nav-links a:hover {
+  color: #ff8c42;
+  transform: translateY(-3px);
+  background: #ffffff1a;
+}
+
+
+
+
+
+/* User Profile & Avatar */
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ff8c42;
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.15);
+}
+
+/* Login Button */
+.logout-btn {
+  background: none;
+  border: none;
+  color: #ff8c42 !important;  /* Ensure the color applies */
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-style: italic;
+  transition: color 0.3s ease, transform 0.3s ease;
+  margin-left: 20px;
+}
+
+.logout-btn:hover {
+  background: #C0392B;
+  color: white; /* Change color on hover for visibility */
+  transform: translateY(-3px);
+}
+
+
+
+/* Hamburger Menu (Mobile) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 30px;
+  height: 3px;
+  background-color: white;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+/* Mobile Menu */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    right: 0;
+    width: 100%;
+    background: rgba(44, 62, 80, 0.95);
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 15px 0;
+    font-size: 1.1rem;
+  }
+
+  /* Ensure smooth animation */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  z-index: 1100; /* Ensure it's above other elements */
+}
+
+.hamburger span {
+  width: 30px;
+  height: 3px;
+  background-color: white;
+  margin: 5px 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* When menu is open, transform the bars into a cross */
+.hamburger.open span:first-child {
+  transform: rotate(45deg) translate(9px, 9px);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:last-child {
+  transform: rotate(-45deg) translate(9px, -9px);
+}
+
+}

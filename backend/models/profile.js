@@ -1,57 +1,59 @@
-import db from '../config/db.js';
+import pool from '../config/db.js';
 
-// Create user profile
-export const createUserProfile = async (userId) => {
-  if (!userId) {
-      throw new Error('User ID is required to create a profile');
-  }
+// Create a user profile
 
-  const defaultAvatarUrl = 'http://localhost:5001/uploads/default_avatar.png';
-  const query = 'INSERT INTO user_profiles (user_id, bio, avatar_url) VALUES (?, ?, ?)';
-
+export const createUserProfile = async (profileData) => {
   try {
-      const [result] = await db.query(query, [userId, '', defaultAvatarUrl]);
+      const query = `
+          INSERT INTO user_profiles 
+          (user_id, first_name, last_name, bio, avatar_url) 
+          VALUES (?, ?, ?, ?, ?)
+      `;
+      const result = await pool.query(query, [
+          profileData.user_id,
+          profileData.first_name,
+          profileData.last_name,
+          profileData.bio,
+          profileData.avatar_url
+      ]);
       return result;
-  } catch (err) {
-      console.error('Error creating user profile:', err);
-      throw new Error('Profile creation failed');
+  } catch (error) {
+      console.error('Error creating user profile:', error);
+      throw new Error('Failed to create user profile');
   }
 };
 
-// Get a profile by user ID
+
+// Get profile by user ID
 export const getProfileByUserId = async (userId) => {
-  const query = 'SELECT * FROM user_profiles WHERE user_id = ?';
-  const [rows] = await db.query(query, [userId]);
-  return rows[0]; // Return the first matching profile
+    const query = 'SELECT * FROM user_profiles WHERE user_id = ?';
+    const [rows] = await pool.query(query, [userId]);
+    return rows[0]; // Return the first matching profile
 };
 
-// Update profile for a specific user
+// Update profile (bio and avatar)
 export const updateProfile = async (userId, profileData) => {
-  const { bio, avatar_url } = profileData;
+    const { bio, avatar_url } = profileData;
 
-  // Check if the profile exists
-  const [existingProfile] = await db.query('SELECT * FROM user_profiles WHERE user_id = ?', [userId]);
+    const [existingProfile] = await pool.query('SELECT * FROM user_profiles WHERE user_id = ?', [userId]);
 
-  if (!existingProfile.length) {
-    // If no profile exists, create one
-    try {
-      await db.query('INSERT INTO user_profiles (user_id, bio, avatar_url) VALUES (?, ?, ?)', [userId, bio, avatar_url]);
-    } catch (error) {
-      console.error('Error creating profile:', error);
-      throw new Error('Failed to create profile');
+    if (!existingProfile.length) {
+        try {
+            await pool.query('INSERT INTO user_profiles (user_id, bio, avatar_url) VALUES (?, ?, ?)', [userId, bio, avatar_url]);
+        } catch (error) {
+            console.error('Error creating profile:', error);
+            throw new Error('Failed to create profile');
+        }
+    } else {
+        try {
+            const [result] = await pool.query('UPDATE user_profiles SET bio = ?, avatar_url = ? WHERE user_id = ?', [bio, avatar_url, userId]);
+
+            if (result.affectedRows === 0) {
+                throw new Error(`Profile update failed for user ID: ${userId}`);
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            throw new Error('Failed to update profile');
+        }
     }
-  } else {
-    // Update the existing profile
-    try {
-      const [result] = await db.query('UPDATE user_profiles SET bio = ?, avatar_url = ? WHERE user_id = ?', [bio, avatar_url, userId]);
-
-      if (result.affectedRows === 0) {
-        throw new Error(`Profile update failed for user ID: ${userId}`);
-      }
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      throw new Error('Failed to update profile');
-    }
-  }
 };
-

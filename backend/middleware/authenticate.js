@@ -1,25 +1,25 @@
-import jwt from 'jsonwebtoken'; 
-
+import jwt from 'jsonwebtoken';
 export const authenticate = (req, res, next) => {
-  // Extract token from the cookies
-  const token = req.cookies.authToken;
+  console.log('Authorization header:', req.headers['authorization']); // Log the header
   
-  // If there's no token, return an unauthorized error
+  const token = req.headers['authorization']?.split(' ')[1] || req.cookies?.authToken;
+
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized, token is missing' });
   }
 
-  // Verify token
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      if (err instanceof jwt.TokenExpiredError) {
-        return res.status(401).json({ message: 'Token has expired, please request a new one.' });
-      }
+      console.error("JWT Error:", err);
       return res.status(401).json({ message: 'Invalid token.' });
     }
 
-    // Attach user data to the request object
-    req.user = decoded;
+    req.user = {
+      id: decoded.userId,      // Keep consistent with how you sign the token
+      email: decoded.email,
+      role: decoded.role
+    };
+
     next();
   });
 };

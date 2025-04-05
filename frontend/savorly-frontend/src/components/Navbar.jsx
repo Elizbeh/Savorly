@@ -11,31 +11,38 @@ const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("Auth Token:", authToken);
+  // Check if we are on the landing page
+  const isLandingPage = location.pathname === "/";
 
   // Fetch user profile inside useEffect
   useEffect(() => {
     const fetchUserProfile = async () => {
-      console.log("Auth Token in Navbar:", Cookies.get("authToken"));
-      if (!authToken) return;
-      
       try {
-        const response = await fetch('/api/profile', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
           method: 'GET',
+          credentials: 'include', // ✅ Include cookies
           headers: {
-            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
           },
         });
+  
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.statusText}`);
+        }
+  
         const data = await response.json();
-        setUserProfile(data.profile);
+        setUserProfile(data); // Adjust if your API returns { profile: {...} }
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
     };
-
-    fetchUserProfile();
+  
+    if (authToken) {
+      fetchUserProfile();
+    }
   }, [authToken]);
   
+
   // Logout function
   const logout = async () => {
     try {
@@ -58,50 +65,63 @@ const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        <Link to="/" className="logo">
-          <img src={logo} alt="Savorly Logo" className="logo-icon" />
-          <span className="logo-text">Savorly</span>
-        </Link>
-      </div>
-
-      <div className={`nav-links ${isMobileMenuOpen ? "active" : ""}`}>
-        <Link to="/home">Home</Link>
-        <Link to="/create-recipe">Create Recipe</Link>
-        <Link to="/saved-recipes">Saved Recipes</Link>
-        {authToken && (
-          <Link to="#" onClick={logout} className="logout-btn">Logout</Link>
+        {/* On the landing page, use span to prevent navigation, otherwise, use Link */}
+        {isLandingPage ? (
+          <span className="logo">
+            <img src={logo} alt="Savorly Logo" className="logo-icon" />
+            <span className="logo-text">Savorly</span>
+          </span>
+        ) : (
+          <Link to="/" className="logo">
+            <img src={logo} alt="Savorly Logo" className="logo-icon" />
+            <span className="logo-text">Savorly</span>
+          </Link>
         )}
       </div>
 
+      {/* Conditionally render nav-links only if we are not on the landing page */}
+      {!isLandingPage && (
+        <div className={`nav-links ${isMobileMenuOpen ? "active" : ""}`}>
+          <Link to="/create-recipe">Create Recipe</Link>
+          <Link to="/saved-recipes">Saved Recipes</Link>
+          <Link to="/about">About Us</Link> {/* New Link for About Us */}
+          {authToken && (
+            <Link to="#" onClick={logout} className="logout-btn">Logout</Link>
+          )}
+        </div>
+      )}
+
+      {/* Conditionally render login button on landing page */}
       <div className="navbar-right">
-  {userProfile ? (
+  {isLandingPage ? (
+    <Link to="/login" className="login-btn">Login</Link>
+  ) : userProfile ? (
     <div className="user-info">
-      <Link to="/profile">
+      {/* Check if the user is authenticated before navigating to /profile */}
+      <Link to={authToken ? "/profile" : "/login"}>
         <img 
           src={userProfile.avatar_url || defaultAvatar} 
           alt="User Avatar" 
           className="user-avatar" 
         />
       </Link>
-      <span className="user-name">{userProfile.first_name} {userProfile.last_name}</span>
     </div>
   ) : (
-    <div className="user-info">
-      <Link to="/profile">
-        <img src={defaultAvatar} alt="Default Avatar" className="user-avatar" />
-      </Link>
-    </div>
+    <Link to="/profile">
+      <img src={defaultAvatar} alt="Default Avatar" className="user-avatar" />
+    </Link>
   )}
-
-  
 </div>
 
 
-      <div className={`hamburger ${isMobileMenuOpen ? "open" : ""}`} onClick={toggleMobileMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+      {/* Conditionally render the hamburger menu only if we are not on the landing page */}
+      {!isLandingPage && (
+        <div className={`hamburger ${isMobileMenuOpen ? "open" : ""}`} onClick={toggleMobileMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      )}
     </nav>
   );
 };

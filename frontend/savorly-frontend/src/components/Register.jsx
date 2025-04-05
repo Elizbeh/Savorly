@@ -31,38 +31,39 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    // Form validation
     if (!formData.first_name || !formData.last_name || !formData.email || !formData.password) {
       setError("Please fill in all fields.");
       return;
     }
-  
+
     if (!validateEmail(formData.email)) {
-      setError("Please enter a valid email address.");
+      setError("Please enter a valid email.");
       return;
     }
-  
+
     if (!validatePassword(formData.password)) {
-      setError("Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.");
+      setError("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.");
       return;
     }
-  
+
     try {
       setIsLoading(true);
       setError("");
       setMessage("");
-  
+
       const response = await fetch("http://localhost:5001/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
-      console.log("Response data:", data);  // Debugging
-  
+
       if (response.ok) {
         setMessage("Registration successful! Please check your email for verification.");
+        setTimeout(() => navigate("/login"), 2000); // Redirect to login after a brief message
       } else {
         setError(data.message || "An error occurred. Please try again.");
       }

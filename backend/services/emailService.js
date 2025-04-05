@@ -1,17 +1,14 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = (to, subject, first_name, verificationUrl) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+export const sendEmail = (to, first_name, verificationUrl) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.error("Missing email credentials in environment variables.");
+    return Promise.reject(new Error("Missing email credentials"));
+  }
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
+    from: process.env.EMAIL_USER,  // Your email address from which emails will be sent
+    to: to,                       // Now correctly using the "to" parameter
     subject: 'Verify Your Email Address',
     html: `
       <html>
@@ -82,10 +79,14 @@ export const sendEmail = (to, subject, first_name, verificationUrl) => {
               <p>Hi ${first_name},</p>
               <p>Thank you for signing up on Savorly! To complete your registration, please verify your email address by clicking the button below:</p>
               <p style="text-align: center;">
-                <a href="${verificationUrl}" target="_blank" class="btn">Verify My Email</a>
+                <a href="${verificationUrl}" target="_blank" class="btn">
+                  Verify My Email
+                </a>
               </p>
               <p>Or copy and paste this link into your browser:</p>
-              <p><a href="${verificationUrl}" target="_blank">${verificationUrl}</a></p>
+              <p style="text-align: center;">
+                <a href="${verificationUrl}" target="_blank">${verificationUrl}</a>
+              </p>
               <p>If you did not sign up for this account, please ignore this email.</p>
             </div>
             <div class="email-footer">
@@ -98,13 +99,28 @@ export const sendEmail = (to, subject, first_name, verificationUrl) => {
     `,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      // Optional: throw error or propagate it
-      throw new Error('Failed to send email');
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
+  console.log('Email User:', process.env.EMAIL_USER);
+  console.log('Email Password:', process.env.EMAIL_PASS);
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    },
+    tls: {
+      rejectUnauthorized: false, // This allows insecure connections, but it's useful for local testing.
+    },
+  });
+
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Error sending email:', error);
+        return reject(new Error('Failed to send email'));
+      }
+      console.log('Email sent:', info.response);
+      resolve(info);
+    });
   });
 };

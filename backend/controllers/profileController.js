@@ -1,26 +1,24 @@
 import { getProfileByUserId, updateProfile } from '../models/profile.js';
 
-// Get user profile
-export const getUserProfile = async (req, res) => {
-  const userId = req.user?.userId;
 
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is missing from request' });
-  }
+export const getUserProfile = async (req, res) => {
+  console.log('Decoded User:', req.user);
+
+  const userId = req.user.id;  // Get user ID from the authenticated user
+  
 
   try {
-    const profile = await getProfileByUserId(userId);
-
-    if (!profile) {
+    const userProfile = await getProfileByUserId(userId);
+    if (!userProfile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
-
-    res.json({ message: 'Profile fetched successfully', profile });
-  } catch (err) {
-    console.error('Error fetching profile:', err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(200).json(userProfile); // Send the profile data as a JSON response
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Failed to fetch user profile' });
   }
 };
+
 
 // Update user profile
 export const updateUserProfile = async (req, res) => {

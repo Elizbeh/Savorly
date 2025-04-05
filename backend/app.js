@@ -54,10 +54,21 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
 
 // Error handler for unhandled errors
-app.use((err, req, res, next) => {
+/*app.use((err, req, res, next) => {
   console.error('Global Error:', err);
   res.status(500).json({ message: err.message || 'Something went wrong. Please try again later.' });
+});*/
+app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ message: err.message });
+  }
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ message: 'Unauthorized, please log in again' });
+  }
+  console.error('Global Error:', err);
+  res.status(500).json({ message: 'Something went wrong. Please try again later.' });
 });
+
 
 // Token validation route for testing
 app.post('/test-token', (req, res) => {

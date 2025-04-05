@@ -5,6 +5,8 @@ import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
+
+
 // Get user profile
 router.get('/', authenticate, (req, res, next) => {
   console.log("User in request:", req.user);
@@ -16,16 +18,18 @@ router.put('/', authenticate, updateUserProfile);
 
 // Upload avatar image
 router.post('/avatar', authenticate, upload.single('avatar'), (req, res) => {
-  try {
-    // Build the public URL for the uploaded image
-    const avatarUrl = `http://localhost:5001/uploads/${req.file.filename}`;
-
-    // Respond with the new avatar URL
-    res.json({ avatar_url: avatarUrl });
-  } catch (error) {
-    console.error('Error uploading avatar:', error);
-    res.status(500).json({ message: 'Error uploading avatar' });
+  if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
   }
+
+  const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  if (!allowedMimeTypes.includes(req.file.mimetype)) {
+      return res.status(400).json({ message: 'Invalid file type' });
+  }
+
+  const avatarUrl = `http://localhost:5001/uploads/${req.file.filename}`;
+  res.json({ avatar_url: avatarUrl });
 });
+
 
 export default router;

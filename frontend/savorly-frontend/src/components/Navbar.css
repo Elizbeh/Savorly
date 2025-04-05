@@ -58,9 +58,6 @@
 }
 
 
-
-
-
 /* User Profile & Avatar */
 .user-avatar {
   width: 45px;
@@ -75,8 +72,9 @@
   transform: scale(1.15);
 }
 
+
 /* Login Button */
-.logout-btn {
+ .login-btn .logout-btn {
   background: none;
   border: none;
   color: #ff8c42 !important;  /* Ensure the color applies */

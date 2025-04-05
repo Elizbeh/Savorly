@@ -10,9 +10,10 @@ const VerifyEmail = () => {
 
   const navigate = useNavigate();
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const token = decodeURIComponent(queryParams.get("token"));
-  console.log("Token extracted from URL:", token);
+  const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+console.log("Extracted Token:", token);
+
 
   useEffect(() => {
     if (!token) {
@@ -20,7 +21,7 @@ const VerifyEmail = () => {
       setLoading(false);
       return;
     }
-
+  
     const verifyToken = async () => {
       try {
         const response = await fetch(`http://localhost:5001/api/auth/verify-email?token=${token}`);
@@ -29,7 +30,7 @@ const VerifyEmail = () => {
         if (data.success) {
           setMessage(data.message);
           setTimeout(() => {
-            navigate(data.redirectUrl || "/login"); 
+            navigate(data.redirectUrl || "/login"); // Ensure you redirect to the correct URL
           }, 2000);
         } else {
           setError(data.message);
@@ -42,18 +43,17 @@ const VerifyEmail = () => {
         setError("There was an error verifying your email.");
       }
     };
-    
-
+  
     verifyToken();
   }, [token, navigate]);
-
+  
   const handleResendVerification = async () => {
     const email = ""; // Ideally, email should be fetched securely, maybe via session or token-based auth.
     if (!email) {
       setError("Email not found. Please log in again.");
       return;
     }
-
+  
     setResendLoading(true);
     try {
       const response = await fetch("http://localhost:5001/api/auth/resend-verification", {
@@ -62,7 +62,7 @@ const VerifyEmail = () => {
         body: JSON.stringify({ email }),
       });
       const data = await response.json();
-
+  
       if (data.success) {
         setMessage(data.message);
         setTimeout(() => {
@@ -78,7 +78,7 @@ const VerifyEmail = () => {
       setResendLoading(false);
     }
   };
-
+  
   return (
     <div className="verify-email-container">
       {loading ? (

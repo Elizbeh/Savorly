@@ -1,6 +1,6 @@
 import express from 'express';
 import pool from '../config/db.js';
-import { registerUser, resendVerificationEmail, refreshToken, logoutUser} from '../controllers/authController.js';
+import { getUserData, registerUser, resendVerificationEmail, refreshToken, logoutUser} from '../controllers/authController.js';
 import { verifyEmail } from '../controllers/verifyEmailController.js';
 import { loginUser } from '../controllers/loginController.js';
 import { validateRegister, validateLogin } from '../middleware/validateInput.js';
@@ -8,11 +8,17 @@ import { authenticate } from '../middleware/authenticate.js';
 import rateLimit from 'express-rate-limit';
 
 
-
 const router = express.Router();
 
+const registerRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Too many attempts from this IP, pls try again after 15 minutes.',
+});
+
 // Registration Route with validation middleware
-router.post('/register', validateRegister, registerUser);
+router.post('/register', registerRateLimiter, validateRegister, registerUser);
+
 // Email verification route
 router.get('/verify-email', verifyEmail);
 
@@ -20,7 +26,7 @@ router.get('/verify-email', verifyEmail);
 // Set up rate lmiting:5 request per IP address
 const loginRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 20,
+    max: 10,
     message: 'Too many attempts from this IP, pls try again after 15 minutes.',
 });
 
@@ -53,6 +59,8 @@ router.post("/resend-verification", async (req, res) => {
   
     res.status(200).json({ message: 'Verification email resent successfully.' });
   });
+  // Get the user data (authenticated)
+router.get('/user', authenticate, getUserData);
   
   router.post('/refresh-token', refreshToken);
   

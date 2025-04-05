@@ -22,15 +22,14 @@ CREATE TABLE IF NOT EXISTS recipes (
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-
+-- Create the recipe_ingredients table
 CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT NOT NULL,
   ingredient_name VARCHAR(255) NOT NULL,
   FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
 );
 
-
--- Create the categories table if it doesn't already exist
+-- Create the categories table
 CREATE TABLE IF NOT EXISTS categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE,
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS categories (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create a recipe_categories table for many-to-many relationships if it doesn't exist
+-- Create a recipe_categories table for many-to-many relationships
 CREATE TABLE IF NOT EXISTS recipe_categories (
   recipe_id INT NOT NULL, -- Foreign key to recipes
   category_id INT NOT NULL, -- Foreign key to categories
@@ -48,14 +47,16 @@ CREATE TABLE IF NOT EXISTS recipe_categories (
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
+-- Create the user_profiles table
 CREATE TABLE IF NOT EXISTS user_profiles (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
+  user_id INT NOT NULL UNIQUE,
   bio TEXT,
   avatar_url VARCHAR(255),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Create the comments table
 CREATE TABLE IF NOT EXISTS comments (
   id INT AUTO_INCREMENT PRIMARY KEY,
   recipe_id INT NOT NULL,
@@ -63,6 +64,7 @@ CREATE TABLE IF NOT EXISTS comments (
   comment TEXT NOT NULL
 );
 
+-- Create the ratings table
 CREATE TABLE IF NOT EXISTS ratings (
   id INT AUTO_INCREMENT PRIMARY KEY,
   recipe_id INT NOT NULL,

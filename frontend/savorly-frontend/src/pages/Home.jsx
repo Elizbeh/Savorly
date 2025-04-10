@@ -7,9 +7,6 @@ import Toast from "../components/Toast";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
-import Cookies from "js-cookie";
-
-
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -24,40 +21,26 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = Cookies.get("authToken") || localStorage.getItem("authToken");
-
-      console.log("Token in HomePage:", token);
-      if (!token) {
-        console.log("No token found, redirecting in 5 seconds...");
-        setTimeout(() => navigate("/login"), 5000);
-      }
-      
       try {
         const response = await api.get("/api/profile", {
-          headers: { Authorization: `Bearer ${Cookies.get("authToken")}` },
-          withCredentials: true,
+          credentials: "include", // Automatically include cookies sent by the backend
         });
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);
-        setUser(null);
+        navigate("/login"); // Redirect to login if error fetching user or not authenticated
       }
     };
-  
+
     fetchUser();
-    
-  
   }, [navigate]);
-  
+
   const fetchData = async () => {
     try {
       const [recipeResponse, categoryResponse] = await Promise.all([
-        api.get("/api/recipes"),
-        api.get("/api/categories"),
+        api.get("/api/recipes", { credentials: "include" }), // Include cookies
+        api.get("/api/categories", { credentials: "include" }), // Include cookies
       ]);
-      console.log("Recipes Data:", recipeResponse.data);
-      console.log("Categories Data:", categoryResponse.data);
-  
       setRecipes(recipeResponse.data);
       setCategories(categoryResponse.data);
       setRecipesError(null);
@@ -69,15 +52,10 @@ const HomePage = () => {
       setToastMessage("Failed to load data. Please try again later.");
     }
   };
-  
-  
+
   useEffect(() => {
-    const fetchAllData = async () => {
-      await fetchData();
-    };
-    fetchAllData();
+    fetchData();
   }, []);
-  
 
   const retryFetch = () => {
     setToastMessage("Retrying to load data...");
@@ -85,17 +63,17 @@ const HomePage = () => {
   };
 
   const handleDelete = async (recipeId) => {
-    const authToken = Cookies.get("authToken");
-    if (!authToken) return setToastMessage("Please log in to delete recipes.");
+    if (!user) return setToastMessage("Please log in to delete recipes.");
 
     try {
       await api.delete(`/api/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
+        headers: { Authorization: `Bearer ${user.token}` },
+        credentials: "include",
       });
-      setRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId));
-      setToastMessage("Recipe deleted successfully");
-    } catch {
-      setToastMessage("Failed to delete the recipe. Please try again later.");
+      fetchData(); // Refresh the recipe list after deletion
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      setToastMessage("Failed to delete recipe. Please try again later.");
     }
   };
 
@@ -103,7 +81,7 @@ const HomePage = () => {
     const scrollAmount = recipeListRef.current.clientWidth;
     recipeListRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
+      behavior: "smooth",  // Ensure smooth scrolling here
     });
   };
 
@@ -112,11 +90,20 @@ const HomePage = () => {
       <Navbar user={user} isMobileMenuOpen={isMobileMenuOpen} toggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
       {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}
       <div className="home-page">
-        <div className="hero">
-          <h1>Welcome to Savorly</h1>
-          {user && <p>👋 {user.first_name}, ready to discover amazing recipes? 🍽️</p>}
-          <Link to="/create-recipe"><button className="cta-btn">Create a Recipe</button></Link>
-        </div>
+      <div className="hero">
+        <h1>Welcome to Savorly</h1>
+
+        {user && (
+          <p className="user-greeting">
+            👋 <span className="username">{user.first_name}</span>, ready to discover amazing recipes? 🍽️
+          </p>
+        )}
+
+        <Link to="/create-recipe">
+          <button className="cta-btn">Create a Recipe</button>
+        </Link>
+</div>
+
 
         <section className="categories">
           <h2>Explore Categories</h2>
@@ -141,7 +128,7 @@ const HomePage = () => {
             <div className="scroll-container">
               <button className="scroll-button left" onClick={() => scrollRecipes("left")}>{"<"}</button>
               <div className="recipes" ref={recipeListRef}>
-                {recipes.length ? recipes.map((r) => (
+                {recipes.length ? recipes.slice().reverse().map((r) => (
                   <RecipeCard key={r.id} recipe={r} onDelete={handleDelete} />
                 )) : <p>No recipes available</p>}
               </div>

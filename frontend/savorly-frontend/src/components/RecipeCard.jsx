@@ -1,29 +1,31 @@
 import React, { useState } from 'react';
 import './RecipeCard.css';
 import { FaEllipsisV, FaTrashAlt, FaEdit, FaEye, FaHeart } from 'react-icons/fa';
-import api from '../services/api'; // Import the configured axios instance
+import api from '../services/api';
 import Cookies from 'js-cookie';
 
 const RecipeCard = ({ recipe, onDelete, onSave }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const authToken = Cookies.get('authToken'); // Get auth token
+  const authToken = Cookies.get('authToken');
 
-  // Debugging: Log the image URL to ensure correctness
-  console.log("Recipe Image URL:", recipe.image_url);
+  // Format image URL
+  const imageUrl = recipe.image_url
+    ? recipe.image_url.startsWith('http')
+      ? recipe.image_url
+      : `http://localhost:5001${recipe.image_url}`
+    : '/assets/default-recipe.png';
 
-  // Ensure image URL is absolute
-  const imageUrl = recipe.image_url 
-  ? recipe.image_url.startsWith('http') 
-    ? recipe.image_url 
-    : `http://localhost:5001${recipe.image_url}`  // Remove the extra slash before 'uploads'
-  : '/assets/default-recipe.png';
-
+  // Truncate title and description
+  const truncatedTitle =
+    recipe.title && recipe.title.length > 30
+      ? `${recipe.title.slice(0, 30)}...`
+      : recipe.title;
 
   const truncatedDescription =
-    recipe.description && recipe.description.length > 25
-      ? `${recipe.description.slice(0, 25)}...`
+    recipe.description && recipe.description.length > 60
+      ? `${recipe.description.slice(0, 20)}...`
       : recipe.description;
 
   const handleDelete = async () => {
@@ -105,11 +107,12 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
         className="recipe-image"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = '/assets/default-recipe.png'; // Set default image if error occurs
+          e.target.src = '/assets/default-recipe.png';
         }}
       />
+
       <div className="recipe-details">
-        <h3>{recipe.title}</h3>
+        <h3>{truncatedTitle}</h3>
         <p>{truncatedDescription}</p>
       </div>
     </div>

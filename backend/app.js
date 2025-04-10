@@ -11,16 +11,15 @@ import adminRoutes from './routes/adminRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import jwt from 'jsonwebtoken';  // JWT for token validation
+import jwt from 'jsonwebtoken';
+import { authenticate } from './middleware/authenticate.js';
 
-// Ensure JWT_SECRET is set in environment variables
 if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET is missing in environment variables!");
 }
 
 const app = express();
 
-// CORS Configuration
 const corsOptions = {
   origin: process.env.CLIENT_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -29,13 +28,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(helmet());  // Secure HTTP headers
-
-// Middleware to parse JSON bodies and cookies
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
-// Serve static files with appropriate headers
+// Static file handling
 app.use('/uploads', (req, res, next) => {
   res.setHeader('Cache-Control', 'public, max-age=0');
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -45,19 +42,14 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(process.cwd(), 'uploads')));
 
-
-// Register API routes
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/profile', profileRoutes);
+app.use('/api/profile', authenticate, profileRoutes); // 👈 Globally protected
 
-// Error handler for unhandled errors
-/*app.use((err, req, res, next) => {
-  console.error('Global Error:', err);
-  res.status(500).json({ message: err.message || 'Something went wrong. Please try again later.' });
-});*/
+// Error handler
 app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {
     return res.status(400).json({ message: err.message });
@@ -69,8 +61,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong. Please try again later.' });
 });
 
-
-// Token validation route for testing
+// Token tester
 app.post('/test-token', (req, res) => {
   const token = req.body.token;
   if (!token) return res.status(400).json({ message: 'Token is required' });
@@ -83,7 +74,6 @@ app.post('/test-token', (req, res) => {
   }
 });
 
-// Root route to check if the API is running
 app.get('/', (req, res) => {
   res.send('Savorly API is running!');
 });

@@ -1,5 +1,5 @@
 import { 
-  create as createRecipeModel, 
+  create, 
   getRecipes, 
   findById, 
   update,  
@@ -9,84 +9,127 @@ import {
 import { addCategoriesToRecipe } from '../models/recipes_categories.js';
 import { addCommentToRecipe, getCommentsForRecipe } from '../models/comments.js';
 import { addRatingToRecipe } from '../models/ratings.js';
-import upload from '../middleware/upload.js';
-import path from 'path';
-import fs from 'fs/promises';
 import pool from '../config/db.js'
-
+import cloudinary from '../config/cloudinaryConfig.js';
+import streamifier from 'streamifier'; 
 // Create a new recipe
 export const createRecipe = async (req, res) => {
-  const { title, description, categories, ingredients } = req.body;
+  const { title, description } = req.body;
+  const userId = req.user.id;  // Assuming userId is stored in the request by authenticate middleware
 
+  // Ensure title and description are provided
   if (!title || !description) {
-      return res.status(400).json({ message: 'Title and description are required.' });
+    return res.status(400).json({ message: 'Title and description are required' });
   }
-
-  const userId = req.user.userId; // Make sure user is set in req.user
-  if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-  }
-
-  let imageUrl = null;
-  if (req.file) {
-      imageUrl = '/uploads/' + req.file.filename; // Assuming `upload` middleware saves the file
-  }
-
-  const connection = await pool.getConnection(); // Use a connection for transaction
 
   try {
-      await connection.beginTransaction();
+    let imageUrl = null;
+    if (req.file) {
+      // Upload recipe image to Cloudinary
+      const stream = cloudinary.v2.uploader.upload_stream(
+        {
+          folder: 'recipe_images', // Folder name for recipe images
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) {
+            console.error('Cloudinary upload failed:', error);
+            return res.status(500).json({ message: 'Upload failed', error });
+          }
 
-      // Create the recipe
-      const [result] = await connection.query(
-          'INSERT INTO recipes (title, description, user_id, image_url) VALUES (?, ?, ?, ?)',
-          [title, description, userId, imageUrl]
+          imageUrl = result.secure_url; // Get the image URL from Cloudinary
+
+          // Now create the recipe with the image URL
+          create({ title, description, userId, imageUrl })
+            .then(recipe => {
+              res.status(201).json(recipe); // Send the created recipe back
+            })
+            .catch(error => {
+              res.status(500).json({ message: 'Error creating recipe', error });
+            });
+        }
       );
-      const recipeId = result.insertId;
 
-      // Add categories (if provided)
-      if (categories && categories.length > 0) {
-        const categoryValues = categories.map((catId) => [recipeId, catId]);
-        await connection.query(
-            'INSERT INTO recipe_categories (recipe_id, category_id) VALUES ?',
-            [categoryValues]
-        );
-      }
-      
-      if (!Array.isArray(ingredients) || ingredients.some(ing => typeof ing !== 'string')) {
-        return res.status(400).json({ message: 'Ingredients must be an array of strings.' });
-      }    
-        const ingredientValues = ingredients.map(ingredient => [recipeId, ingredient]);
-        await connection.query(
-            'INSERT INTO recipe_ingredients (recipe_id, ingredient_name) VALUES ?',
-            [ingredientValues]
-        );
-
-      await connection.commit();
-      res.status(201).json({ message: 'Recipe created successfully', recipeId });
-    } catch (err) {
-        await connection.rollback();
-        console.error('Error creating recipe:', err);
-        res.status(500).json({ message: 'Error creating recipe', error: err.message });
-    } finally {
-        connection.release();
+      // Convert buffer to stream and pipe to Cloudinary
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    } else {
+      // If no image, just create the recipe without an image
+      create({ title, description, userId, imageUrl: null })
+        .then(recipe => {
+          res.status(201).json(recipe); // Send the created recipe back
+        })
+        .catch(error => {
+          res.status(500).json({ message: 'Error creating recipe', error });
+        });
+    }
+  } catch (error) {
+    console.error('Error creating recipe:', error);
+    res.status(500).json({ message: 'Error creating recipe' });
   }
 };
 
+// Update recipe (with optional image upload)
+export const updateRecipe = async (req, res) => {
+  const { id, title, description } = req.body;
 
-/*// Get all recipes
-export const getAllCategories = async (req, res) => {
-  try {
-    const [categories] = await pool.query('SELECT * FROM categories');
-    console.log('Categories from DB:', categories); // Check categories here
-    res.status(200).json(categories);
-  } catch (err) {
-    console.error('Error fetching categories:', err);
-    res.status(500).json({ message: 'Error fetching categories' });
+  // Ensure required fields are provided
+  if (!id || !title || !description) {
+    return res.status(400).json({ message: 'ID, title, and description are required' });
   }
-};*/
 
+  try {
+    let imageUrl = null;
+    if (req.file) {
+      // Upload new recipe image to Cloudinary
+      const stream = cloudinary.v2.uploader.upload_stream(
+        {
+          folder: 'recipe_images', // Folder name for recipe images
+          resource_type: 'image',
+        },
+        (error, result) => {
+          if (error) {
+            console.error('Cloudinary upload failed:', error);
+            return res.status(500).json({ message: 'Upload failed', error });
+          }
 
+          imageUrl = result.secure_url; // Get the image URL from Cloudinary
+
+          // Now update the recipe with the new image URL
+          update({ id, title, description, imageUrl })
+            .then(success => {
+              if (success) {
+                res.status(200).json({ message: 'Recipe updated successfully' });
+              } else {
+                res.status(400).json({ message: 'Recipe update failed' });
+              }
+            })
+            .catch(error => {
+              res.status(500).json({ message: 'Error updating recipe', error });
+            });
+        }
+      );
+
+      // Convert buffer to stream and pipe to Cloudinary
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    } else {
+      // If no image is provided, just update the recipe without changing the image
+      update({ id, title, description })
+        .then(success => {
+          if (success) {
+            res.status(200).json({ message: 'Recipe updated successfully' });
+          } else {
+            res.status(400).json({ message: 'Recipe update failed' });
+          }
+        })
+        .catch(error => {
+          res.status(500).json({ message: 'Error updating recipe', error });
+        });
+    }
+  } catch (error) {
+    console.error('Error updating recipe:', error);
+    res.status(500).json({ message: 'Error updating recipe' });
+  }
+};
 
 // Get recipe by ID
 export const getRecipeById = async (req, res) => {
@@ -110,52 +153,6 @@ export const getRecipeById = async (req, res) => {
 };
 
 // Update a recipe
-export const updateRecipe = async (req, res) => {
-  const { id } = req.params;
-  const { title, description } = req.body;
-  let imageUrl;
-
-  if (!title || !description) {
-    return res.status(400).json({ message: 'Title and description are required' });
-  }
-
-  try {
-    // Fetch the existing recipe to get the current image URL
-    const existingRecipe = await findById(id);
-    if (!existingRecipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
-
-    // If a new file is uploaded, handle the file update
-    if (req.file) {
-      imageUrl = '/uploads/' + req.file.filename;
-
-      // Delete the old image file if it exists
-      if (existingRecipe.imageUrl) {
-        const oldImagePath = path.join('uploads', path.basename(existingRecipe.imageUrl));
-        try {
-          await fs.unlink(oldImagePath);
-        } catch (err) {
-          console.error('Error deleting old image:', err.message);
-        }
-      }
-    } else {
-      // Keep the existing image if no new file is uploaded
-      imageUrl = existingRecipe.imageUrl;
-    }
-
-    // Update the recipe in the database
-    const updated = await update({ id, title, description, imageUrl });
-    if (!updated) {
-      return res.status(404).json({ message: 'Recipe not updated' });
-    }
-
-    res.status(200).json({ message: 'Recipe updated successfully' });
-  } catch (err) {
-    console.error('Error updating recipe:', err);
-    res.status(500).json({ message: 'Error updating recipe', error: err.message });
-  }
-};
 
 // Delete a recipe
 export const deleteRecipe = async (req, res) => {

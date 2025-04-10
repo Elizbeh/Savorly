@@ -66,8 +66,9 @@
 }
 
 .file-input {
-  display: none;
+  display: block;  /* Ensure it is visible */
 }
+
 
 .profile-info {
   display: flex;

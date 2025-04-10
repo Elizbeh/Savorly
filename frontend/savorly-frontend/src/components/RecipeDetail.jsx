@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './RecipeDetails.css'; // Ensure the CSS file is imported
+import './RecipeDetails.css';
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
-  const authToken = localStorage.getItem('authToken'); // Retrieve token from localStorage
+  const authToken = localStorage.getItem('authToken');
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -13,7 +13,7 @@ const RecipeDetail = () => {
         const response = await fetch(`http://localhost:5001/api/recipes/${id}`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${authToken}`, // Include the token in the request header
+            Authorization: `Bearer ${authToken}`,
           },
         });
 
@@ -29,7 +29,7 @@ const RecipeDetail = () => {
     };
 
     fetchRecipe();
-  }, [id, authToken]); // Ensure authToken is considered in dependency array
+  }, [id, authToken]);
 
   if (!recipe) return <p>Loading...</p>;
 
@@ -37,14 +37,21 @@ const RecipeDetail = () => {
     <div className="recipe-detail-container">
       <h1 className="recipe-detail-title">{recipe.title}</h1>
       <img
-        src={`http://localhost:5001${recipe.image_url}` || '/assets/default-recipe.png'}
-        alt={recipe.title}
-        className="recipe-detail-image"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = '/assets/default-recipe.png';
-        }}
-      />
+  src={
+    recipe.image_url
+      ? recipe.image_url.startsWith('http')
+        ? recipe.image_url
+        : `http://localhost:5001${recipe.image_url}`
+      : '/assets/default-recipe.png'
+  }
+  alt={recipe.title}
+  className="recipe-detail-image"
+  onError={(e) => {
+    e.target.onerror = null;
+    e.target.src = '/assets/default-recipe.png';
+  }}
+/>
+
 
       <p className="recipe-detail-description">{recipe.description}</p>
 

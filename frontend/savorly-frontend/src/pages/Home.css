@@ -1,3 +1,7 @@
+/*
+primary = #ff8c42
+ secondary= #5aea66(greenish);
+*/
 /* ========================
    General Reset
 ======================== */
@@ -65,7 +69,7 @@ body, html {
   font-weight: bold;
   margin-bottom: 20px;
   line-height: 1.2;
-  color:  #5aea66;
+  color:  white;
   z-index: 1;
 }
 
@@ -75,7 +79,16 @@ body, html {
   margin-bottom: 30px;
   line-height: 1.5;
 }
+.home-page .hero .user-greeting {
+  z-index: 1;
+  color: rgb(228, 223, 223);
+  font-size: 18px;
+}
 
+.home-page .hero .username {
+  color: white;
+  font-weight: bold;
+}
 /* CTA Buttons */
 .cta-buttons {
   display: flex;
@@ -148,10 +161,10 @@ body, html {
 }
 
 .categories h2 {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: bold;
   margin-bottom: 40px;
-  color: #2C3E50;
+  color: #ff8c42,
 }
 
 .category-name a {
@@ -226,15 +239,18 @@ body, html {
    Featured Recipes Section
 ======================== */
 .recipe-list {
-  padding: 60px 8%;
+  
   background-color: hsl(0, 0%, 96%);
   text-align: center;
+  width: 80%;
 }
 
 .recipe-list h2 {
-  font-size: 32px;
-  margin-bottom: 40px;
+  font-size: 28px;
+  margin-bottom: 30px;
+  margin-top: 30px;
   font-weight: bold;
+
 }
 
 .scroll-container {
@@ -287,7 +303,7 @@ body, html {
 
 .recipe-card {
   flex: 0 0 auto;
-  width: 250px;
+  width: 200px;
   background: #fff;
   padding: 20px;
   border-radius: 8px;
@@ -304,9 +320,9 @@ body, html {
 
 .recipe-card h3 {
   margin-top: 15px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
-}
+}*
 
 .view-button {
   background-color: #ff8c42;

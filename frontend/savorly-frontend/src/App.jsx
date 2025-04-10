@@ -13,20 +13,39 @@ import RecipeForm from './pages/RecipeFormPage';
 import ProfilePage from './pages/Profile';
 import SavedRecipes from './pages/SavedRecipes';
 import VerifyEmail from "./components/verifyEmail";
-import Cookies from 'js-cookie';
 import './App.css';
 
 // ProtectedRoute component to guard routes based on authentication status
 const ProtectedRoute = ({ element }) => {
-  const token = Cookies.get("authToken") || localStorage.getItem("authToken");
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
-  if (!token) {
-    console.log("No token found, redirecting to login");
-    return <Navigate to="/login" />;
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
   }
 
-  console.log("Token in ProtectedRoute:", token); // Now logs only when token exists
-  return element;
+  return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 
@@ -35,42 +54,39 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
+  
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
 
+  // Fetch user profile if authToken exists in cookies
   useEffect(() => {
-    const fetchUser = async () => {
-      const authToken = Cookies.get("authToken");
-      
-      if (!authToken) return;
-  
+    const fetchUserProfile = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
           method: "GET",
           credentials: "include",
         });
-  
+
         if (response.ok) {
           const data = await response.json();
           setUser(data);
         } else {
-          console.error("Failed to fetch user data");
+          console.error("Failed to fetch user profile");
+          setUser(null);
         }
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("Error fetching user profile:", error);
+        setUser(null);
       }
     };
-  
-    fetchUser();
+
+    fetchUserProfile();
   }, []);
-  
 
   return (
     <div className="App">
       <ErrorBoundary>
-  
         {!["/login", "/register", "/verify-email"].includes(location.pathname) && (
           <Navbar user={user} isMobileMenuOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu} />
         )}
@@ -85,13 +101,13 @@ function App() {
           <Route path="/create-recipe" element={<RecipeForm />} />
           <Route path="/recipe-form/:id" element={<RecipeForm />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          {/* Pass setUser to ProfilePage to update user data globally */}
+          <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
           <Route path="/saved-recipes" element={<SavedRecipes />} />
         </Routes>
       </ErrorBoundary>
     </div>
   );
 }
-
 
 export default App;

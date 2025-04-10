@@ -1,25 +1,31 @@
 import jwt from 'jsonwebtoken';
+
 export const authenticate = (req, res, next) => {
-  console.log('Authorization header:', req.headers['authorization']); // Log the header
-  
-  const token = req.headers['authorization']?.split(' ')[1] || req.cookies?.authToken;
+  console.log('Cookies:', req.cookies);  // Log the cookies
+
+  // Get the token from the cookie
+  const token = req.cookies?.authToken;
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized, token is missing' });
   }
 
+  // Verify the token
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.error("JWT Error:", err);
       return res.status(401).json({ message: 'Invalid token.' });
     }
 
+    // Attach user info to the request for future use
     req.user = {
-      id: decoded.userId,      // Keep consistent with how you sign the token
+      id: decoded.userId,      // Ensure this matches how the token was signed
       email: decoded.email,
       role: decoded.role
     };
 
+    // Continue to the next middleware or route handler
     next();
   });
 };
+

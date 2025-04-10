@@ -3,11 +3,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import defaultAvatar from "../assets/images/default_avatar.png";
 import "./Navbar.css";
-import Cookies from 'js-cookie';
 
-const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
+const Navbar = ({  user, isMobileMenuOpen, toggleMobileMenu }) => {
   const [userProfile, setUserProfile] = useState(null);
-  const authToken = Cookies.get('authToken');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,43 +14,41 @@ const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
 
   // Fetch user profile inside useEffect
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
-          method: 'GET',
-          credentials: 'include', // ✅ Include cookies
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Failed to fetch profile: ${response.statusText}`);
-        }
-  
-        const data = await response.json();
-        setUserProfile(data); // Adjust if your API returns { profile: {...} }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile');
       }
-    };
-  
-    if (authToken) {
-      fetchUserProfile();
+
+      const data = await response.json();
+      setUserProfile(data.profile || data); // Ensure you update the profile here
+    } catch (error) {
+      console.error('Error fetching profile:', error);
     }
-  }, [authToken]);
-  
+  };
+
+  if (user) {
+    fetchUserProfile();
+  }
+}, [user]);  // Now using the user prop correctly
 
   // Logout function
   const logout = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
         method: 'POST',
-        credentials: 'include',
+        credentials: 'include', // Include cookies during logout
       });
 
       if (response.ok) {
-        Cookies.remove('authToken');
         navigate("/login");
       } else {
         console.error('Logout failed');
@@ -72,7 +68,7 @@ const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
             <span className="logo-text">Savorly</span>
           </span>
         ) : (
-          <Link to="/" className="logo">
+          <Link to="/home" className="logo">
             <img src={logo} alt="Savorly Logo" className="logo-icon" />
             <span className="logo-text">Savorly</span>
           </Link>
@@ -85,34 +81,33 @@ const Navbar = ({ user, isMobileMenuOpen, toggleMobileMenu }) => {
           <Link to="/create-recipe">Create Recipe</Link>
           <Link to="/saved-recipes">Saved Recipes</Link>
           <Link to="/about">About Us</Link> {/* New Link for About Us */}
-          {authToken && (
-            <Link to="#" onClick={logout} className="logout-btn">Logout</Link>
+          {userProfile && (
+            <Link to="/" onClick={logout} className="logout-btn">Logout</Link>
           )}
         </div>
       )}
 
       {/* Conditionally render login button on landing page */}
       <div className="navbar-right">
-  {isLandingPage ? (
-    <Link to="/login" className="login-btn">Login</Link>
-  ) : userProfile ? (
-    <div className="user-info">
-      {/* Check if the user is authenticated before navigating to /profile */}
-      <Link to={authToken ? "/profile" : "/login"}>
-        <img 
-          src={userProfile.avatar_url || defaultAvatar} 
-          alt="User Avatar" 
-          className="user-avatar" 
-        />
-      </Link>
-    </div>
-  ) : (
-    <Link to="/profile">
-      <img src={defaultAvatar} alt="Default Avatar" className="user-avatar" />
-    </Link>
-  )}
-</div>
-
+        {isLandingPage ? (
+          <Link to="/login" className="login-btn">Login</Link>
+        ) : userProfile ? (
+          <div className="user-info">
+            {/* Check if the user is authenticated before navigating to /profile */}
+            <Link to={userProfile ? "/profile" : "/login"}>
+              <img
+                src={userProfile.avatar_url || defaultAvatar}
+                alt="User Avatar"
+                className="user-avatar"
+              />
+            </Link>
+          </div>
+        ) : (
+          <Link to="/profile">
+            <img src={defaultAvatar} alt="Default Avatar" className="user-avatar" />
+          </Link>
+        )}
+      </div>
 
       {/* Conditionally render the hamburger menu only if we are not on the landing page */}
       {!isLandingPage && (

@@ -39,21 +39,32 @@ export const loginUser = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: '7d' }
     );
+
     // Set access token in a cookie
     res.cookie('authToken', accessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax", // Allows cookies in most cases without cross-site restrictions
-      path: "/",
-      maxAge: 60 * 60 * 1000
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Use https in production
+      sameSite: 'Lax', // Allows cookies in most cases without cross-site restrictions
+      path: '/',  // Set path to root, making cookie accessible across your app
+      maxAge: 60 * 60 * 1000, // 1 hour expiration for the access token
     });
-    
 
     // Set refresh token in cookies
     setRefreshTokenCookie(res, refreshToken);
 
-    // Respond with user details
-    res.status(200).json({ message: 'Login successful', token: accessToken, user });
+    // Respond with user details (excluding token)
+    res.status(200).json({
+      message: 'Login successful',
+      token: accessToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        is_verified: user.is_verified,
+      },
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });

@@ -10,7 +10,8 @@ import {
 import { authenticate } from '../middleware/authenticate.js';
 import { addRatingToRecipe } from '../models/ratings.js';
 import { addCommentToRecipe } from '../models/comments.js';
-import upload from '../middleware/upload.js'; // Import the upload middleware
+import upload from '../middleware/upload.js';
+
 const router = express.Router();
 
 router.post('/create', authenticate, upload.single('image'), createRecipe); // Create a new recipe

@@ -11,9 +11,8 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
 
   const params = new URLSearchParams(window.location.search);
-const token = params.get("token");
-console.log("Extracted Token:", token);
-
+  const token = params.get("token");
+  console.log("Extracted Token:", token);
 
   useEffect(() => {
     if (!token) {
@@ -21,16 +20,21 @@ console.log("Extracted Token:", token);
       setLoading(false);
       return;
     }
-  
+
     const verifyToken = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/api/auth/verify-email?token=${token}`);
+        const response = await fetch(`http://localhost:5001/api/auth/verify-email?token=${token}`, {
+          method: "GET",
+          credentials: "include", // 🧁 Include cookies just in case session matters
+        });
+
         const data = await response.json();
         console.log(data);
+
         if (data.success) {
           setMessage(data.message);
           setTimeout(() => {
-            navigate(data.redirectUrl || "/login"); // Ensure you redirect to the correct URL
+            navigate(data.redirectUrl || "/login");
           }, 2000);
         } else {
           setError(data.message);
@@ -41,30 +45,27 @@ console.log("Extracted Token:", token);
       } catch (error) {
         console.error("Error verifying token:", error);
         setError("There was an error verifying your email.");
+      } finally {
+        setLoading(false);
       }
     };
-  
+
     verifyToken();
   }, [token, navigate]);
-  
+
   const handleResendVerification = async () => {
-    const email = ""; // Ideally, email should be fetched securely, maybe via session or token-based auth.
-    if (!email) {
-      setError("Email not found. Please log in again.");
-      return;
-    }
-  
     setResendLoading(true);
     try {
       const response = await fetch("http://localhost:5001/api/auth/resend-verification", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        credentials: "include", // ✅ Cookies for session-based email lookup
       });
+
       const data = await response.json();
-  
+
       if (data.success) {
         setMessage(data.message);
+        setError("");
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -78,7 +79,7 @@ console.log("Extracted Token:", token);
       setResendLoading(false);
     }
   };
-  
+
   return (
     <div className="verify-email-container">
       {loading ? (

@@ -1,8 +1,25 @@
-/* Adjust body padding to consider safe areas */
+/* App.css */
+
+/* Define a CSS variable for the navbar height */
+:root {
+  --navbar-height: 80px;
+}
+
+/* Ensure the body respects safe-area insets (good for mobile devices) */
 body {
   margin: 0;
-  padding-top: env(safe-area-inset-top);  /* This ensures the content below the navbar is properly spaced */
+  padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
 }
+
+/* Main application wrapper should push content down below the fixed navbar */
+.App {
+  padding-top: var(--navbar-height);
+  min-height: 100vh;
+}
+
+/* You can include any global styles here */

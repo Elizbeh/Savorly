@@ -1,5 +1,5 @@
 import React from 'react';
-import './AboutPage.css'; // Optional, if you want to style the page
+import './AboutPage.css';
 
 const AboutPage = () => {
   return (

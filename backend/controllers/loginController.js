@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import { setRefreshTokenCookie } from '../utils/tokenUtils.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from '../models/users.js';
+import { setRefreshTokenCookie } from '../utils/tokenUtils.js';
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -44,7 +44,7 @@ export const loginUser = async (req, res) => {
     res.cookie('authToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Use https in production
-      sameSite: 'Lax', // Allows cookies in most cases without cross-site restrictions
+      sameSite: 'None', // Allows cookies in most cases without cross-site restrictions
       path: '/',  // Set path to root, making cookie accessible across your app
       maxAge: 60 * 60 * 1000, // 1 hour expiration for the access token
     });

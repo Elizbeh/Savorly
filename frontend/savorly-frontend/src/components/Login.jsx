@@ -4,6 +4,7 @@ import "./Login.css";
 import "font-awesome/css/font-awesome.min.css";
 import savorlyLogo from "../assets/images/logo.png"; 
 import api from '../services/api';  
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,14 +30,24 @@ const Login = () => {
     if (!validateEmail(email)) return setError("Invalid email format");
     if (!validatePassword(password)) return setError("Password must be at least 8 characters long and contain a letter, a number, and a special character");
   
+    console.log("Sending Login Request:", { email, password });
+  
     try {
-      const response = await api.post("/api/auth/login", { email, password }, { withCredentials: true });
+      const response = await api.post("/api/auth/login", { email, password });
   
       console.log("Login Response:", response.data);
   
       if (response.status === 200) {
+        const { token } = response.data;
+        if (!token) throw new Error("Token missing in response");
+  
+        Cookies.set("authToken", token, { expires: 7, sameSite: "Strict", path: '/'  });
+        
+  
         console.log("Navigating to /home...");
         navigate("/home");
+        console.log("Navigation attempt complete.");
+
       } else {
         setError(response.data.message || "Invalid login credentials.");
       }
@@ -47,7 +58,7 @@ const Login = () => {
   };
   
   
-  
+
   return (
     <div className="login-container">
       <div className="login-image"></div>
@@ -82,7 +93,7 @@ const Login = () => {
             ></i>
           </div>
 
-          <button type="submit" className="login-btn">Log In</button>
+          <button type="submit"  className="login-btn">Log In</button>
         </form>
 
         <p className="signup-link">

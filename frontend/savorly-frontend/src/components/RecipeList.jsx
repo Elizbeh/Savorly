@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const RecipeList = () => {
   const [recipes, setRecipes] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchRecipes = async () => {

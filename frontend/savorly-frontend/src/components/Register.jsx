@@ -64,7 +64,7 @@ const Register = () => {
 
       if (response.ok) {
         setMessage("Registration successful! Please check your email for verification.");
-        setTimeout(() => navigate("/login"), 2000); // Redirect to login after a brief message
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setError(data.message || "An error occurred. Please try again.");
       }

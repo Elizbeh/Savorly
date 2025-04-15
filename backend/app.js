@@ -9,6 +9,7 @@ import recipeRoutes from './routes/recipesRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
+import {router as savedRecipesRoutes} from './routes/savedRecipesRoutes.js';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
@@ -48,7 +49,7 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/profile', authenticate, profileRoutes); // 👈 Globally protected
-
+app.use('/api/saved-recipes', authenticate, savedRecipesRoutes);
 // Error handler
 app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {

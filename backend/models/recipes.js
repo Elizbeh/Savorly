@@ -79,18 +79,7 @@ export const remove = async (id) => {
 };
 
 // Helper function to get ingredients for a recipe
-export const getIngredientsForRecipe = async (recipeId) => {
-  try {
-    // Correcting the table name to 'recipe_ingredients'
-    const [ingredients] = await pool.query(
-      'SELECT * FROM recipe_ingredients WHERE recipe_id = ?',
-      [recipeId]
-    );
-    return ingredients;
-  } catch (error) {
-    handleDatabaseError(error, 'Error fetching ingredients');
-  }
-};
+
 
 
 // Additional helper function to fetch categories related to a recipe
@@ -107,17 +96,5 @@ export const getCategoriesForRecipe = async (recipeId) => {
 };
 
 // Add ingredients to a recipe
-export const addIngredientsToRecipe = async (recipeId, ingredients) => {
-  const values = ingredients.map(ingredient => [recipeId, ingredient]);
 
-  try {
-    const [result] = await pool.query(
-      'INSERT INTO ingredients (recipe_id, ingredient) VALUES ?',
-      [values]
-    );
-    return result;
-  } catch (error) {
-    handleDatabaseError(error, 'Error adding ingredients to recipe');
-  }
-};
 

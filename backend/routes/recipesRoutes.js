@@ -32,6 +32,4 @@ router.post('/:id/comments', authenticate, addCommentToRecipe);
 // Route to add a rating to a recipe
 router.post('/:id/ratings', authenticate, addRatingToRecipe);
 
-
-
 export default router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './CategoryPage.css';
-import RecipeCard from '../components/RecipeCard'; // Import the RecipeCard component
+import RecipeCard from '../components/RecipeCard';
 
 const CategoryPage = () => {
   const { categoryId } = useParams();
@@ -34,23 +34,23 @@ const CategoryPage = () => {
     fetchCategoryData();
   }, [categoryId]);
 
+  // Prevent accessing category.name before it's set
+  if (!category) {
+    return <div>Loading category...</div>; // Optionally, add a loading state
+  }
+
   return (
     <div className="category-page">
       {error && <div className="error">{error}</div>}
 
-      {category && (
-        <section className="category-info">
-          <h1>{category.name}</h1>
-          <p>{category.description}</p>
-        </section>
-      )}
+      
 
       <section className="recipes-list">
-        <h2>Recipes in this Category</h2>
+        <h2>Recipe in the {category.name} category</h2>
         {recipes.length ? (
           <div className="recipe-cards">
             {recipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} /> // Use the RecipeCard component
+              <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
         ) : (

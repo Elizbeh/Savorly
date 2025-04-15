@@ -4,6 +4,7 @@ import './RecipeFormPage.css';
 import { FaTimes } from 'react-icons/fa';
 import api from '../services/api';
 
+
 const RecipeForm = () => {
   const { id } = useParams(); // Get the recipe ID (if editing)
   const [title, setTitle] = useState('');
@@ -22,32 +23,26 @@ const RecipeForm = () => {
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const navigate = useNavigate();
 
-  // Helper function to create FormData
+
   const createFormData = () => {
     const formData = new FormData();
-    formData.append('id', id);  // Include the recipe ID
+    if (id) formData.append('id', id)
     formData.append('title', title);
     formData.append('description', description);
   
-    // Filter out empty ingredients before appending to FormData
-    ingredients.filter(ingredient => ingredient.trim() !== '').forEach((ingredient) => formData.append('ingredients[]', ingredient));
+    ingredients
+      .filter((ingredient) => ingredient.trim() !== '')
+      .forEach((ingredient) => formData.append('ingredients[]', ingredient));
   
-    selectedCategories.forEach((category) => formData.append('categories[]', category));
+    selectedCategories.forEach((catId) => formData.append('categories[]', catId));
   
-    // If a new image is uploaded, append it, else append the existing image URL
     if (image) {
       formData.append('image', image);
-    } else if (existingImageUrl) {
-      formData.append('existingImageUrl', existingImageUrl);
-    }
-  
-    // Log the FormData contents (for debugging purposes)
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
     }
   
     return formData;
   };
+
   
   // Fetch categories on load
   useEffect(() => {
@@ -56,6 +51,7 @@ const RecipeForm = () => {
         const response = await api.get('/api/categories');
         setCategories(response.data);
         setLoadingCategories(false);
+        console.log('Categories fetched:', response.data); // Debug categories response
       } catch (err) {
         console.error(err);
         setErrorLoadingCategories(true);
@@ -72,16 +68,16 @@ const RecipeForm = () => {
       const fetchRecipe = async () => {
         try {
           const response = await api.get(`/api/recipes/${id}`);
+          console.log("Fetched recipe data:", response.data); // Log the full fetched response data
+          
           const data = response.data;
-          console.log("Fetched recipe", data);
-
+          
           setTitle(data.title || '');
           setDescription(data.description || '');
-          setIngredients(data.ingredients.map((ingredient) => ingredient.ingredient_name || ''));
-          setSelectedCategories(data.categories.map((category) => category.id));
+          setIngredients(data.ingredients?.map((ingredient) => ingredient.ingredient_name) || []);
+          setSelectedCategories(data.categories?.map((category) => category.id) || []);
           setExistingImageUrl(data.image_url);
           
-          // Check if we have an existing image URL, then set the preview
           if (data.image_url) {
             setImagePreview(data.image_url); 
           }
@@ -89,7 +85,7 @@ const RecipeForm = () => {
           console.error('Error fetching recipe:', error);
         }
       };
-
+  
       fetchRecipe();
     }
   }, [id]);
@@ -104,7 +100,6 @@ const RecipeForm = () => {
       return false;
     }
 
-    // Only check if there is at least one filled ingredient
     const filledIngredients = ingredients.filter(ingredient => ingredient.trim() !== '');
     if (filledIngredients.length === 0) {
       setErrorMessage('Please fill in at least one ingredient.');
@@ -159,127 +154,131 @@ const RecipeForm = () => {
   };
 
   return (
-    <form className="create-recipe-form" onSubmit={handleSubmit}>
-      <h2>{id ? 'Edit Recipe' : 'Create a Recipe'}</h2>
+    <div className="recipe-form-container">
+      {/* Background image container */}
+      <div className="background-image"></div>
 
-      {/* Error message */}
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <form className="create-recipe-form" onSubmit={handleSubmit}>
+        <h2>{id ? 'Edit Recipe' : 'Create a Recipe'}</h2>
 
-      {/* Recipe Title */}
-      <label>
-        Title:
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </label>
+        {/* Error message */}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-      {/* Recipe Description */}
-      <label>
-        Description:
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-      </label>
+        {/* Recipe Title */}
+        <label>
+          Title:
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </label>
 
-      {/* Ingredients */}
-      <label>
-        Ingredients:
-        <div className="ingredient-list">
-          {ingredients.map((ingredient, index) => (
-            ingredient.trim() && (
-              <div key={index} className="ingredient-chip">
-                {ingredient}
-                <button
-                  type="button"
-                  className="remove-ingredient-button"
-                  onClick={() => setIngredients(ingredients.filter((_, i) => i !== index))}
-                >
-                  <FaTimes />
-                </button>
-              </div>
-            )
-          ))}
-        </div>
+        {/* Recipe Description */}
+        <label>
+          Description:
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          ></textarea>
+        </label>
 
-        <input
-          type="text"
-          value={ingredients[ingredients.length - 1] || ''}
-          onChange={(e) => setIngredients([...ingredients.slice(0, -1), e.target.value])}
-          onKeyDown={(e) => e.key === 'Enter' && setIngredients([...ingredients, ''])}
-          placeholder="Enter ingredient"
-        />
-
-        <button
-          type="button"
-          className="add-ingredient-button"
-          onClick={() => setIngredients([...ingredients, ''])}
-        >
-          + Add Ingredient
-        </button>
-      </label>
-
-      {/* Categories */}
-      <label>
-        Categories:
-        {loadingCategories ? (
-          <p>Loading categories...</p>
-        ) : errorLoadingCategories ? (
-          <p>Error loading categories</p>
-        ) : (
-          <select
-            multiple
-            value={selectedCategories}
-            onChange={(e) =>
-              setSelectedCategories([...e.target.selectedOptions].map((opt) => opt.value))
-            }
-          >
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
+        {/* Ingredients */}
+        <label>
+          Ingredients:
+          <div className="ingredient-list">
+            {ingredients.map((ingredient, index) => (
+              ingredient.trim() && (
+                <div key={index} className="ingredient-chip">
+                  {ingredient}
+                  <button
+                    type="button"
+                    className="remove-ingredient-button"
+                    onClick={() => setIngredients(ingredients.filter((_, i) => i !== index))}
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              )
             ))}
-          </select>
-        )}
-      </label>
-
-      {/* Image Upload */}
-      <label>
-        Image:
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (file) {
-              setImage(file);
-              setImagePreview(URL.createObjectURL(file));
-            }
-          }}
-        />
-        {imagePreview && <img src={imagePreview} alt="Preview" />}
-        {/* Display existing image if no new one is selected */}
-        {!imagePreview && existingImageUrl && <img src={existingImageUrl} alt="Existing" />}
-      </label>
-
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? 'Submitting...' : 'Submit Recipe'}
-      </button>
-
-      {/* Confirmation Modal */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>{confirmationMessage}</h3>
-            <button onClick={handleCloseModal}>OK</button>
           </div>
-        </div>
-      )}
-    </form>
+
+          <input
+            type="text"
+            value={ingredients[ingredients.length - 1] || ''}
+            onChange={(e) => setIngredients([...ingredients.slice(0, -1), e.target.value])}
+            onKeyDown={(e) => e.key === 'Enter' && setIngredients([...ingredients, ''])}
+            placeholder="Enter ingredient"
+          />
+
+          <button
+            type="button"
+            className="add-ingredient-button"
+            onClick={() => setIngredients([...ingredients, ''])}
+          >
+            + Add Ingredient
+          </button>
+        </label>
+
+        {/* Categories */}
+        <label>
+          Categories:
+          {loadingCategories ? (
+            <p>Loading categories...</p>
+          ) : errorLoadingCategories ? (
+            <p>Error loading categories</p>
+          ) : (
+            <select
+              multiple
+              value={selectedCategories}
+              onChange={(e) =>
+                setSelectedCategories([...e.target.selectedOptions].map((opt) => opt.value))
+              }
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </label>
+
+        {/* Image Upload */}
+        <label>
+          Image:
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                setImage(file);
+                setImagePreview(URL.createObjectURL(file));
+              }
+            }}
+          />
+          {imagePreview && <img src={imagePreview} alt="Preview" />}
+          {!imagePreview && existingImageUrl && <img src={existingImageUrl} alt="Existing" />}
+        </label>
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Submitting...' : 'Submit Recipe'}
+        </button>
+
+        {/* Confirmation Modal */}
+        {showModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <h3>{confirmationMessage}</h3>
+              <button onClick={handleCloseModal}>OK</button>
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 

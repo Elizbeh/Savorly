@@ -17,18 +17,19 @@ const HomePage = () => {
   const [recipesError, setRecipesError] = useState(null);
   const [categoriesError, setCategoriesError] = useState(null);
   const recipeListRef = useRef(null);
+  const [savedRecipes, setSavedRecipes] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await api.get("/api/profile", {
-          credentials: "include", // Automatically include cookies sent by the backend
+          credentials: "include",
         });
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user:", error);
-        navigate("/login"); // Redirect to login if error fetching user or not authenticated
+        navigate("/login");
       }
     };
 
@@ -38,9 +39,10 @@ const HomePage = () => {
   const fetchData = async () => {
     try {
       const [recipeResponse, categoryResponse] = await Promise.all([
-        api.get("/api/recipes", { credentials: "include" }), // Include cookies
-        api.get("/api/categories", { credentials: "include" }), // Include cookies
+        api.get("/api/recipes", { credentials: "include" }),
+        api.get("/api/categories", { credentials: "include" }),
       ]);
+
       setRecipes(recipeResponse.data);
       setCategories(categoryResponse.data);
       setRecipesError(null);
@@ -62,28 +64,43 @@ const HomePage = () => {
     setTimeout(fetchData, 1000);
   };
 
-  const handleDelete = async (recipeId) => {
+  const handleDelete = async (recipeId) => { 
     if (!user) return setToastMessage("Please log in to delete recipes.");
-
+  
     try {
       await api.delete(`/api/recipes/${recipeId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
         credentials: "include",
       });
-      fetchData(); // Refresh the recipe list after deletion
+  
+      // Optimistically update local state by filtering out the deleted recipe
+      setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
+      
     } catch (error) {
       console.error("Error deleting recipe:", error);
       setToastMessage("Failed to delete recipe. Please try again later.");
     }
+  
   };
 
   const scrollRecipes = (direction) => {
     const scrollAmount = recipeListRef.current.clientWidth;
     recipeListRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",  // Ensure smooth scrolling here
+      behavior: "smooth",
     });
   };
+  const handleSaveToggle = (recipe, isSaved) => {
+    // Update the saved recipes in the parent component state
+    if (isSaved) {
+      setSavedRecipes((prev) => [...prev, recipe]);
+    } else {
+      setSavedRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
+    }
+
+    setToastMessage(isSaved ? 'Recipe saved!' : 'Recipe removed from saved.');
+  };
+
 
   return (
     <ErrorBoundary>
@@ -129,7 +146,7 @@ const HomePage = () => {
               <button className="scroll-button left" onClick={() => scrollRecipes("left")}>{"<"}</button>
               <div className="recipes" ref={recipeListRef}>
                 {recipes.length ? recipes.slice().reverse().map((r) => (
-                  <RecipeCard key={r.id} recipe={r} onDelete={handleDelete} />
+                  <RecipeCard key={r.id} recipe={r} onDelete={handleDelete}  onSave={handleSaveToggle} />
                 )) : <p>No recipes available</p>}
               </div>
               <button className="scroll-button right" onClick={() => scrollRecipes("right")}>{">"}</button>

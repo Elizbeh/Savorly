@@ -31,7 +31,7 @@
 .recipe-card {
   background-color: #fff; /* Ensure cards have a background color */
   border-radius: 8px;
-  overflow: hidden; /* Ensures no overflow outside the card */
+  overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -43,7 +43,7 @@
 
 .recipe-card img {
   width: 100%;
-  height: 200px; /* Set a fixed height for images to maintain uniformity */
+  height: 200px;
   object-fit: cover;
 }
 
@@ -63,7 +63,7 @@
 
 @media (max-width: 768px) {
   .recipe-cards {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust for smaller screens */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 

@@ -3,70 +3,86 @@ import {
   getRecipes, 
   findById, 
   update,  
-  getCategoriesForRecipe, 
-  getIngredientsForRecipe
+  remove
 } from '../models/recipes.js';
-import { addCategoriesToRecipe } from '../models/recipes_categories.js';
+import { addCategoriesToRecipe,  getCategoriesForRecipe } from '../models/recipes_categories.js';
+import { addIngredientsToRecipe, getIngredientsForRecipe } from '../models/ingredients.js';
 import { addCommentToRecipe, getCommentsForRecipe } from '../models/comments.js';
 import { addRatingToRecipe } from '../models/ratings.js';
 import pool from '../config/db.js'
 import cloudinary from '../config/cloudinaryConfig.js';
 import streamifier from 'streamifier'; 
+
+
 // Create a new recipe
 export const createRecipe = async (req, res) => {
-  const { title, description } = req.body;
-  const userId = req.user.id;  // Assuming userId is stored in the request by authenticate middleware
+  const { title, description, ingredients, categories } = req.body;
+  const userId = req.user.id;
 
-  // Ensure title and description are provided
   if (!title || !description) {
     return res.status(400).json({ message: 'Title and description are required' });
   }
 
   try {
     let imageUrl = null;
+
+    const handleRecipeCreation = async (imageUrl) => {
+      // Step 1: Create recipe
+      const recipe = await create({ title, description, userId, imageUrl });
+
+      // Step 2: Add ingredients if provided
+      if (ingredients && Array.isArray(ingredients) && ingredients.length > 0) {
+        await addIngredientsToRecipe(recipe.id, ingredients);
+      }
+
+      // Step 3: Add categories if provided
+      if (categories && Array.isArray(categories) && categories.length > 0) {
+        await addCategoriesToRecipe(recipe.id, categories);
+      }
+
+      // Step 4: Fetch related data
+      const fullIngredients = await getIngredientsForRecipe(recipe.id);
+      const fullCategories = await getCategoriesForRecipe(recipe.id);
+      const comments = await getCommentsForRecipe(recipe.id);
+
+      // Step 5: Respond
+      res.status(201).json({
+        ...recipe,
+        ingredients: fullIngredients,
+        categories: fullCategories,
+        comments,
+      });
+    };
+
+    // If image is provided
     if (req.file) {
-      // Upload recipe image to Cloudinary
       const stream = cloudinary.v2.uploader.upload_stream(
         {
-          folder: 'recipe_images', // Folder name for recipe images
+          folder: 'recipe_images',
           resource_type: 'image',
         },
-        (error, result) => {
+        async (error, result) => {
           if (error) {
             console.error('Cloudinary upload failed:', error);
-            return res.status(500).json({ message: 'Upload failed', error });
+            return res.status(500).json({ message: 'Image upload failed', error });
           }
 
-          imageUrl = result.secure_url; // Get the image URL from Cloudinary
-
-          // Now create the recipe with the image URL
-          create({ title, description, userId, imageUrl })
-            .then(recipe => {
-              res.status(201).json(recipe); // Send the created recipe back
-            })
-            .catch(error => {
-              res.status(500).json({ message: 'Error creating recipe', error });
-            });
+          imageUrl = result.secure_url;
+          await handleRecipeCreation(imageUrl);
         }
       );
 
-      // Convert buffer to stream and pipe to Cloudinary
       streamifier.createReadStream(req.file.buffer).pipe(stream);
     } else {
-      // If no image, just create the recipe without an image
-      create({ title, description, userId, imageUrl: null })
-        .then(recipe => {
-          res.status(201).json(recipe); // Send the created recipe back
-        })
-        .catch(error => {
-          res.status(500).json({ message: 'Error creating recipe', error });
-        });
+      // No image uploaded
+      await handleRecipeCreation(null);
     }
   } catch (error) {
     console.error('Error creating recipe:', error);
-    res.status(500).json({ message: 'Error creating recipe' });
+    res.status(500).json({ message: 'Error creating recipe', error: error.message });
   }
 };
+
 
 // Update recipe (with optional image upload)
 export const updateRecipe = async (req, res) => {
@@ -152,33 +168,56 @@ export const getRecipeById = async (req, res) => {
   }
 };
 
-// Update a recipe
-
 // Delete a recipe
 export const deleteRecipe = async (req, res) => {
   const recipeId = req.params.id;
-  const userId = req.user.userId;  // Correct way to access user ID from the token
+  const userId = req.user.id;
 
   try {
-    // Query the database for the recipe by ID
+    // Retrieve the recipe by ID from the database
     const [recipe] = await pool.query('SELECT * FROM recipes WHERE id = ?', [recipeId]);
 
     if (recipe.length === 0) {
-      return res.status(404).json({ message: "Recipe not found" });
+      return res.status(404).json({ message: 'Recipe not found' });
     }
 
-    // Check if the current user is the creator (user_id should match)
+    // Check if the user is authorized to delete the recipe
     if (recipe[0].user_id !== userId) {
-      return res.status(403).json({ message: "You are not authorized to delete this recipe" });
+      return res.status(403).json({ message: 'You are not authorized to delete this recipe' });
     }
 
-    // Proceed with deletion
-    await pool.query('DELETE FROM recipes WHERE id = ?', [recipeId]);
-    res.status(200).json({ message: "Recipe deleted successfully" });
+    // Retrieve the image public_id from the recipe
+    const imagePublicId = recipe[0].image_url ? extractPublicIdFromUrl(recipe[0].image_url) : null;
+
+    // If an image exists, delete it from Cloudinary
+    if (imagePublicId) {
+      cloudinary.v2.uploader.destroy(imagePublicId, (error, result) => {
+        if (error) {
+          console.error('Cloudinary delete failed:', error);
+          return res.status(500).json({ message: 'Failed to delete image from Cloudinary', error });
+        }
+        console.log('Image deleted from Cloudinary:', result);
+      });
+    }
+
+    // Proceed with deleting the recipe from the database
+    const success = await remove(recipeId);
+    if (success) {
+      return res.status(200).json({ message: 'Recipe deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete recipe' });
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to delete recipe" });
+    console.error('Error deleting recipe:', error);
+    res.status(500).json({ message: 'Failed to delete recipe', error: error.message });
   }
+};
+
+// Helper function to extract the public_id from the Cloudinary image URL
+const extractPublicIdFromUrl = (url) => {
+  const regex = /\/([a-zA-Z0-9-_]+)\./;
+  const match = url.match(regex);
+  return match ? match[1] : null;
 };
 
 // Add a comment to a recipe
@@ -229,5 +268,3 @@ export const getAllRecipes = async (req, res) => {
     res.status(500).json({ message: 'Error fetching recipes' });
   }
 };
-
-

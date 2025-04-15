@@ -1,214 +1,240 @@
-/* Global Styles */
-* {
+/* General Styles */
+body, html {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  height: 100%;
 }
 
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f7fb;
-  color: #333;
-  padding: 20px;
+/* Container for the entire layout */
+.recipe-form-container {
+  display: flex;
+  flex-direction: column; /* Stack on small screens */
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+/* Background image section (hidden on small screens) */
+.background-image {
+  display: none;
 }
 
-/* Recipe Form */
+/* Form Style */
 .create-recipe-form {
-  background-color: #fff;
-  border-radius: 8px;
-  padding-top: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 900px;
-  margin-top: 320px;
-  margin-bottom: 50px;
-  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+  margin: 1rem; /* Add margin on smaller screens */
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; 
 }
 
+/* Form header */
 .create-recipe-form h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #4CAF50;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
 }
 
-/* Form Labels */
+/* Form labels and inputs */
 .create-recipe-form label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
-  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
 }
 
-/* Form Inputs */
 .create-recipe-form input,
 .create-recipe-form textarea,
 .create-recipe-form select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
   border-radius: 8px;
-  font-size: 16px;
-  color: #333;
-  background-color: #f9f9f9;
-  transition: all 0.3s ease;
+  border: 1px solid #ccc;
+  font-size: 1rem;
 }
 
-.create-recipe-form input:focus,
-.create-recipe-form textarea:focus,
-.create-recipe-form select:focus {
-  border-color: #4CAF50;
-  outline: none;
-  background-color: #ffffff;
+/* Buttons */
+.create-recipe-form button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  background-color:   #ff8c42;;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Ingredient Pills */
-.create-recipe-form .ingredient-list {
-  display: flex;
-  flex-wrap: wrap; /* Ensures that items wrap to the next line */
-  gap: 10px; /* Space between chips */
-  margin-bottom: 20px;
-  padding: 0;
-  justify-content: flex-start; /* Ensures items are aligned to the left */
+.create-recipe-form button:disabled {
+  background-color: #d3d3d3;
 }
 
-.create-recipe-form .ingredient-chip {
+.create-recipe-form button:hover:not(:disabled) {
+  background-color: #155a8a;
+}
+
+/* Error message */
+.error-message {
+  color: red;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Ingredient chip */
+.ingredient-chip {
   display: inline-flex;
   align-items: center;
-  border: 2px solid #4CAF50;
-  color: black;
-  padding: 5px 12px;
+  background-color: #f2f2f2;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
   border-radius: 20px;
-  margin: 6px 2px;
-  font-size: 14px;
-  white-space: nowrap; /* Prevent text overflow */
-  max-width: 45%; /* Ensures each chip doesn't exceed the available width */
-  flex-shrink: 1; /* Allows the chip to shrink if necessary */
-  min-width: 100px; /* Ensures each chip is not too small */
 }
 
-.create-recipe-form .remove-ingredient-button {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 16px;
+.remove-ingredient-button {
+  margin-left: 0.5rem;
   cursor: pointer;
-  margin-left: 8px;
-}
-
-.create-recipe-form .remove-ingredient-button:hover {
-  color: #f3b6b6;
-}
-
-/* Add Ingredient Button */
-.create-recipe-form .add-ingredient-button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
+  background: none;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  color: #ff0000;
 }
 
-.create-recipe-form .add-ingredient-button:hover {
-  background-color: #45a049;
-}
-
-/* File Upload Styles */
-.create-recipe-form input[type='file'] {
-  padding: 10px 12px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.create-recipe-form img {
-  width: 100%;
-  max-width: 300px;
-  margin-top: 15px;
-  border-radius: 8px;
-}
-
-/* Button Styles */
-.create-recipe-form button[type='submit'] {
-  padding: 12px 25px;
-  background-color: #4CAF50;
+.add-ingredient-button {
+  background-color:  #ff8c42;;
   color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.create-recipe-form button[type='submit']:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.add-ingredient-button:hover {
+  background-color: #e0891c;
 }
 
-.create-recipe-form button[type='submit']:hover {
-  background-color: #45a049;
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Responsive Styles */
+.modal-content {
+  padding: 2rem;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+}
+
+.modal button {
+  background-color: #1f8ef1;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.modal button:hover {
+  background-color: #155a8a;
+}
+
+/* Small Screen Adjustments (Mobile and Tablets) */
 @media (max-width: 768px) {
+  .recipe-form-container {
+    flex-direction: column;
+  }
+
+  /* Form container adjustments */
   .create-recipe-form {
-    padding: 20px;
-    margin-top: 260px;
+    margin: 1rem; /* Add margin */
+    padding: 1.5rem; /* Adjust padding */
+    border-radius: 10px;
   }
 
   .create-recipe-form h2 {
-    font-size: 22px;
+    font-size: 1.6rem; /* Adjust header font size */
+    margin-bottom: 1rem;
+  }
+
+  .create-recipe-form label {
+    font-size: 1rem;
   }
 
   .create-recipe-form input,
   .create-recipe-form textarea,
-  .create-recipe-form select,
-  .create-recipe-form button[type='submit'] {
-    font-size: 14px;
-    padding: 10px;
+  .create-recipe-form select {
+    font-size: 1rem;
   }
 
-  .create-recipe-form .ingredient-chip {
-    font-size: 12px;
-    padding: 5px 10px;
+  .create-recipe-form button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .ingredient-chip {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .add-ingredient-button {
+    font-size: 0.9rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .modal button {
+    font-size: 0.9rem;
   }
 }
 
-@media (max-width: 480px) {
+/* Large Screen Adjustments */
+@media (min-width: 1024px) {
+  .recipe-form-container {
+    flex-direction: row;
+    background: linear-gradient(135deg, #2C3E50, #34495E);;
+  }
+
+  .background-image {
+    display: block;
+    flex: 3; /* 60% of screen */
+    background: url('../assets/images/blackmanjuice.avif') no-repeat center center;
+    background-size: contain;
+    height: 100%;
+  }
+
   .create-recipe-form {
-    padding: 15px;
+    flex: 2;
+    height: 100%;
+    overflow-y: auto;
+    border-radius: 0;
+    margin: 2rem;
   }
 
-  .create-recipe-form input,
-  .create-recipe-form textarea,
-  .create-recipe-form select,
-  .create-recipe-form button[type='submit'] {
-    font-size: 12px;
-    padding: 8px;
+  .create-recipe-form h2 {
+    font-size: 2.5rem;
+    color: #333;
   }
 
-  .create-recipe-form .ingredient-chip {
-    font-size: 11px;
-    padding: 4px 8px;
-  }
-
-  .create-recipe-form .remove-ingredient-button {
-    font-size: 12px;
+  .create-recipe-form .error-message,
+  .create-recipe-form .modal-content {
+    color: #333;
   }
 }

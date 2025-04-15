@@ -1,4 +1,4 @@
-/* General Navbar Styling */
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -11,9 +11,10 @@
   left: 0;
   right: 0;
   z-index: 1000;
+  height: var(--navbar-height); /* Use variable for consistency */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  height: 80px;
 }
+
 
 /* Logo Styling */
 .logo {

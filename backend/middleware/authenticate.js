@@ -24,6 +24,8 @@ export const authenticate = (req, res, next) => {
       role: decoded.role
     };
 
+    console.log("Decoded User Info:", req.user);  // Log the decoded user info for debugging
+
     // Continue to the next middleware or route handler
     next();
   });

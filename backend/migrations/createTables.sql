@@ -22,6 +22,15 @@ CREATE TABLE IF NOT EXISTS recipes (
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS saved_recipes (
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, recipe_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+);
+
 -- Create the recipe_ingredients table
 CREATE TABLE IF NOT EXISTS recipe_ingredients (
   recipe_id INT NOT NULL,
@@ -74,3 +83,4 @@ CREATE TABLE IF NOT EXISTS ratings (
   FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+

@@ -121,7 +121,36 @@ body, html {
 
 .cta-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 61, 46, 0.5); /* Adds a focus shadow */
+  box-shadow: 0 0 0 3px rgba(255, 61, 46, 0.5);
+}
+
+.error-card {
+  background-color: #ffe0e0;
+  border-left: 5px solid #ff4c4c;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  color: #b00020;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.retry-btn {
+  background-color: #ff4c4c;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.retry-btn:hover {
+  background-color: #e63946;
 }
 
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Routes, Route, Navigate } from "react-router-dom";
+import React from "react";
+import { useLocation, Routes, Route, Navigate } from "react-router-dom";
 import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import CategoryPage from './pages/CategoryPage';
@@ -13,100 +13,60 @@ import RecipeForm from './pages/RecipeFormPage';
 import ProfilePage from './pages/Profile';
 import SavedRecipes from './pages/SavedRecipes';
 import VerifyEmail from "./components/verifyEmail";
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AboutPage from './pages/AboutPage';
 import './App.css';
 
-// ProtectedRoute component to guard routes based on authentication status
+// ✅ ProtectedRoute using useAuth
 const ProtectedRoute = ({ element }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? element : <Navigate to="/login" />;
+  return user ? element : <Navigate to="/login" />;
 };
 
-
-function App() {
-  const [user, setUser] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const AppContent = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  
+  const { user } = useAuth(); // ✅ use context for Navbar access
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
 
-  // Fetch user profile if authToken exists in cookies
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        } else {
-          console.error("Failed to fetch user profile");
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setUser(null);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
   return (
-    <div className="App">
-      <ErrorBoundary>
-        {!["/login", "/register", "/verify-email"].includes(location.pathname) && (
-          <Navbar user={user} isMobileMenuOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu} />
-        )}
+    <ErrorBoundary>
+      {!["/login", "/register", "/verify-email"].includes(location.pathname) && (
+        <Navbar user={user} isMobileMenuOpen={isMobileMenuOpen} toggleMobileMenu={toggleMobileMenu} />
+      )}
 
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<ProtectedRoute element={<HomePage />} />} />
-          <Route path="/categories/:categoryId" element={<CategoryPage />} />
-          <Route path="/create-recipe" element={<RecipeForm />} />
-          <Route path="/recipe-form/:id" element={<RecipeForm />} />
-          <Route path="/recipe/:id" element={<RecipeDetail />} />
-          {/* Pass setUser to ProfilePage to update user data globally */}
-          <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
-          <Route path="/saved-recipes" element={<SavedRecipes />} />
-        </Routes>
-      </ErrorBoundary>
-    </div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/home" element={<ProtectedRoute element={<HomePage />} />} />
+        <Route path="/categories/:categoryId" element={<CategoryPage />} />
+        <Route path="/create-recipe" element={<ProtectedRoute element={<RecipeForm />} />} />
+        <Route path="/recipe-form/:id" element={<ProtectedRoute element={<RecipeForm />} />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
+        <Route path="/saved-recipes" element={<ProtectedRoute element={<SavedRecipes />} />} />
+      </Routes>
+    </ErrorBoundary>
+  );
+};
+
+// ✅ Wrap entire App in AuthProvider
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

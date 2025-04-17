@@ -86,10 +86,37 @@ body, html {
 
 /* Error message */
 .error-message {
-  color: red;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffe0e0;
+  color: #b00020;
+  padding: 0.8rem 1rem;
+  border: 1px solid #f5c2c2;
+  border-radius: 8px;
   font-size: 1rem;
   margin-bottom: 1rem;
+  animation: fadeInSlide 0.4s ease-in-out;
 }
+
+/* Icon inside error message */
+.error-message .fa-exclamation-circle {
+  color: #b00020;
+  font-size: 1.2rem;
+}
+
+/* Fade-in animation */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Ingredient chip */
 .ingredient-chip {

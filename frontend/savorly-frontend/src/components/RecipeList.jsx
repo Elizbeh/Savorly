@@ -36,7 +36,7 @@ const RecipeList = () => {
   return (
     <div className="recipe-list-container">
       <h1 className="recipe-list-title">Discover Delicious Recipes</h1>
-      {errorMessage && <div className="error-message">{errorMessage}</div>} {/* Display error message if exists */}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <div className="recipe-grid">
         {recipes.map((recipe) => (
           <RecipeCard key={recipe.id} recipe={recipe} onDelete={handleDelete} />

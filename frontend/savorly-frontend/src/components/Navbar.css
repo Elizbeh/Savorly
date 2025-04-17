@@ -11,7 +11,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  height: var(--navbar-height); /* Use variable for consistency */
+  height: var(--navbar-height);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -78,7 +78,7 @@
  .login-btn .logout-btn {
   background: none;
   border: none;
-  color: #ff8c42 !important;  /* Ensure the color applies */
+  color: #ff8c42 !important;
   font-size: 1.1rem;
   font-weight: 600;
 
@@ -92,7 +92,7 @@
 
 .logout-btn:hover {
   background: #C0392B;
-  color: white; /* Change color on hover for visibility */
+  color: white;
   transform: translateY(-3px);
 }
 
@@ -142,7 +142,7 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  z-index: 1100; /* Ensure it's above other elements */
+  z-index: 1100;
 }
 
 .hamburger span {

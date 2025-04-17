@@ -25,18 +25,18 @@ body, html {
 /* Main Layout */
 .login-container {
   display: flex;
-  width: 90vw;
-  max-width: 1100px;
-  height: 80vh;
+  width: 100vw;
+  height: 100vh;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 100px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+  
 }
 
 /* Image Section */
 .login-image {
-  flex: 1;
+  flex: 2;
   background: url("../assets/images/pic04.png") no-repeat center center/cover;
   display: flex;
   align-items: center;
@@ -56,26 +56,23 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 50px;
   text-align: center;
 }
 
 /* Logo */
 .login-logo {
-  width: 100px;
-  margin-bottom: 20px;
+  width: 80px;
 }
 
 /* Heading */
 h2 {
   color: var(--primary-color);
   font-size: 2rem;
-  margin-bottom: 15px;
   font-weight: 600;
 }
 
 .login-form-wrapper .subtitle {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   font-size: 1rem;
   font-weight: 500;
   color: var(--secondary-color);
@@ -188,6 +185,35 @@ h2 {
 .signup-link a:hover, .forgot-password-link a:hover {
   color: #e06700;
 }
+/* Error Message with Icon */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  animation: slideFade 0.4s ease-out;
+}
+
+.error-icon {
+  font-size: 1rem;
+  color: var(--error-color);
+}
+
+/* Optional: Add a fade-in effect */
+@keyframes slideFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Responsive Design */
 @media (max-width: 900px) {
@@ -203,6 +229,6 @@ h2 {
 
   .login-form-wrapper {
     width: 100%;
-    padding: 40px;
+    padding: 70px;
   }
 }

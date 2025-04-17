@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './RecipeFormPage.css';
 import { FaTimes } from 'react-icons/fa';
 import api from '../services/api';
+import { FaExclamationCircle } from 'react-icons/fa';
 
 
 const RecipeForm = () => {
@@ -162,7 +163,12 @@ const RecipeForm = () => {
         <h2>{id ? 'Edit Recipe' : 'Create a Recipe'}</h2>
 
         {/* Error message */}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="error-message">
+            <FaExclamationCircle />
+            {errorMessage}
+          </p>
+        )}
 
         {/* Recipe Title */}
         <label>

@@ -110,6 +110,6 @@
 /* Responsive Grid Layout */
 @media screen and (max-width: 768px) {
   .recipe-card {
-    width: 100%; /* Full width for smaller screens */
+    width: 100%;
   }
 }

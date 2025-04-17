@@ -16,10 +16,7 @@ body {
   background-color: #f9f9f9;
 }
 
-/* Main application wrapper should push content down below the fixed navbar */
 .App {
   padding-top: var(--navbar-height);
   min-height: 100vh;
 }
-
-/* You can include any global styles here */

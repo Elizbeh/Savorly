@@ -25,7 +25,7 @@ const VerifyEmail = () => {
       try {
         const response = await fetch(`http://localhost:5001/api/auth/verify-email?token=${token}`, {
           method: "GET",
-          credentials: "include", // 🧁 Include cookies just in case session matters
+          credentials: "include",
         });
 
         const data = await response.json();

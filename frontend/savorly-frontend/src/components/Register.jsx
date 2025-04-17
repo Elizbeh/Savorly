@@ -88,8 +88,18 @@ const Register = () => {
         </div>
         <p className="register-subtext">Join Savorly and explore amazing recipes!</p>
 
-        {error && <div className="error-message">{error}</div>}
-        {message && <div className="success-message">{message}</div>}
+        {error && (
+          <div className="feedback-message error-message">
+            <span className="feedback-icon">❌</span>
+            {error}
+          </div>
+        )}
+        {message && (
+          <div className="feedback-message success-message">
+            <span className="feedback-icon">✅</span>
+            {message}
+          </div>
+        )}
 
         <form className="register-form" onSubmit={handleSubmit}>
           <div className="form-group">

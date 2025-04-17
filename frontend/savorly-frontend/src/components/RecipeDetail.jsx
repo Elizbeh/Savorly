@@ -39,7 +39,7 @@ const RecipeDetail = () => {
     };
   
     fetchRecipe();
-  }, [id]);  // Only fetch when `id` changes
+  }, [id]);
   
 
   useEffect(() => {

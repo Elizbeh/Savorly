@@ -1,12 +1,15 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import "font-awesome/css/font-awesome.min.css";
 import savorlyLogo from "../assets/images/logo.png"; 
+import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';  
 import Cookies from "js-cookie";
 
+
 const Login = () => {
+  const { setUser } = useAuth(); // ✅ Access setUser from context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,16 +41,18 @@ const Login = () => {
       console.log("Login Response:", response.data);
   
       if (response.status === 200) {
-        const { token } = response.data;
+        const { token, user } = response.data;
         if (!token) throw new Error("Token missing in response");
   
-        Cookies.set("authToken", token, { expires: 7, sameSite: "Strict", path: '/'  });
-        
-  
+        // Set the user in context
+        setUser(user);
+      
+        // Store token in cookies (or can be set via context)
+        Cookies.set("authToken", token, { expires: 7, sameSite: "Strict", path: '/' });
+
         console.log("Navigating to /home...");
         navigate("/home");
         console.log("Navigation attempt complete.");
-
       } else {
         setError(response.data.message || "Invalid login credentials.");
       }
@@ -56,8 +61,6 @@ const Login = () => {
       setError("Something went wrong. Please try again later.");
     }
   };
-  
-  
 
   return (
     <div className="login-container">
@@ -68,7 +71,13 @@ const Login = () => {
         <p className="subtitle">Log in to explore delicious recipes!</p>
 
         <form onSubmit={handleSubmit} className="login-form">
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <p className="error-message">
+              <i className="fa fa-exclamation-circle error-icon" aria-hidden="true"></i>
+              {error}
+            </p>
+          )}
+
           <div className="form-group">
             <input
               type="email"

@@ -1,14 +1,37 @@
+:root {
+  --max-width: 1200px;
+  --padding: 2rem;
+  --header-margin: 1rem;
+  --color-green: green;
+  --color-success-bg: #e6f7e9;
+  --color-success-text: #2e7d32;
+  --color-error-bg: #ffe6e6;
+  --color-error-text: #d32f2f;
+  --recipe-bg: #fff;
+  --recipe-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --recipe-hover-scale: 1.02;
+  --text-muted: #555;
+  --button-danger: #ff4d4f;
+  --button-danger-hover: #e04143;
+  --pagination-bg: #f0f0f0;
+  --pagination-hover-bg: #dcdcdc;
+  --pagination-active-bg: #155a8a;
+  --pagination-disabled-bg: #e0e0e0;
+}
+
 .saved-recipes-container {
-  padding: 2rem;
-  max-width: 1200px;
+  padding: var(--padding);
+  max-width: var(--max-width);
   margin: auto;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 100px);
   overflow-y: auto;
 }
 
 h2 {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--padding);
+  margin-top: var(--header-margin);
+  color: var(--color-green);
 }
 
 .message {
@@ -19,13 +42,13 @@ h2 {
 }
 
 .message.success {
-  background-color: #e6f7e9;
-  color: #2e7d32;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .message.error {
-  background-color: #ffe6e6;
-  color: #d32f2f;
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .recipes-grid {
@@ -35,9 +58,9 @@ h2 {
 }
 
 .saved-recipe-item {
-  background: #fff;
+  background: var(--recipe-bg);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: var(--recipe-shadow);
   transition: transform 0.2s ease;
   overflow: hidden;
   display: flex;
@@ -45,7 +68,7 @@ h2 {
 }
 
 .saved-recipe-item:hover {
-  transform: scale(1.02);
+  transform: scale(var(--recipe-hover-scale));
 }
 
 .recipe-image {
@@ -62,7 +85,7 @@ h2 {
 .saved-recipe-item p {
   margin: 0 1rem 1rem;
   font-size: 0.95rem;
-  color: #555;
+  color: var(--text-muted);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -78,7 +101,7 @@ h2 {
 }
 
 .unsave-button {
-  background-color: #ff4d4f;
+  background-color: var(--button-danger);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -88,13 +111,14 @@ h2 {
 }
 
 .unsave-button:hover {
-  background-color: #e04143;
+  background-color: var(--button-danger-hover);
 }
 
 .info-link {
   font-size: 1.5rem;
   text-decoration: none;
 }
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -104,7 +128,7 @@ h2 {
 }
 
 .pagination button {
-  background-color: #f0f0f0;
+  background-color: var(--pagination-bg);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -114,16 +138,16 @@ h2 {
 }
 
 .pagination button:hover:not(:disabled) {
-  background-color: #dcdcdc;
+  background-color: var(--pagination-hover-bg);
 }
 
 .pagination button.active {
-  background-color: #155a8a;
+  background-color: var(--pagination-active-bg);
   color: white;
   font-weight: bold;
 }
 
 .pagination button:disabled {
-  background-color: #e0e0e0;
+  background-color: var(--pagination-disabled-bg);
   cursor: not-allowed;
 }

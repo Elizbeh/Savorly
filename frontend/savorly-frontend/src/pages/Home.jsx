@@ -6,8 +6,10 @@ import ErrorBoundary from "../components/ErrorBoundary";
 import Toast from "../components/Toast";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import api from "../services/api";
 import { useAuth } from "../contexts/AuthContext"; // ✅ use auth context
+import fetchData from "../utils/fetchData";
+import handleDelete from "../utils/handleDelete";
+import handleSaveToggle from "../utils/handleSaveToggle";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -22,52 +24,17 @@ const HomePage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    try {
-      const [recipeResponse, categoryResponse] = await Promise.all([
-        api.get("/api/recipes", { credentials: "include" }),
-        api.get("/api/categories", { credentials: "include" }),
-      ]);
-
-      setRecipes(recipeResponse.data);
-      setCategories(categoryResponse.data);
-      setRecipesError(null);
-      setCategoriesError(null);
-    } catch (error) {
-      console.error("API Error:", error);
-      setRecipesError("Unable to load recipes. Please try again.");
-      setCategoriesError("Unable to load categories. Please try again.");
-      setToastMessage("Failed to load data. Please try again later.");
-    }
-  };
-
   useEffect(() => {
     if (!user) {
       navigate("/login");
       return;
     }
-    fetchData();
+    fetchData(setRecipes, setCategories, setRecipesError, setCategoriesError, setToastMessage);
   }, [user, navigate]);
 
   const retryFetch = () => {
     setToastMessage("Retrying to load data...");
-    setTimeout(fetchData, 1000);
-  };
-
-  const handleDelete = async (recipeId) => {
-    if (!user) return setToastMessage("Please log in to delete recipes.");
-
-    try {
-      await api.delete(`/api/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-        credentials: "include",
-      });
-
-      setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
-    } catch (error) {
-      console.error("Error deleting recipe:", error);
-      setToastMessage("Failed to delete recipe. Please try again later.");
-    }
+    setTimeout(() => fetchData(setRecipes, setCategories, setRecipesError, setCategoriesError, setToastMessage), 1000);
   };
 
   const scrollRecipes = (direction) => {
@@ -76,16 +43,6 @@ const HomePage = () => {
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
-  };
-
-  const handleSaveToggle = (recipe, isSaved) => {
-    if (isSaved) {
-      setSavedRecipes((prev) => [...prev, recipe]);
-    } else {
-      setSavedRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
-    }
-
-    setToastMessage(isSaved ? "Recipe saved!" : "Recipe removed from saved.");
   };
 
   return (
@@ -113,9 +70,9 @@ const HomePage = () => {
           <h2>Explore Categories</h2>
           {categoriesError ? (
             <div className="error-card">
-            <p>{categoriesError}</p>
-            <button className="retry-btn" onClick={retryFetch}>🔁 Retry</button>
-          </div>
+              <p>{categoriesError}</p>
+              <button className="retry-btn" onClick={retryFetch}>🔁 Retry</button>
+            </div>
           ) : (
             <div className="category-list">
               {categories.length ? (
@@ -135,10 +92,9 @@ const HomePage = () => {
           <h2>Featured Recipes</h2>
           {recipesError ? (
             <div className="error-card">
-            <p>{recipesError}</p>
-            <button className="retry-btn" onClick={retryFetch}>🔁 Retry</button>
-          </div>
-          
+              <p>{recipesError}</p>
+              <button className="retry-btn" onClick={retryFetch}>🔁 Retry</button>
+            </div>
           ) : (
             <div className="scroll-container">
               <button className="scroll-button left" onClick={() => scrollRecipes("left")}>
@@ -150,7 +106,7 @@ const HomePage = () => {
                     .slice()
                     .reverse()
                     .map((r) => (
-                      <RecipeCard key={r.id} recipe={r} onDelete={handleDelete} onSave={handleSaveToggle} />
+                      <RecipeCard key={r.id} recipe={r} onDelete={(id) => handleDelete(id, user, setRecipes, setToastMessage)} onSave={(recipe, isSaved) => handleSaveToggle(recipe, isSaved, setSavedRecipes, setToastMessage)} />
                     ))
                 ) : (
                   <p>No recipes available</p>

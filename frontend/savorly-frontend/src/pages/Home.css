@@ -1,7 +1,4 @@
-/*
-primary = #ff8c42
- secondary= #5aea66(greenish);
-*/
+
 /* ========================
    General Reset
 ======================== */
@@ -25,7 +22,7 @@ body, html {
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 80px);
   margin-top: 80px;
 }
 
@@ -100,7 +97,7 @@ body, html {
    CTA Button Styles
 ======================== */
 .cta-btn {
-  background: linear-gradient(135deg, #ff8c42, #ff3d2e);
+  background: linear-gradient(135deg, #ff8c42, #f76408);
   color: white;
   padding: 15px 30px;
   font-size: 18px;
@@ -193,6 +190,7 @@ body, html {
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 40px;
+  color: green;
 
 }
 
@@ -204,6 +202,7 @@ body, html {
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
+
 /* Large Screens: Grid Layout */
 @media (min-width: 1024px) {
   .category-list {
@@ -212,7 +211,12 @@ body, html {
     gap: 30px;
     justify-content: center;
   }
+  .recipe-list {
+    display: flex;
+    flex-direction: column;
+  }
 }
+
 
 /* Small Screens: Stacked Layout */
 @media (max-width: 1023px) {
@@ -222,6 +226,7 @@ body, html {
     gap: 20px;
   }
 }
+
 
 /* Category Cards */
 .category-card {
@@ -268,19 +273,17 @@ body, html {
    Featured Recipes Section
 ======================== */
 .recipe-list {
-  
+  padding-top: 20px;
   background-color: hsl(0, 0%, 96%);
   text-align: center;
   width: 80%;
 }
 
 .recipe-list h2 {
-  font-size: 28px;
-  margin-bottom: 30px;
-  margin-top: 30px;
-  font-weight: bold;
-
+  margin-top: 20px;
+  color: green;
 }
+
 
 .scroll-container {
   position: relative;
@@ -399,3 +402,48 @@ body, html {
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 480px) {
+  .home-page .hero h1 {
+    font-size: 28px;
+  }
+
+  .home-page .hero p {
+    font-size: 14px;
+  }
+
+  .home-page .hero .user-greeting {
+    font-size: 14px;
+  }
+
+  .cta-btn {
+    font-size: 16px;
+    padding: 12px 25px;
+  }
+
+  .categories h2,
+  .recipe-list h2 {
+    font-size: 22px;
+  }
+
+  .category-name a {
+    font-size: 1rem;
+  }
+
+  .category-name {
+    font-size: 18px;
+  }
+
+  .recipe-card h3 {
+    font-size: 16px;
+  }
+
+  .view-button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  footer {
+    font-size: 14px;
+  }
+}
+

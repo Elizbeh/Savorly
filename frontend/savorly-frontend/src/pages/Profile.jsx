@@ -3,47 +3,63 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './Profile.css';
 import defaultAvatar from '../assets/images/default_avatar.png';
-import { useAuth } from '../contexts/AuthContext'; // ✅ Import auth context
+import { useAuth } from '../contexts/AuthContext';
+import { FaExclamationCircle } from 'react-icons/fa';
+
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
-  const [userState, setUserState] = useState({ first_name: '', last_name: '', bio: '', avatar_url: '' });
+  const [userState, setUserState] = useState({
+    first_name: '',
+    last_name: '',
+    bio: '',
+    avatar_url: ''
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarKey, setAvatarKey] = useState(Date.now());
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  //Fetch profile on mount or if user not yet in context
   useEffect(() => {
-    if (!user) {
-      const fetchUserProfile = async () => {
-        try {
-          const response = await api.get('/api/profile', {
-            withCredentials: true,
-          });
-          if (response.status !== 200) {
-            throw new Error('Failed to fetch profile');
-          }
-
-          const data = response.data;
-          setUserState(data);
-          setUser(data); // ✅ Update global auth state
-        } catch (error) {
-          console.error('Error fetching user profile:', error);
-          setMessage('Error fetching profile. Please try again later.');
-          navigate('/login');
+    const fetchUserProfile = async () => {
+      try {
+        const response = await api.get('/api/profile', {
+          withCredentials: true,
+        });
+  
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch profile');
         }
-      };
+  
+        const data = response.data;
+        setUserState(data);
+        setUser(data);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setMessage('Error fetching profile. Please try again later.');
+        navigate('/login');
+      }
+    };
+  
+    
+    fetchUserProfile();
+  }, [setUser, navigate]);
+  
 
-      fetchUserProfile();
-    } else {
-      setUserState(user); // ✅ Sync local state with context
+  useEffect(() => {
+    if (userState.avatar_url) {
+      setAvatarKey(Date.now());
     }
-  }, [user, setUser, navigate]);
-
+  }, [userState.avatar_url]);
+  
+  // 💾 Save handler
   const handleSave = async () => {
     try {
       let newAvatarUrl = userState.avatar_url;
 
+      // Upload avatar if selected
       if (avatarFile) {
         const formData = new FormData();
         formData.append('avatar', avatarFile);
@@ -58,8 +74,10 @@ const ProfilePage = () => {
         }
 
         newAvatarUrl = avatarResponse.data.avatar_url;
+        console.log('Avatar upload response:', avatarResponse.data);
       }
 
+      // Prepare update payload
       const updatedProfile = {
         first_name: userState.first_name,
         last_name: userState.last_name,
@@ -75,8 +93,16 @@ const ProfilePage = () => {
         throw new Error('Failed to update profile');
       }
 
-      setUser(updatedProfile); // ✅ Update context
-      setUserState(updatedProfile); // ✅ Update local
+      // Refresh profile after update
+      const refreshed = await api.get('/api/profile', {
+        withCredentials: true,
+      });
+
+      console.log('Refreshed user data:', refreshed.data);
+
+      setUser(refreshed.data);
+      setUserState(refreshed.data);
+
       setMessage('Profile updated successfully!');
       setIsEditing(false);
     } catch (error) {
@@ -90,37 +116,64 @@ const ProfilePage = () => {
   };
 
   const handleChange = (e) => {
-    setUserState({ ...userState, [e.target.name]: e.target.value });
+    setUserState({
+      ...userState,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  const getAvatarUrl = (url) => {
+    if (!url || url.trim() === '') return defaultAvatar;
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}t=${Date.now()}`;
+  };
+
+  
   return (
     <div className="profile-page">
       <h2 className="profile-title">Profile</h2>
 
       {message && (
-        <p className={`message ${message.includes('Failed') ? 'error' : 'success'}`}>
-          {message}
-        </p>
+        <div className={`message ${message.includes('Failed') ? 'error' : 'success'}`}>
+          {message.includes('Failed') && <FaExclamationCircle size={24} style={{ marginRight: '10px', color: '#fff' }} />}
+          <p>{message}</p>
+        </div>
       )}
 
+
       <div className="profile-header">
+      {userState.avatar_url ? (
         <img
-          src={userState.avatar_url ? `${userState.avatar_url}?t=${Date.now()}` : defaultAvatar}
+          key={avatarKey}
+          src={getAvatarUrl(userState.avatar_url)}
           alt="Profile"
           className="avatar-image"
-          onError={(e) => (e.target.src = defaultAvatar)}
+          onError={() => console.warn('Failed to load avatar')}
         />
-        {isEditing && (
-          <div>
-            <input
-              type="file"
-              className="file-input"
-              onChange={handleAvatarChange}
-              accept="image/*"
-            />
-            <span>Click to change avatar</span>
-          </div>
-        )}
+      ) : (
+        <img
+          src={defaultAvatar}
+          alt="Default Avatar"
+          className="avatar-image"
+        />
+      )}
+
+      {isEditing && (
+        <div className="file-input-container">
+          <input
+  id="avatarUpload"
+  type="file"
+  className="file-input"
+  onChange={handleAvatarChange}
+  accept="image/*"
+/>
+<label htmlFor="avatarUpload" className="custom-file-label">
+  Choose Avatar
+</label>
+<span className="file-instruction">Click to change avatar</span>
+
+        </div>
+      )}
       </div>
 
       <div className={`profile-info ${isEditing ? 'profile-edit' : 'profile-view'}`}>

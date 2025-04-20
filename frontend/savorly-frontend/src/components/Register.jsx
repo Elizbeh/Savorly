@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
 import logo from "../assets/images/logo.png";
 import registerImage from "../assets/images/pic01.png";
+import { validateEmail, validatePassword } from "../utils/validation";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,12 +18,6 @@ const Register = () => {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  const validatePassword = (password) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
-
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+$/.test(email);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +79,6 @@ const Register = () => {
       <div className="register-form-section">
         <div className="brand">
           <img src={logo} alt="Savorly Logo" className="logo" />
-          <h1>Savorly</h1>
         </div>
         <p className="register-subtext">Join Savorly and explore amazing recipes!</p>
 

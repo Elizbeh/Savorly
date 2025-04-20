@@ -66,24 +66,18 @@ body, html {
   flex-direction: column;
   align-items: center;
   margin-bottom: 10px;
+  padding-top: 20px;
 }
 
 .logo {
-  width: 70px;
+  width: 150px;
 }
-
-h1 {
-  color: var(--primary-color);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
 /* Subtitle */
 .register-subtext {
   font-size: 1.1rem;
   font-weight: 500;
-  margin-bottom: 25px;
+  padding: 20px;
+  margin-bottom: 10px;
   background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -127,6 +121,9 @@ h1 {
 /* Icon style */
 .feedback-icon {
   font-size: 1.2rem;
+}
+.login-link {
+  padding-bottom: 20px;
 }
 
 /* Animation */

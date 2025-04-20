@@ -1,5 +1,6 @@
 // src/contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../services/api"; // Import the configured Axios instance
 
 const AuthContext = createContext();
 
@@ -11,15 +12,8 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/user`, {
-        credentials: "include",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-      } else {
-        setUser(null);
-      }
+      const { data } = await api.get("/api/auth/user");
+      setUser(data);
     } catch (err) {
       console.error("Auth fetch error:", err);
       setUser(null);
@@ -34,10 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
+      await api.post("/api/auth/logout");
       setUser(null);
     } catch (err) {
       console.error("Logout error:", err);

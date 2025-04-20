@@ -11,11 +11,7 @@ export const updateRecipe = async (id, updatedData) => {
   }
 
   try {
-    const response = await fetch(`/api/recipes/${id}`, {
-      method: 'PUT',
-      body: formData,
-      credentials: 'include',  // Required for sending cookies
-    });
+    const response = await api.put(`/api/recipes/${id}`)
 
     if (response.ok) {
       console.log('Recipe updated successfully');

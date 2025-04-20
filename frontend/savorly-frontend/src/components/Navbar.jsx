@@ -3,46 +3,44 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import defaultAvatar from "../assets/images/default_avatar.png";
 import "./Navbar.css";
-import { useAuth } from "../contexts/AuthContext"; // 🔥 Use your AuthContext
+import { useAuth } from "../contexts/AuthContext";
+import api from '../services/api'; // same as in ProfilePage
 
 const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
   const [userProfile, setUserProfile] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth(); // 🧠 Grab user & logout from context
+  const { user, logout } = useAuth();
 
   const isLandingPage = location.pathname === "/";
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/`, {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        const response = await api.get('/api/profile', {
+          withCredentials: true,
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile');
-        }
-
-        const data = await response.json();
-        setUserProfile(data.profile || data);
+  
+        setUserProfile(response.data.profile || response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
       }
     };
-
+  
     if (user) {
       fetchUserProfile();
     }
-  }, [user]); // ✅ react to user from context
+  }, [user]);
+  
 
   const handleLogout = async () => {
-    await logout();       // 🌟 use context's logout
+    await logout();
     navigate("/login");
+    toggleMobileMenu(false); // close menu on logout
+  };
+
+  const handleLinkClick = () => {
+    if (isMobileMenuOpen) toggleMobileMenu();
   };
 
   return (
@@ -51,21 +49,19 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
         {isLandingPage ? (
           <span className="logo">
             <img src={logo} alt="Savorly Logo" className="logo-icon" />
-            <span className="logo-text">Savorly</span>
           </span>
         ) : (
-          <Link to="/home" className="logo">
+          <Link to="/home" className="logo" onClick={handleLinkClick}>
             <img src={logo} alt="Savorly Logo" className="logo-icon" />
-            <span className="logo-text">Savorly</span>
           </Link>
         )}
       </div>
 
       {!isLandingPage && (
         <div className={`nav-links ${isMobileMenuOpen ? "active" : ""}`}>
-          <Link to="/create-recipe">Create Recipe</Link>
-          <Link to="/saved-recipes">Saved Recipes</Link>
-          <Link to="/about">About Us</Link>
+          <Link to="/create-recipe" onClick={handleLinkClick}>Create Recipe</Link>
+          <Link to="/saved-recipes" onClick={handleLinkClick}>Saved Recipes</Link>
+          <Link to="/about" onClick={handleLinkClick}>About Us</Link>
           {userProfile && (
             <Link to="/" onClick={handleLogout} className="logout-btn">Logout</Link>
           )}
@@ -77,7 +73,7 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
           <Link to="/login" className="login-btn">Login</Link>
         ) : userProfile ? (
           <div className="user-info">
-            <Link to="/profile">
+            <Link to="/profile" onClick={handleLinkClick}>
               <img
                 src={userProfile.avatar_url || defaultAvatar}
                 alt="User Avatar"
@@ -86,7 +82,7 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
             </Link>
           </div>
         ) : (
-          <Link to="/profile">
+          <Link to="/profile" onClick={handleLinkClick}>
             <img src={defaultAvatar} alt="Default Avatar" className="user-avatar" />
           </Link>
         )}

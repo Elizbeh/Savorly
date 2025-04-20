@@ -18,8 +18,9 @@ export const getUserProfile = async (req, res) => {
 };
 
 export const updateUserProfile = async (req, res) => {
-  const userId = req.user?.id; // FIXED
-  const { bio, avatar_url } = req.body;
+  const userId = req.user?.id;
+  const { first_name, last_name, bio, avatar_url } = req.body;
+
 
   if (!userId) return res.status(400).json({ message: 'User ID is missing from request' });
   if (bio && typeof bio !== 'string') return res.status(400).json({ message: 'Bio must be a string' });
@@ -27,8 +28,10 @@ export const updateUserProfile = async (req, res) => {
 
   try {
     const updatedProfileData = {
+      first_name: first_name || '',
+      last_name: last_name || '',
       bio: bio || '',
-      avatar_url: avatar_url || 'http://localhost:5001/uploads/default_avatar.png',
+      avatar_url: avatar_url || 'http://localhost:5001/uploads/default_avatar.png',    
     };
 
     await updateProfile(userId, updatedProfileData);

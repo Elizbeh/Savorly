@@ -17,6 +17,7 @@ const keyPath = path.resolve(__dirname, '../../backend/cert/key.pem');
 const certPath = path.resolve(__dirname, '../../backend/cert/cert.pem');
 
 export default defineConfig({
+  base: '/savorly-frontend/',
   plugins: [
     react(),
     removeConsole(), // Strips console.* in production

@@ -5,30 +5,20 @@ import {
   getRecipeById,
   updateRecipe,
   deleteRecipe,
+  addCommentToRecipeHandler,
+  addRatingToRecipeHandler
 } from '../controllers/recipeController.js';
 import { authenticate } from '../middleware/authenticate.js';
-import { addRatingToRecipe } from '../models/ratings.js'
-import { addCommentToRecipe } from '../models/comments.js'
-import { getAllCategories } from '../controllers/categoryController.js';
-
+import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
-router.post('/', authenticate, createRecipe); // Create a new recipe
-
-router.get('/', getAllRecipes); // Fetch all recipes
-
-router.get('/:id', getRecipeById); // Fetch a single recipe by ID
-
-router.put('/:id', authenticate, updateRecipe); // Update a recipe
-
-router.delete('/:id', authenticate, deleteRecipe); // Delete a recipe
-
-// Route to add a comment to a recipe
-router.post('/:id/comments', authenticate, addCommentToRecipe);
-
-// Route to add a rating to a recipe
-router.post('/:id/ratings', authenticate, addRatingToRecipe);
-
+router.post('/create', authenticate, upload.single('image'), createRecipe);
+router.get('/', getAllRecipes);
+router.get('/:id', getRecipeById);
+router.put('/:id', authenticate, upload.single('image'), updateRecipe);
+router.delete('/:id', authenticate, deleteRecipe);
+router.post('/:id/comments', authenticate, addCommentToRecipeHandler);
+router.post('/:id/ratings', authenticate, addRatingToRecipeHandler);
 
 export default router;

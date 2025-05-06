@@ -51,7 +51,8 @@ const seedDatabase = async () => {
                 description: 'This is a sample recipe description.',
                 user_id: 1, // Associate with an existing user
                 categories: [categoryIds.Vegetarian, categoryIds.MainCourse], // Use category IDs
-                ingredients: ['Flour', 'Sugar', 'Eggs'] // Ingredients for the recipe
+                ingredients: ['Flour', 'Sugar', 'Eggs'],// Ingredients for the recipe
+                image_url: 'https://example.com/sample-recipe.jpg'
             }
         ];
 
@@ -60,8 +61,8 @@ const seedDatabase = async () => {
             const [userExists] = await pool.query('SELECT id FROM users WHERE id = ?', [recipe.user_id]);
             if (userExists.length > 0) {
                 const [recipeResult] = await pool.query(
-                    'INSERT IGNORE INTO recipes (title, description, user_id) VALUES (?, ?, ?)',
-                    [recipe.title, recipe.description, recipe.user_id]
+                    'INSERT IGNORE INTO recipes (title, description, user_id, image_url) VALUES (?, ?, ?, ?)',
+                    [recipe.title, recipe.description, recipe.user_id, recipe.image_url]
                 );
 
                 // Now, link the categories to the created recipe

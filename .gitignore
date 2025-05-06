@@ -16,3 +16,7 @@ npm-debug.log*
 package-lock.json
 
 *.py
+
+/certs/
+.qodo
+backend/cert/

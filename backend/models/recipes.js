@@ -1,55 +1,45 @@
-
-
-// **recipes.js (Model)**
 import pool from '../config/db.js';
+import logger from '../config/logger.js'; // ✅ Make sure the path is correct
 
 // Helper function to handle database errors
 const handleDatabaseError = (error, message = 'Database error') => {
-  console.error(error);
+  logger.error(`${message}: ${error.message}`, { stack: error.stack });
   throw new Error(message);
 };
 
 // Create a new recipe
-export const create = async ({ title, description, userId }) => {
+export const create = async ({ title, description, userId, imageUrl, prepTime, cookTime, calories }) => {
   try {
     const [result] = await pool.query(
-      `INSERT INTO recipes (title, description, user_id) VALUES (?, ?, ?)`,
-      [title, description, userId]
+      `INSERT INTO recipes (title, description, user_id, image_url, prep_time, cook_time, calories) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [title, description, userId, imageUrl, prepTime, cookTime, calories]
     );
-    return { id: result.insertId, title, description, userId };
+    logger.info(`Recipe created with ID ${result.insertId}`);
+    return { id: result.insertId, title, description, userId, imageUrl, prepTime, cookTime, calories };
   } catch (error) {
     handleDatabaseError(error, 'Error creating recipe');
   }
 };
 
-// Get all recipes with optional filters
-export const getRecipes = async ({ userId, categoryId }) => {
-  const queryParams = [];
-  let query = `
-    SELECT recipes.*, users.first_name, users.last_name 
-    FROM recipes
-    INNER JOIN users ON recipes.user_id = users.id
-  `;
-
-  if (userId) {
-    query += ' WHERE recipes.user_id = ?';
-    queryParams.push(userId);
-  }
-
-  if (categoryId) {
-    query += userId ? ' AND' : ' WHERE';
-    query += `
-      EXISTS (
-        SELECT 1 FROM recipe_categories 
-        WHERE recipe_categories.recipe_id = recipes.id 
-          AND recipe_categories.category_id = ?
-      )
-    `;
-    queryParams.push(categoryId);
-  }
-
+// Get all recipes with optional category filter
+export const getRecipes = async (filters = {}) => {
+  const { categoryId } = filters;
   try {
-    const [recipes] = await pool.query(query, queryParams);
+    let recipes;
+    if (categoryId) {
+      const [filtered] = await pool.query(
+        `SELECT r.* 
+         FROM recipes r
+         INNER JOIN recipe_categories rc ON r.id = rc.recipe_id
+         WHERE rc.category_id = ?`,
+        [categoryId]
+      );
+      recipes = filtered;
+    } else {
+      const [all] = await pool.query('SELECT * FROM recipes');
+      recipes = all;
+    }
+    logger.info(`Fetched ${recipes.length} recipes`);
     return recipes;
   } catch (error) {
     handleDatabaseError(error, 'Error fetching recipes');
@@ -58,6 +48,7 @@ export const getRecipes = async ({ userId, categoryId }) => {
 
 // Find a recipe by ID
 export const findById = async (id) => {
+  logger.debug(`Looking for recipe with id: ${id}`);
   try {
     const [recipe] = await pool.query('SELECT * FROM recipes WHERE id = ?', [id]);
     return recipe[0] || null;
@@ -67,12 +58,14 @@ export const findById = async (id) => {
 };
 
 // Update a recipe's details
-export const update = async ({ id, title, description }) => {
+export const update = async ({ id, title, description, imageUrl, prepTime, cookTime, calories }) => {
   try {
     const [result] = await pool.query(
-      `UPDATE recipes SET title = ?, description = ? WHERE id = ?`,
-      [title, description, id]
+      `UPDATE recipes SET title = ?, description = ?, image_url = ?, prep_time = ?, cook_time = ?, calories = ?
+       WHERE id = ?`,
+      [title, description, imageUrl, prepTime, cookTime, calories, id]
     );
+    logger.info(`Updated recipe ID ${id}, affected rows: ${result.affectedRows}`);
     return result.affectedRows > 0;
   } catch (error) {
     handleDatabaseError(error, 'Error updating recipe');
@@ -83,52 +76,27 @@ export const update = async ({ id, title, description }) => {
 export const remove = async (id) => {
   try {
     const [result] = await pool.query('DELETE FROM recipes WHERE id = ?', [id]);
+    logger.info(`Deleted recipe ID ${id}, affected rows: ${result.affectedRows}`);
     return result.affectedRows > 0;
   } catch (error) {
     handleDatabaseError(error, 'Error deleting recipe');
   }
 };
 
-// Helper function to get ingredients for a recipe
-export const getIngredientsForRecipe = async (recipeId) => {
-  try {
-    // Correcting the table name to 'recipe_ingredients'
-    const [ingredients] = await pool.query(
-      'SELECT * FROM recipe_ingredients WHERE recipe_id = ?',
-      [recipeId]
-    );
-    return ingredients;
-  } catch (error) {
-    handleDatabaseError(error, 'Error fetching ingredients');
-  }
-};
-
-
-// Additional helper function to fetch categories related to a recipe
+// Fetch categories for a recipe
 export const getCategoriesForRecipe = async (recipeId) => {
   try {
     const [categories] = await pool.query(
-      'SELECT categories.* FROM categories INNER JOIN recipe_categories ON categories.id = recipe_categories.category_id WHERE recipe_categories.recipe_id = ?',
+      `SELECT categories.* 
+       FROM categories 
+       INNER JOIN recipe_categories 
+       ON categories.id = recipe_categories.category_id 
+       WHERE recipe_categories.recipe_id = ?`,
       [recipeId]
     );
+    logger.info(`Fetched ${categories.length} categories for recipe ID ${recipeId}`);
     return categories;
   } catch (error) {
     handleDatabaseError(error, 'Error fetching categories for recipe');
   }
 };
-
-// Add ingredients to a recipe
-export const addIngredientsToRecipe = async (recipeId, ingredients) => {
-  const values = ingredients.map(ingredient => [recipeId, ingredient]);
-
-  try {
-    const [result] = await pool.query(
-      'INSERT INTO ingredients (recipe_id, ingredient) VALUES ?',
-      [values]
-    );
-    return result;
-  } catch (error) {
-    handleDatabaseError(error, 'Error adding ingredients to recipe');
-  }
-};
-

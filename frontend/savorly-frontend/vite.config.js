@@ -5,23 +5,31 @@ import { configDefaults } from 'vitest/config';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import removeConsole from 'vite-plugin-remove-console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// SSL certificate paths (relative to frontend)
+const isDev = process.env.NODE_ENV !== 'production';
+
+// SSL cert paths (used only in dev)
 const keyPath = path.resolve(__dirname, '../../backend/cert/key.pem');
 const certPath = path.resolve(__dirname, '../../backend/cert/cert.pem');
 
 export default defineConfig({
   plugins: [
     react(),
-    nodePolyfills({
-      protocol: true,
-      buffer: true,
-      crypto: true,
-      events: true,
-    }),
+    removeConsole(), // Strips console.* in production
+    ...(isDev
+      ? [
+          nodePolyfills({
+            protocol: true,
+            buffer: true,
+            crypto: true,
+            events: true,
+          }),
+        ]
+      : []),
   ],
 
   resolve: {
@@ -33,20 +41,23 @@ export default defineConfig({
   },
 
   optimizeDeps: {
+    // Only necessary if you're accidentally importing server-side deps in frontend
     exclude: ['bcryptjs', 'mysql2'],
   },
 
   server: {
-    https: {
-      key: fs.readFileSync(keyPath),
-      cert: fs.readFileSync(certPath),
-    },
+    ...(isDev && {
+      https: {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath),
+      },
+    }),
     watch: {
       usePolling: true,
     },
     proxy: {
       '/api': {
-        target: 'https://localhost:5001', // Note: changed to https
+        target: 'https://localhost:5001',
         changeOrigin: true,
         secure: false,
       },

@@ -6,6 +6,7 @@ import { loginUser } from '../controllers/loginController.js';
 import { validateRegister, validateLogin } from '../middleware/validateInput.js';
 import { authenticate } from '../middleware/authenticate.js';
 import rateLimit from 'express-rate-limit';
+import { isAdmin } from '../middleware/isAdmin.js';
 
 
 const router = express.Router();
@@ -60,7 +61,7 @@ router.post("/resend-verification", async (req, res) => {
     res.status(200).json({ message: 'Verification email resent successfully.' });
   });
   // Get the user data (authenticated)
-router.get('/user', authenticate, getUserData);
+router.get('/user', authenticate, isAdmin, getUserData);
   
   router.post('/refresh-token', refreshToken);
   

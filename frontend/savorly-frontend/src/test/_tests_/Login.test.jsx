@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -19,32 +20,6 @@ describe('Login Component', () => {
     setUserMock.mockClear();
   });
 
-  /*it('shows error message for invalid email', async () => {
-    render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
-    );
-  
-    const emailInput = screen.getByPlaceholderText(/email/i); // Get the email input by placeholder text
-    const passwordInput = screen.getByPlaceholderText(/password/i); // Get the password input
-    const loginButton = screen.getByRole("button", { name: /log in/i }); // Get the login button
-  
-    // Fill in the fields with invalid email
-    fireEvent.change(emailInput, { target: { value: "invalidemail.com" } });
-    fireEvent.change(passwordInput, { target: { value: "ValidPass123!" } });
-  
-    // Submit the form
-    fireEvent.click(loginButton);
-  
-    // Log the container to check if the error is rendered
-    await waitFor(() => {
-      expect(screen.getByText((content, element) => 
-        content.includes("invalid email format") && element.tagName.toLowerCase() === "p")).toBeInTheDocument();
-    });    
-  });
-  */
-
   it('shows error message for invalid password', async () => {
     render(
       <BrowserRouter>
@@ -62,6 +37,7 @@ describe('Login Component', () => {
 
     fireEvent.click(screen.getByText('Log In'));
 
+    // Assert that the error message is shown for the invalid password
     expect(
       await screen.findByText(/password must be at least/i)
     ).toBeInTheDocument();
@@ -88,6 +64,7 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByText('Log In'));
 
     await waitFor(() => {
+      // Assert that the error message for login failure is shown
       expect(
         screen.getByText(/something went wrong/i)
       ).toBeInTheDocument();
@@ -116,6 +93,7 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByText('Log In'));
 
     await waitFor(() => {
+      // Assert that the setUser function is called with the mock user
       expect(setUserMock).toHaveBeenCalledWith(mockUser);
     });
   });

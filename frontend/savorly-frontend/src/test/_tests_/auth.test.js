@@ -10,17 +10,20 @@ describe('loginUser', () => {
   const mockToken = 'fake-token';
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(); // Clear all mocks after each test
   });
 
   it('logs in user and sets token cookie', async () => {
+    // Mocking API response
     api.post.mockResolvedValue({
       status: 200,
       data: { token: mockToken, user: mockUser },
     });
 
+    // Call the loginUser function
     const result = await loginUser({ email: 'test@example.com', password: 'StrongPass1!' });
 
+    // Assertions
     expect(api.post).toHaveBeenCalledWith('/api/auth/login', {
       email: 'test@example.com',
       password: 'StrongPass1!',
@@ -30,11 +33,13 @@ describe('loginUser', () => {
   });
 
   it('throws error if token is missing', async () => {
+    // Mocking API response without token
     api.post.mockResolvedValue({
       status: 200,
       data: { user: mockUser },
     });
 
+    // Expecting the loginUser function to throw an error
     await expect(
       loginUser({ email: 'test@example.com', password: 'StrongPass1!' })
     ).rejects.toThrow('Token missing in response');

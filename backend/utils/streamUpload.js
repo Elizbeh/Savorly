@@ -9,10 +9,8 @@ const streamUpload = (fileBuffer, folder) => {
       },
       (error, result) => {
         if (error) {
-          console.error(`Cloudinary upload error for folder ${folder}:`, error);
           reject(error);
         } else {
-          console.log(`Cloudinary upload result for folder ${folder}:`, result);
           resolve(result);
         }
       }

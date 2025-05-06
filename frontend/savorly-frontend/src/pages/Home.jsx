@@ -5,7 +5,6 @@ import RecipeCard from "../components/RecipeCard";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Toast from "../components/Toast";
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext"; // ✅ use auth context
 import fetchData from "../utils/fetchData";
 import handleDelete from "../utils/handleDelete";
@@ -14,7 +13,6 @@ import handleSaveToggle from "../utils/handleSaveToggle";
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [recipesError, setRecipesError] = useState(null);
   const [categoriesError, setCategoriesError] = useState(null);
@@ -47,11 +45,6 @@ const HomePage = () => {
 
   return (
     <ErrorBoundary>
-      <Navbar
-        user={user}
-        isMobileMenuOpen={isMobileMenuOpen}
-        toggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      />
       {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage("")} />}
       <div className="home-page">
         <div className="hero">

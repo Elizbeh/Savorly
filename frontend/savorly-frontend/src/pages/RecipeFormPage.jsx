@@ -10,6 +10,9 @@ const RecipeForm = () => {
   const { id } = useParams(); // Get the recipe ID (if editing)
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [prepTime, setPrepTime] = useState('');
+  const [cookTime, setCookTime] = useState('');
+  const [calories, setCalories] = useState('');
   const [ingredients, setIngredients] = useState(['']);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -30,6 +33,10 @@ const RecipeForm = () => {
     if (id) formData.append('id', id)
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('prepTime', prepTime);
+    formData.append('cookTime', cookTime);
+    formData.append('calories', calories);
+
   
     ingredients
       .filter((ingredient) => ingredient.trim() !== '')
@@ -75,6 +82,10 @@ const RecipeForm = () => {
           
           setTitle(data.title || '');
           setDescription(data.description || '');
+          setPrepTime(data.prep_time || '');
+          setCookTime(data.cook_time || '');
+          setCalories(data.calories || '');
+
           setIngredients(data.ingredients?.map((ingredient) => ingredient.ingredient_name) || []);
           setSelectedCategories(data.categories?.map((category) => category.id) || []);
           setExistingImageUrl(data.image_url);
@@ -100,6 +111,19 @@ const RecipeForm = () => {
       setErrorMessage('Description must be at least 20 characters long.');
       return false;
     }
+
+    if (!prepTime || prepTime <= 0) {
+      setErrorMessage('Prep time must be greater than 0.');
+      return false;
+    }
+    if (!cookTime || cookTime <= 0) {
+      setErrorMessage('Cook time must be greater than 0.');
+      return false;
+    }
+    if (!calories || calories <= 0) {
+      setErrorMessage('Calories must be greater than 0.');
+      return false;
+    }    
 
     const filledIngredients = ingredients.filter(ingredient => ingredient.trim() !== '');
     if (filledIngredients.length === 0) {
@@ -190,6 +214,38 @@ const RecipeForm = () => {
             required
           ></textarea>
         </label>
+        <div className="time-calorie-inputs">
+          <label>
+            Prep Time (minutes):
+            <input
+              type="number"
+              min="0"
+              value={prepTime}
+              onChange={(e) => setPrepTime(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Cook Time (minutes):
+            <input
+              type="number"
+              min="0"
+              value={cookTime}
+              onChange={(e) => setCookTime(e.target.value)}
+            />
+          </label>
+
+          <label>
+            Calories:
+            <input
+              type="number"
+              min="0"
+              value={calories}
+              onChange={(e) => setCalories(e.target.value)}
+            />
+          </label>
+        </div>
+
 
         {/* Ingredients */}
         <label>

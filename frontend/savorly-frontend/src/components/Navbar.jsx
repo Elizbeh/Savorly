@@ -4,7 +4,7 @@ import logo from "../assets/images/logo.png";
 import defaultAvatar from "../assets/images/default_avatar.png";
 import "./Navbar.css";
 import { useAuth } from "../contexts/AuthContext";
-import api from '../services/api'; // same as in ProfilePage
+import api from '../services/api';
 
 const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
   const [userProfile, setUserProfile] = useState(null);
@@ -20,7 +20,7 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
         const response = await api.get('/api/profile', {
           withCredentials: true,
         });
-  
+        console.log('Profile:', response.data);
         setUserProfile(response.data.profile || response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -31,7 +31,6 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
       fetchUserProfile();
     }
   }, [user]);
-  
 
   const handleLogout = async () => {
     await logout();
@@ -62,12 +61,19 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
           <Link to="/create-recipe" onClick={handleLinkClick}>Create Recipe</Link>
           <Link to="/saved-recipes" onClick={handleLinkClick}>Saved Recipes</Link>
           <Link to="/about" onClick={handleLinkClick}>About Us</Link>
+          {user?.role === 'admin' &&
+            location.pathname !== '/admin-dashboard' &&
+            !location.pathname.startsWith('/admin') && (
+              <Link to="/admin-dashboard" onClick={handleLinkClick}>
+                Admin
+              </Link>
+          )}
+
           {userProfile && (
             <Link to="/" onClick={handleLogout} className="logout-btn">Logout</Link>
           )}
         </div>
       )}
-
       <div className="navbar-right">
         {isLandingPage ? (
           <Link to="/login" className="login-btn">Login</Link>

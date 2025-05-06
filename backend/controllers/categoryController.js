@@ -1,45 +1,50 @@
 import { getAllCategories, createCategory, getCategoryById } from '../models/categories.js';
-
-// Fetch all categories and send as response
+import logger from '../config/logger.js';
 export const fetchCategories = async (req, res) => {
   try {
+    logger.info('Fetching all categories');  // Log the start of fetching categories
     const categories = await getAllCategories();
+    logger.info('Categories fetched successfully');  // Log success
     res.status(200).json(categories);
   } catch (err) {
-    console.error('Error fetching categories:', err);
-    res.status(500).json({ message: 'Error fetching categories', error: err.message });
+    logger.error('Error fetching categories: ', err.message);  // Log error
+    res.status(500).json({ message: 'Error fetching categories' });
   }
 };
 
-
-// Create a new category
+// Create new category
 export const createCategoryHandler = async (req, res) => {
   const { name } = req.body;
   if (!name) {
-    return res.status(400).json({ message: 'Category name is required' });
+    logger.warn('Name is required to create a category');  // Log warning if name is not provided
+    return res.status(400).json({ message: 'Name is required' });
   }
 
   try {
+    logger.info(`Creating category with name: ${name}`);  // Log category creation request
     const category = await createCategory(name);
+    logger.info('Category created successfully');  // Log success
     res.status(201).json(category);
   } catch (err) {
-    res.status(500).json({ message: 'Error creating category', error: err.message });
+    logger.error('Error creating category: ', err.message);  // Log error
+    res.status(400).json({ message: err.message });
   }
 };
 
-// Fetch category by ID and send as a response
 export const fetchCategoryById = async (req, res) => {
-  const { id } = req.params; // Extract the ID from the route parameters
+  const { id } = req.params;
 
   try {
-    const category = await getCategoryById(id); // Call the model function to get the category
+    logger.info(`Fetching category with ID: ${id}`);  // Log the category fetch attempt
+    const category = await getCategoryById(id);
     if (!category) {
-      return res.status(404).json({ message: 'Category not found' }); // Return 404 if no category exists
+      logger.warn(`Category with ID: ${id} not found`);  // Log warning if category not found
+      return res.status(404).json({ message: 'Category not found' });
     }
-    res.status(200).json(category); // Return the category if found
+    logger.info('Category fetched successfully');  // Log success
+    res.status(200).json(category);
   } catch (err) {
-    console.error('Error fetching category by ID:', err);
-    res.status(500).json({ message: 'Error fetching category', error: err.message });
+    logger.error('Error fetching category: ', err.message);  // Log error
+    res.status(500).json({ message: 'Error fetching category' });
   }
 };
-

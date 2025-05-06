@@ -4,6 +4,7 @@ import "./Register.css";
 import logo from "../assets/images/logo.png";
 import registerImage from "../assets/images/pic01.png";
 import { validateEmail, validatePassword } from "../utils/validation";
+import api from "../services/api"; // ✅ Using custom Axios instance
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -26,49 +27,49 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Form validation
-    if (!formData.first_name || !formData.last_name || !formData.email || !formData.password) {
-      setError("Please fill in all fields.");
+  
+    const validate = () => {
+      let formErrors = {};
+      
+      // Use utility functions for validation
+      if (!formData.first_name) formErrors.first_name = "First Name is required";
+      if (!formData.last_name) formErrors.last_name = "Last Name is required";
+      if (!formData.email) formErrors.email = "Email is required";
+      else if (!validateEmail(formData.email)) formErrors.email = "Invalid email format";
+      if (!formData.password) formErrors.password = "Password is required";
+      else if (!validatePassword(formData.password)) formErrors.password = "Password should be at least 8 characters and include a letter, number, and special character";
+      
+      return formErrors;
+    };
+  
+    const errors = validate();
+    
+    if (Object.keys(errors).length > 0) {
+      setError(errors);
       return;
     }
-
-    if (!validateEmail(formData.email)) {
-      setError("Please enter a valid email.");
-      return;
-    }
-
-    if (!validatePassword(formData.password)) {
-      setError("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.");
-      return;
-    }
-
+  
     try {
       setIsLoading(true);
       setError("");
-      setMessage("");
-
-      // Sending registration request to the backend
-      const response = await fetch("http://localhost:5001/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Registration successful! Please check your email for verification.");
-        setTimeout(() => navigate("/login"), 2000);
-      } else {
-        setError(data.message || "An error occurred. Please try again.");
-      }
+      setMessage(""); // Reset success message
+  
+      // ✅ Sending registration request via Axios
+      const { data } = await api.post("/api/auth/register", formData);
+  
+      setMessage(data.message || "Registration successful! Please check your email for verification.");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError("Error submitting form. Please try again.");
+      const errorMsg =
+        err.response?.data?.message || "Error submitting form. Please try again.";
+      setError(errorMsg); // Set the error message here
+      console.log(errorMsg); // Log the error message
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
 
   return (
     <div className="register-container">
@@ -83,13 +84,20 @@ const Register = () => {
         <p className="register-subtext">Join Savorly and explore amazing recipes!</p>
 
         {error && (
-          <div className="feedback-message error-message">
-            <span className="feedback-icon">❌</span>
-            {error}
-          </div>
-        )}
+  <div className="feedback-message error-message" role="alert">
+    <span className="feedback-icon">❌</span>
+    {typeof error === "string" ? (
+      <div>{error}</div>
+    ) : (
+      Object.entries(error).map(([field, msg], idx) => (
+        <div key={idx}>{msg}</div>
+      ))
+    )}
+  </div>
+)}
+
         {message && (
-          <div className="feedback-message success-message">
+          <div className="feedback-message success-message" role="alert">
             <span className="feedback-icon">✅</span>
             {message}
           </div>
@@ -118,7 +126,7 @@ const Register = () => {
           </div>
           <div className="form-group">
             <input
-              type="email"
+              type="text"
               name="email"
               placeholder="Email Address"
               value={formData.email}

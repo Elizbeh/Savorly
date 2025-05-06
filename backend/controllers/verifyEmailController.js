@@ -3,15 +3,13 @@ import pool from '../config/db.js';
 // Function to mark the user as verified
 const markUserAsVerified = async (userId) => {
   const query = 'UPDATE users SET is_verified = 1, verification_token_expires_at = NULL WHERE id = ?';
-  
   const [result] = await pool.execute(query, [userId]);
-  console.log('User verified:', result);
-  
   if (result.affectedRows === 0) {
-    console.error('User verification update failed.');
-    throw new Error('Failed to update user verification status.');
+    throw new Error('User verification failed. User may already be verified.');
   }
+  return result;
 };
+
 
 export const verifyEmail = async (req, res) => {
   const { token } = req.query;

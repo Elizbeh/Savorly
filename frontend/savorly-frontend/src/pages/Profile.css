@@ -1,18 +1,7 @@
-:root {
-  --primary-color: #f76408;
-  --secondary-color: green;
-  --button-gradient: linear-gradient(135deg, #ff8c42, #f76408);
-  --btn-hover: #cd6905;
-  --text-dark: #333;
-  --bg-light: #f5f5f5;
-  --input-bg: #f9f9f9;
-  --input-disabled: #f0f0f0;
-}
-
 /* Profile Page Styling */
 .profile-page {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-light);
+  background: var(--bg-light); /* Use global background color */
   padding: 30px;
   border-radius: 10px;
   max-width: 800px;
@@ -31,7 +20,7 @@
   margin-top: 2rem;
   text-align: center;
   width: 100%;
-  color: var(--secondary-color);
+  color: var(--secondary-color); /* Use global secondary color */
 }
 
 .message {
@@ -80,7 +69,7 @@
 }
 
 .retry-btn {
-  background: var(--button-gradient);
+  background: var(--button-gradient); /* Use global button gradient */
   color: white;
   border: none;
   padding: 6px 14px;
@@ -94,7 +83,7 @@
 }
 
 .retry-btn:hover {
-  background-color: var(--btn-hover);
+  background-color: var(--btn-hover); /* Use global button hover color */
 }
 
 .retry-btn svg {
@@ -120,7 +109,7 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 4px solid var(--secondary-color);
+  border: 4px solid var(--secondary-color); /* Use global secondary color */
   object-fit: cover;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
@@ -155,8 +144,8 @@
 }
 
 .custom-file-label:hover {
-  border: 2px dotted var(--btn-hover);
-  color: var(--btn-hover);
+  border: 2px dotted var(--btn-hover); /* Use global button hover color */
+  color: var(--btn-hover); /* Use global button hover color */
 }
 
 .file-instruction,
@@ -187,20 +176,20 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
-  background-color: var(--input-bg);
-  color: var(--text-dark);
+  background-color: var(--input-bg); /* Use global input background color */
+  color: var(--text-dark); /* Use global text color */
   transition: border 0.3s ease;
 }
 
 .text-input:focus,
 .bio-input:focus {
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--primary-color); /* Use global primary color */
   outline: none;
 }
 
 .text-input:disabled,
 .bio-input:disabled {
-  background-color: var(--input-disabled);
+  background-color: var(--input-disabled); /* Use global input disabled color */
 }
 
 .profile-view .text-input,
@@ -232,13 +221,13 @@
 
 .save-btn,
 .edit-btn {
-  background: var(--button-gradient);
+  background: var(--button-gradient); /* Use global button gradient */
   color: white;
 }
 
 .save-btn:hover,
 .edit-btn:hover {
-  background-color: var(--btn-hover);
+  background-color: var(--btn-hover); /* Use global button hover color */
 }
 
 .cancel-btn {

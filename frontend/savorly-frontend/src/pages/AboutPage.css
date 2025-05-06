@@ -1,6 +1,6 @@
 .about-page {
-  padding-top: 220px;
-  margin-top: 220px;
+  padding-top: 180px;
+  margin-top: 180px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -66,10 +66,9 @@
 }
 
 /* Very small devices (max-width: 480px) */
-@media (max-width: 480px) {
+@media (max-width: 769px) {
   .about-page {
-    padding-top: 220px; /* Reduced padding-top for smaller screens */
-    margin-top: 220px;  /* Reduced margin-top for smaller screens */
+    margin-top: 330px;
   }
 
   .about-header h1 {

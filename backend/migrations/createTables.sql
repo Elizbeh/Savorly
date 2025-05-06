@@ -16,7 +16,10 @@ CREATE TABLE IF NOT EXISTS recipes (
   user_id INT NOT NULL, -- Foreign key to users
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  image_url VARCHAR(255) DEFAULT NULL, -- Column to store image URL
+  image_url VARCHAR(255) DEFAULT NULL,
+  prep_time INT DEFAULT NULL,
+  cook_time INT DEFAULT NULL,
+  calories INT DEFAULT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

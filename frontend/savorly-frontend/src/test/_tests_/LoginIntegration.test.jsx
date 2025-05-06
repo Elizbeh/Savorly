@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "../../components/Login";  // Path to your Login component
 import { vi } from "vitest";
@@ -21,6 +22,7 @@ vi.mock("js-cookie", () => ({
   set: vi.fn(),
   get: vi.fn(),
 }));
+
 
 describe("Login Component", () => {
   const mockSetUser = vi.fn();
@@ -50,21 +52,25 @@ describe("Login Component", () => {
         <Login />
       </Router>
     );
-
+  
     fireEvent.change(screen.getByPlaceholderText("Email"), {
       target: { value: "invalid-email" },
     });
-
+  
     fireEvent.change(screen.getByPlaceholderText("Password"), {
       target: { value: "Valid123!" },
     });
-
+  
     fireEvent.click(screen.getByText("Log In"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/Invalid email format/i)).toBeInTheDocument();
-    });
+  
+    expect(
+      await screen.findByText((content, element) =>
+        element?.tagName.toLowerCase() === "p" &&
+        content.includes("Invalid email format")
+      )
+    ).toBeInTheDocument();
   });
+   
 
   it("should show an error message for invalid password format", async () => {
     render(

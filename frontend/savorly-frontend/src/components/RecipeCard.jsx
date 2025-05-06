@@ -12,9 +12,9 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
 
   // Format image URL
   const imageUrl = recipe.image_url
-    ? recipe.image_url.startsWith('http')
+    ? recipe.image_url.startsWith('https')
       ? recipe.image_url
-      : `http://localhost:5001${recipe.image_url}`
+      : `https://localhost:5001${recipe.image_url}`
     : '/assets/default-recipe.png';
 
   // Truncate title and description

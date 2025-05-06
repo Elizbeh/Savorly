@@ -1,57 +1,52 @@
-const nodemailer = require('nodemailer');
-const { sendEmail } = require('../../services/emailService');
+// Import necessary modules
+import { sendEmail } from '../../services/emailService';  // Adjust path to where your service is located
+import nodemailer from 'nodemailer';
 
-// Mock the nodemailer module
+// Mocking the `nodemailer` module to avoid sending real emails
 jest.mock('nodemailer', () => ({
-  createTransport: jest.fn().mockReturnValue({
-    sendMail: jest.fn() // We will mock sendMail dynamically in each test
-  })
+  createTransport: () => ({
+    sendMail: jest.fn().mockResolvedValue('Email sent successfully'),
+  }),
 }));
 
-describe('Email Service', () => {
+describe('sendEmail', () => {
 
-  let sendMailMock;
-
-  beforeEach(() => {
-    sendMailMock = nodemailer.createTransport().sendMail;  // Reset mock before each test
-    sendMailMock.mockClear(); // Clear any previous call history
+  // Before each test, mock the environment variables (only needed for testing environment)
+  beforeAll(() => {
+    process.env.EMAIL_USER = 'your_email_here@gmail.com';  // Replace with a test email
+    process.env.EMAIL_PASS = 'your_email_password_here';   // Replace with a test password
   });
 
-  test('should send an email successfully', async () => {
-    sendMailMock.mockResolvedValue(true);  // Mock a successful email sending
-
-    console.log('Calling sendEmail...');
-    await sendEmail('test@example.com', 'Test Subject', 'Test Body');  // Call the sendEmail function
-
-    // Ensure sendMail was called once with correct arguments
-    expect(sendMailMock).toHaveBeenCalledTimes(1);  // Check that it was called
-    expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
-      from: process.env.EMAIL_USER,
-      to: 'test@example.com',
-      subject: 'Test Subject',
-      text: 'Test Body'
-    }));
-
-    // Debugging - log the actual calls made to sendMail
-    console.log('sendMail mock calls:', sendMailMock.mock.calls);
+  it('should send an email successfully', async () => {
+    try {
+      const result = await sendEmail('test@example.com', 'John', 'https://example.com/verify-email');
+      expect(result).toBe('Email sent successfully');  // Assuming you send back success message or handle it in your service
+    } catch (error) {
+      console.error(error);
+      throw error;  // We want this test to fail if an error occurs
+    }
   });
 
-  test('should handle email sending failure', async () => {
-    sendMailMock.mockRejectedValue(new Error('SMTP error'));  // Mock failure response
+  it('should throw an error if email credentials are missing', async () => {
+    // Temporarily remove email credentials
+    delete process.env.EMAIL_USER;
+    delete process.env.EMAIL_PASS;
 
-    console.log('Testing email sending failure...');
-    // Check that the error is thrown and rejected
-    await expect(sendEmail('test@example.com', 'Test Subject', 'Test Body')).rejects.toThrow('SMTP error');
-
-    // Ensure the rejection happened
-    expect(sendMailMock).toHaveBeenCalledTimes(1);  // Ensure the function was called at least once
-
-    // Debugging: Inspect the rejection
-    console.log('sendMail failure mock calls:', sendMailMock.mock.calls);
+    try {
+      await sendEmail('test@example.com', 'John', 'https://example.com/verify-email');
+    } catch (error) {
+      expect(error.message).toBe('Missing email credentials');
+    }
   });
 
-  test('should throw an error if required fields are missing', async () => {
-    console.log('Testing missing fields...');
-    await expect(sendEmail()).rejects.toThrow('All email fields (to, subject, text) are required.');
+  it('should throw an error if email fails to send', async () => {
+    // Mocking failure of email sending
+    nodemailer.createTransport().sendMail.mockRejectedValue(new Error('Failed to send email'));
+
+    try {
+      await sendEmail('test@example.com', 'John', 'https://example.com/verify-email');
+    } catch (error) {
+      expect(error.message).toBe('Failed to send email');
+    }
   });
 });

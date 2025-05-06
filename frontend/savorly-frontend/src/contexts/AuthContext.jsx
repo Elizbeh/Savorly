@@ -29,6 +29,9 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await api.post("/api/auth/logout");
+      // Clear the authentication token from cookies
+      Cookies.remove("authToken");
+      Cookies.remove("refreshToken");
       setUser(null);
     } catch (err) {
       console.error("Logout error:", err);

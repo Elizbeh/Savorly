@@ -1,6 +1,7 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { AuthProvider, useAuth } from '@contexts/AuthContext';
+import { vi } from 'vitest';
 
 vi.mock('@contexts/AuthContext', async () => {
   const actual = await vi.importActual('@contexts/AuthContext');
@@ -23,8 +24,8 @@ describe('AuthContext', () => {
       </AuthProvider>
     );
 
-    await act(async () => {
-      expect(screen.getByText('Test User')).toBeInTheDocument();
-    });
+    // Directly check if the text "Test User" is rendered
+    await screen.findByText('Test User');
+    expect(screen.getByText('Test User')).toBeTruthy();
   });
 });

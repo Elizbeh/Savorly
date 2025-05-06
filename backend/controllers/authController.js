@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import pool from '../config/db.js';
+import logger from '../config/logger.js';
 
 import { createUser, getUserByEmail, updateUserVerificationToken } from '../models/users.js';
 import { sendEmail } from '../services/emailService.js';
@@ -9,19 +10,23 @@ import { sendEmail } from '../services/emailService.js';
 const generateVerificationToken = () => uuidv4();
 
 export const registerUser = async (req, res) => {
-    const { email, password, first_name, last_name, role } = req.body;
+    const { email, password, first_name, last_name } = req.body;
+    const role = 'user'; // Force role to 'user'
+
+    if (req.body.role && req.body.role !== 'user') {
+        logger.warn(`Overridden attempted role "${req.body.role}" during registration for ${email}`);
+    }
 
     try {
         const existingUser = await getUserByEmail(email);
         if (existingUser) {
+            logger.warn(`Registration failed: Email already in use - ${email}`);
             return res.status(400).json({ message: 'Email already in use' });
         }
 
-        // Hash the password
         const password_hash = await bcrypt.hash(password, 10);
-        const verification_token = generateVerificationToken();
+        const verification_token = uuidv4();
 
-        // Create the user
         const newUser = await createUser({
             email,
             password_hash,
@@ -29,17 +34,14 @@ export const registerUser = async (req, res) => {
             last_name,
             role,
             verification_token,
-            verification_token_expires_at: new Date(Date.now() + 3600000),
+            verification_token_expires_at: new Date(Date.now() + 3600000), // 1 hour
         });
 
-        // Create the verification URL
         const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${encodeURIComponent(verification_token)}`;
-        console.log("Generated verification URL:", verificationUrl);
 
-        // Send verification email
         await sendEmail(email, first_name, verificationUrl);
 
-        // Respond with success
+        logger.info(`New user registered: ${email}`);
         res.status(201).json({
             message: 'User created successfully. Please check your email to verify your account.',
             user: {
@@ -47,14 +49,15 @@ export const registerUser = async (req, res) => {
                 email: newUser.email,
                 first_name,
                 last_name,
-                role,
+                role:'user',
             },
         });
     } catch (error) {
-        console.error('Error during registration:', error);
+        logger.error(`Registration error for email ${email}: ${error.message}`, { stack: error.stack });
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 export const resendVerificationEmail = async (req, res) => {
     const { email } = req.body;
@@ -62,17 +65,16 @@ export const resendVerificationEmail = async (req, res) => {
     try {
         const user = await getUserByEmail(email);
         if (!user) {
+            logger.warn(`Resend failed: User not found - ${email}`);
             return res.status(400).json({ message: 'User not found' });
         }
 
         if (user?.is_verified) {
+            logger.info(`Resend skipped: Email already verified - ${email}`);
             return res.status(400).json({ message: 'Email already verified' });
         }
 
         const verificationToken = generateVerificationToken();
-        
-console.log("Generated Token:", verificationToken);
-
         const tokenExpiration = new Date(Date.now() + 3600000); // 1 hour
 
         await updateUserVerificationToken(user.id, verificationToken, tokenExpiration);
@@ -80,9 +82,10 @@ console.log("Generated Token:", verificationToken);
         const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${encodeURIComponent(verificationToken)}`;
         await sendEmail(email, user.first_name, verificationUrl);
 
+        logger.info(`Verification email resent to: ${email}`);
         res.status(200).json({ message: 'A new verification email has been sent. Please check your inbox.' });
     } catch (error) {
-        console.error('Error resending verification email:', error);
+        logger.error(`Resend verification error for email ${email}: ${error.message}`, { stack: error.stack });
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -91,6 +94,7 @@ export const refreshToken = (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
+        logger.warn('Refresh token missing in request');
         return res.status(401).json({ message: 'No refresh token provided' });
     }
 
@@ -109,37 +113,41 @@ export const refreshToken = (req, res) => {
             { expiresIn: '1h' }
         );
 
+        logger.info(`Token refreshed for user: ${decoded.email}`);
         res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true });
         res.status(200).json({ accessToken: newAccessToken });
     } catch (error) {
-        console.error('Error refreshing token:', error);
+        logger.error(`Refresh token error: ${error.message}`, { stack: error.stack });
         return res.status(403).json({ message: 'Invalid refresh token' });
     }
 };
 
 export const getUserData = async (req, res) => {
     try {
-      const userId = req.user?.id; // safely access user ID
-  
-      if (!userId) {
-        return res.status(400).json({ message: "Invalid or missing user ID" });
-      }
-  
-      const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [userId]);
-  
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.status(200).json(rows[0]);
+        const userId = req.user?.id;
+
+        if (!userId) {
+            logger.warn('User ID missing in getUserData request');
+            return res.status(400).json({ message: 'Invalid or missing user ID' });
+        }
+
+        const [rows] = await pool.execute('SELECT * FROM users WHERE id = ?', [userId]);
+
+        if (rows.length === 0) {
+            logger.warn(`User not found for ID: ${userId}`);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        logger.info(`Fetched data for user ID: ${userId}`);
+        res.status(200).json(rows[0]);
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+        logger.error(`getUserData error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
-  
+};
 
 export const logoutUser = (req, res) => {
+    logger.info(`User logged out`);
     res.clearCookie('refreshToken');
     res.status(200).json({ message: 'Logged out successfully' });
 };

@@ -1,79 +1,44 @@
+/* CategoryPage.css */
 .category-page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  background: var(--bg-light);
+  min-height: 100vh;
 }
 
 .category-title {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
   text-align: center;
-  color: #cd6905;
+  margin-bottom: 1.5rem;
 }
 
 .category-description {
   font-size: 1.2rem;
-  margin-bottom: 2rem;
+  color: var(--text-color);
   text-align: center;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .recipes-header {
   font-size: 1.8rem;
+  color: var(--secondary-color);
   margin-bottom: 1rem;
-  color: #222;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 0.5rem;
+  text-align: center;
 }
 
 .recipe-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 0 10px;
 }
 
-.recipe-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.recipe-card:hover {
-  transform: translateY(-4px);
-}
-
-.recipe-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
-
-.recipe-title {
-  font-size: 1.2rem;
-  margin: 0.8rem;
-  color: #333;
-}
-
-.recipe-snippet {
-  font-size: 0.95rem;
-  margin: 0 0.8rem 1rem 0.8rem;
-  color: #666;
-}
-
-.loading,
-.error,
-.no-recipes {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #999;
-  margin-top: 2rem;
-}
-
-/* Responsive tweaks */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .category-title {
     font-size: 2rem;
   }
@@ -82,7 +47,25 @@
     font-size: 1rem;
   }
 
-  .recipe-image {
-    height: 160px;
+  .recipes-header {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-title {
+    font-size: 1.6rem;
+  }
+
+  .category-description {
+    font-size: 0.95rem;
+  }
+
+  .recipes-header {
+    font-size: 1.4rem;
+  }
+
+  .recipe-list {
+    grid-template-columns: 1fr;
   }
 }

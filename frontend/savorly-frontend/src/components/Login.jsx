@@ -17,10 +17,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Form submitted");
     setError("");
   
     // Validate email and password using the imported functions
     if (!validateEmail(email)) return setError("Invalid email format");
+    console.log("validateEmail:", validateEmail(email));
+
     if (!validatePassword(password)) return setError("Password must be at least 8 characters long and contain a letter, a number, and a special character");
   
     console.log("Sending Login Request:", { email, password });
@@ -30,11 +33,20 @@ const Login = () => {
   
       console.log("Login successful. User:", user);
       setUser(user);
-      navigate("/home");
+      if (user.role === 'admin') {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/home");
+      }
+      
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Please try again later.");
+      const errorMsg = err.response?.data?.message || "Something went wrong. Please try again later.";
+      setError(errorMsg);
+      console.log("Error state:", errorMsg);
+
     }
+    
   };
 
   return (
@@ -54,7 +66,7 @@ const Login = () => {
 
           <div className="form-group">
             <input
-              type="email"
+              type="text"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

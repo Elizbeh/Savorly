@@ -1,5 +1,7 @@
 import pool from '../config/db.js';
 import { createUserProfile } from './profile.js';
+import logger from '../config/logger.js'
+
 
 export const createUser = async (userData) => {
     try {
@@ -35,7 +37,7 @@ export const createUser = async (userData) => {
         
         return { id: userId, email, first_name, last_name, role };
     } catch (error) {
-        console.error('Error creating user:', error);
+        logger.error('Error creating user:', error);
         throw error;
     }
 };
@@ -47,7 +49,7 @@ export const getUserByEmail = async (email) => {
         const [rows] = await pool.query(query, [email]);
         return rows[0] || null;
     } catch (err) {
-        console.error("Error fetching user by email:", err);
+        logger.error("Error fetching user by email:", err);
         throw new Error('Database query failed');
     }
 };
@@ -58,7 +60,7 @@ export const getUserById = async (id) => {
         const [rows] = await pool.query(query, [id]);
         return rows[0] || null;
     } catch (err) {
-        console.error("Error fetching user by ID:", err);
+        logger.error("Error fetching user by ID:", err);
         throw new Error('Database query failed');
     }
 };
@@ -69,7 +71,7 @@ export const getUserByToken = async (token) => {
         const [users] = await pool.query(query, [token]);
         return users.length > 0 ? users[0] : null;  // Fix: use users[0] instead of rows[0]
     } catch (err) {
-        console.error('Error fetching user by token:', err);
+        logger.error('Error fetching user by token:', err);
         throw err;
     }
 };
@@ -78,9 +80,9 @@ export const updateUserVerificationToken = async (userId, token, expiration) => 
     try {
         const query = 'UPDATE users SET verification_token = ?, verification_token_expires_at = ? WHERE id = ?';
         await pool.execute(query, [token, expiration, userId]);
-        console.log("Verification token updated successfully.");
+        logger.log("Verification token updated successfully.");
     } catch (err) {
-        console.error('Error updating verification token:', err);
+        logger.error('Error updating verification token:', err);
         throw new Error('Database update failed');
     }
 };

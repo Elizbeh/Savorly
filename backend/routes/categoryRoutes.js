@@ -1,5 +1,7 @@
 import express from 'express';
 import { fetchCategories, createCategoryHandler,fetchCategoryById } from '../controllers/categoryController.js';
+import { authenticate } from '../middleware/authenticate.js';
+import { isAdmin } from '../middleware/isAdmin.js';
 
 const router = express.Router();
 
@@ -7,7 +9,7 @@ const router = express.Router();
 router.get('/', fetchCategories); // Fetch all categories using the controller
 
 // Route to create a new category
-router.post('/', createCategoryHandler); // Handle category creation
+router.post('/', authenticate, isAdmin, createCategoryHandler); // Handle category creation
 
 router.get('/:id', fetchCategoryById);
 

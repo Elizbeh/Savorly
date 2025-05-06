@@ -12,7 +12,6 @@ export const getUserProfile = async (req, res) => {
     }
     res.status(200).json(userProfile);
   } catch (error) {
-    console.error('Error fetching profile:', error);
     res.status(500).json({ message: 'Failed to fetch user profile' });
   }
 };
@@ -37,7 +36,6 @@ export const updateUserProfile = async (req, res) => {
     await updateProfile(userId, updatedProfileData);
     res.json({ message: 'Profile updated successfully' });
   } catch (error) {
-    console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Server error while updating profile' });
   }
 };
@@ -55,7 +53,6 @@ export const uploadAvatar = async (req, res) => {
       { folder: 'user_avatars', resource_type: 'image' },
       (error, result) => {
         if (error) {
-          console.error('Cloudinary upload failed:', error);
           return res.status(500).json({ message: 'Upload failed', error });
         }
         return res.json({ avatar_url: result.secure_url });
@@ -63,7 +60,6 @@ export const uploadAvatar = async (req, res) => {
     );
     streamifier.createReadStream(req.file.buffer).pipe(stream);
   } catch (error) {
-    console.error('Error uploading to Cloudinary:', error);
     return res.status(500).json({ message: 'Error uploading image', error });
   }
 };

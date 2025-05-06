@@ -19,3 +19,4 @@ package-lock.json
 
 /certs/
 .qodo
+backend/cert/

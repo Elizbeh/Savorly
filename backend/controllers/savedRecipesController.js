@@ -2,7 +2,7 @@ import {
   saveRecipe,
   toggleSave,
   getSavedRecipesByUser,
-  unsaveRecipe as unsaveRecipeModel // ✅ avoid naming conflict
+  unsaveRecipe as unsaveRecipeModel
 } from '../models/savedRecipes.js';
 
 export const saveRecipeForUser = async (req, res) => {
@@ -17,7 +17,6 @@ export const saveRecipeForUser = async (req, res) => {
     await saveRecipe(userId, recipeId);
     res.status(201).json({ message: 'Recipe saved successfully' });
   } catch (error) {
-    console.error('Error saving recipe:', error);
     res.status(500).json({ message: 'Failed to save recipe', error: error.message });
   }
 };
@@ -37,7 +36,6 @@ export const toggleSaveRecipe = async (req, res) => {
       saved: result.saved
     });
   } catch (error) {
-    console.error('Error toggling saved recipe:', error);
     res.status(500).json({ message: 'Error saving/unsaving recipe', error: error.message });
   }
 };
@@ -49,7 +47,6 @@ export const getSavedRecipes = async (req, res) => {
     const recipes = await getSavedRecipesByUser(userId);
     res.status(200).json(recipes);
   } catch (error) {
-    console.error('Error fetching saved recipes:', error);
     res.status(500).json({ message: 'Failed to fetch saved recipes', error: error.message });
   }
 };
@@ -67,7 +64,6 @@ export const unsaveRecipe = async (req, res) => {
     await unsaveRecipeModel(userId, recipeId);
     res.status(200).json({ message: 'Recipe unsaved successfully.' });
   } catch (error) {
-    console.error('Error unsaving recipe:', error);
     res.status(500).json({ message: 'Failed to unsave recipe.', error: error.message });
   }
 };

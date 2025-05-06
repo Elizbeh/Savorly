@@ -1,6 +1,5 @@
 import { validateEmail, validatePassword } from '../../utils/validation';
 
-
 test("validates a proper email", () => {
   expect(validateEmail("user@example.com")).toBe(true);
 });

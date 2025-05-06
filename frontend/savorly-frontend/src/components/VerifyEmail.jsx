@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import "./VerifyEmail.css"; // Add styles for animation and layout
 
 const VerifyEmail = () => {
   const [message, setMessage] = useState("");
@@ -7,29 +9,21 @@ const VerifyEmail = () => {
   const [loading, setLoading] = useState(true);
   const [resendLoading, setResendLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
-
   const navigate = useNavigate();
 
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
-  console.log("Extracted Token:", token);
 
   useEffect(() => {
     if (!token) {
-      setError("Token is missing.");
+      setError("Verification token is missing.");
       setLoading(false);
       return;
     }
 
     const verifyToken = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/api/auth/verify-email?token=${token}`, {
-          method: "GET",
-          credentials: "include",
-        });
-
-        const data = await response.json();
-        console.log(data);
+        const { data } = await api.get(`/api/auth/verify-email?token=${token}`);
 
         if (data.success) {
           setMessage(data.message);
@@ -42,8 +36,8 @@ const VerifyEmail = () => {
             setShowResend(true);
           }
         }
-      } catch (error) {
-        console.error("Error verifying token:", error);
+      } catch (err) {
+        console.error("Error verifying email:", err);
         setError("There was an error verifying your email.");
       } finally {
         setLoading(false);
@@ -56,12 +50,7 @@ const VerifyEmail = () => {
   const handleResendVerification = async () => {
     setResendLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/api/auth/resend-verification", {
-        method: "POST",
-        credentials: "include", // ✅ Cookies for session-based email lookup
-      });
-
-      const data = await response.json();
+      const { data } = await api.post("/api/auth/resend-verification");
 
       if (data.success) {
         setMessage(data.message);
@@ -72,8 +61,8 @@ const VerifyEmail = () => {
       } else {
         setError(data.message || "Failed to resend verification email.");
       }
-    } catch (error) {
-      console.error("Error resending verification email:", error);
+    } catch (err) {
+      console.error("Resend error:", err);
       setError("Something went wrong. Please try again later.");
     } finally {
       setResendLoading(false);
@@ -83,18 +72,27 @@ const VerifyEmail = () => {
   return (
     <div className="verify-email-container">
       {loading ? (
-        <p>Loading...</p>
+        <div className="loader-container">
+          <div className="spinner" />
+          <p>Verifying your email...</p>
+        </div>
       ) : error ? (
-        <div>
-          <p className="error">{error}</p>
+        <div className="error-container">
+          <p className="error-text">{error}</p>
           {showResend && (
-            <button onClick={handleResendVerification} disabled={resendLoading}>
-              {resendLoading ? "Resending..." : "Resend Verification Email"}
+            <button onClick={handleResendVerification} disabled={resendLoading} className="resend-button">
+              {resendLoading ? (
+                <>
+                  <span className="small-spinner" /> Sending...
+                </>
+              ) : (
+                "Resend Verification Email"
+              )}
             </button>
           )}
         </div>
       ) : (
-        <p>{message}</p>
+        <p className="success-text">{message}</p>
       )}
     </div>
   );

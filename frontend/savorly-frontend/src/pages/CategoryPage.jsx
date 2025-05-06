@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../services/api';
+import RecipeCard from '../components/RecipeCard';
 import './CategoryPage.css';
 
 const CategoryPage = () => {
@@ -32,26 +33,17 @@ const CategoryPage = () => {
 
   return (
     <div className="category-page">
-      <h1 className="category-title">{category.name}</h1>
       <p className="category-description">{category.description}</p>
 
-      <h2>Recipes in this category:</h2>
+      <h2 className="recipes-header">{`Recipes in ${category.name} category`}</h2>
       <div className="recipe-list">
         {recipes.length ? (
           recipes.map((recipe) => (
-            <div key={recipe.id} className="recipe-card">
-              <img
-                src={
-                  recipe.image_url?.startsWith('http')
-                    ? recipe.image_url
-                    : `http://localhost:5001${recipe.image_url}`
-                }
-                alt={recipe.title}
-                onError={(e) => (e.target.src = '/assets/default-recipe.png')}
-              />
-              <h3>{recipe.title}</h3>
-              <p>{recipe.description?.slice(0, 100)}...</p>
-            </div>
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onDelete={(id) => setRecipes(recipes.filter((recipe) => recipe.id !== id))}
+            />
           ))
         ) : (
           <p>No recipes found for this category.</p>

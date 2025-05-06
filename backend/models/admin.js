@@ -1,18 +1,17 @@
-import db from '../config/db.js'; // Adjust this import to match your DB setup
+import pool from '../config/db.js'; // Adjust this import to match your DB setup
 
-export const getAllUsersFromDB = async (role) => {
-    let query = 'SELECT * FROM users';
-    const params = [];
-
-    if (role) {
-        query += ' WHERE role = ?';
-        params.push(role);
+export const getAllUsersFromDB = async () => {
+    try {
+      const [rows] = await pool.execute('SELECT id, first_name, last_name, email, role FROM users');
+      return rows;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw new Error('Unable to fetch users from the database');
     }
+  };
+  
 
-    const [users] = await db.query(query, params);
-    return users;
-};
 
 export const deleteUserFromDB = async (id) => {
-    await db.query('DELETE FROM users WHERE id = ?', [id]);
+    await pool.query('DELETE FROM users WHERE id = ?', [id]);
 };

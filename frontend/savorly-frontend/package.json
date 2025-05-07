@@ -2,6 +2,7 @@
   "name": "savorly-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://Elizbeh.github.io/savorly-frontend",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
@@ -32,6 +33,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "test": "vitest",
     "test:ui": "vitest --ui"

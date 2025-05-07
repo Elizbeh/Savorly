@@ -28,6 +28,7 @@
     "vite-plugin-remove-console": "^2.2.0",
     "vitest": "^3.1.2"
   },
+  "homepage": "https://elizbeh.github.io/savorly-frontend",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

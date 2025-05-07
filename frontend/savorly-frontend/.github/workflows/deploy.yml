@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # Or 'main' if your default branch is named that
+      - master
 
 jobs:
   deploy:
@@ -29,5 +29,5 @@ jobs:
       - name: Deploy to GitHub Pages
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          npx gh-pages -d dist
+        run: | 
+          npm run deploy

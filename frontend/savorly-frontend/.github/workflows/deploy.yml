@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy savorly-frontend to GitHub Pages
 
 on:
   push:
@@ -9,25 +9,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: frontend/savorly-frontend
+
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install --save gh-pages
+        run: npm ci
 
-      - name: Build app
+      - name: Build the app
         run: npm run build
 
       - name: Deploy to GitHub Pages
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: | 
-          npm run deploy
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run deploy

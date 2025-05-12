@@ -1,7 +1,6 @@
-
 import pool from '../config/db.js';
 
-// Add ingredients to a recipe
+
 export const addIngredientsToRecipe = async (recipeId, ingredients) => {
   try {
     // Prepare the values as an array of arrays (for bulk insert)

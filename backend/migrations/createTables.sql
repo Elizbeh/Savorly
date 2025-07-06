@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   role ENUM('admin', 'user') DEFAULT 'user',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  is_verified TINYINT(1) DEFAULT 0,
 );
 
 -- Create the recipes table if it doesn't already exist

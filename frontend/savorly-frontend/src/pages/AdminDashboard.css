@@ -1,9 +1,10 @@
-/* General Dashboard Styling */
+
 .admin-dashboard {
-  margin-top: 350px;
-  padding: 30px;
-  background: var(--nav-bar-gradient, linear-gradient(135deg, #393939, #4a4747));/* Soft gradient background */
+  padding: 0 1rem 2rem;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background-color: white;
 }
 
 /* Header Section */
@@ -11,40 +12,99 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  background-color: #ffffffcc; /* Semi-transparent white background */
-  padding: 15px;
-  border-radius: 10px;
+  background-color: #ffffffcc;
+  padding: 1.5rem;
+  border-radius: var(--card-radius);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-h1 {
-  font-size: 1.6rem;
-  color: green;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.admin-header h1 {
+  font-size: 2rem;
+  color: var(--secondary-color);
+  margin: 0;
+  flex: 1;
+  text-align: center;
 }
+.category-form {
+    margin-bottom: 40px;
+    border: 2px solid rgb(157, 156, 156);
+    padding: 20px;
+    border-bottom-right-radius: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
 
-.logout-link {
+
+
+
+
+
+/* Error Message */
+.error-message {
   background-color: #f44336;
   color: white;
-  padding: 12px 25px;
-  text-decoration: none;
+  padding: 1rem;
   border-radius: 5px;
+  margin-bottom: 1.5rem;
   font-weight: bold;
-  transition: background-color 0.3s ease;
 }
 
-.logout-link:hover {
-  background-color: #e53935; /* Darker red on hover */
+/* Form */
+.category-form h2,
+.category-list h2 {
+  text-align: center;
+  color: black;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-/* User List Styling */
+.form-label-input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.category-form label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: rgb(40, 39, 39);
+  font-weight: bold;
+}
+
+.category-form input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 70%;
+}
+
+.category-form input:focus {
+  border-color: var(--secondary-color);
+}
+
+.category-form button {
+  background: var(--button-gradient);
+  color: white;
+  font-size: 1rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.category-form button:hover {
+  background-color: var(--cta-btn-hover);
+}
+
+/* Table */
 .user-list {
-  margin-top: 20px;
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
 }
 
 table {
@@ -55,16 +115,14 @@ table {
 
 table th,
 table td {
-  padding: 12px 15px;
+  padding: 1rem;
   border: 1px solid #ddd;
   text-align: left;
-  font-size: 1rem;
 }
 
 table th {
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
+  background-color: rgb(203, 251, 203);
+  color: black;
 }
 
 table td {
@@ -75,229 +133,136 @@ table tr:nth-child(even) td {
   background-color: #f1f1f1;
 }
 
-/* Button Styling */
+/* Category List */
+.category-list ul {
+  list-style: none;
+  padding: 0;
+
+}
+
+.category-list li {
+  font-size: 1.1rem;
+  color: black;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.75rem;
+}
+
+/* Buttons */
 button {
-  padding: 8px 15px;
-  margin-right: 12px;
-  cursor: pointer;
-  border: none;
-  background: var(--button-gradient);
-  color: white;
-  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  margin-right: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  border-radius: 8px;
+  border: 2px solid var(--primary-color);
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+  background: none;
+  color: var(--text-dark);
 }
 
 button:hover {
-  background: #ff8c42;
+  background-color: var(--primary-color);
+  color: white;
 }
 
 button:disabled {
   background-color: #ddd;
+  color: #888;
   cursor: not-allowed;
 }
 
-/* Error Message Styling */
-.error-message {
-  background-color: #f44336;
-  color: white;
-  padding: 12px;
-  border-radius: 5px;
-  margin-bottom: 25px;
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-
-/* Category Creation Form */
-.category-form {
-  margin-top: 40px;
-  padding: 25px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.category-form h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-}
-
-.category-form form {
-  display: flex;
-  flex-direction: column;
-}
-
-.category-form label {
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.category-form input {
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.category-form input:focus {
-  border-color: #4caf50;
-}
-
-.category-form button {
-  padding: 12px 25px;
-  background: #ff8c42;
-  color: white;
-  font-size: 1.2rem;
-  border-radius: 5px;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease;
-}
-
-.category-form button:hover {
-  background-color: #ff8c42;
-}
-
-/* Category List */
-.category-list {
-  margin-top: 40px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-}
-
-.category-list h2 {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.category-list ul {
-  list-style: none;
-  padding: 0;
-}
-
-.category-list li {
-  font-size: 1.2rem;
-  color: #555;
-  margin: 10px 0;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-}
-
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .admin-dashboard {
-    margin-top: 150px;
-    padding: 15px;
-  }
-
   .admin-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .category-list {
+    padding-top: 40px;
+    border-top: 2px solid green;
+    margin-top: 40px;
+    border-radius: 40px;
   }
 
-  h1 {
-    font-size: 1.5rem;
-    text-align: center;
+  .admin-header h1 {
+    font-size: 1.6rem;
   }
 
   .logout-link {
     width: 100%;
     text-align: center;
-    padding: 10px;
-  }
-
-  .user-list,
-  .category-form,
-  .category-list {
-    padding: 15px;
-    border-radius: 10px;
   }
 
   table th,
   table td {
-    font-size: 0.9rem;
-    padding: 8px;
+    font-size: 0.95rem;
+    padding: 0.75rem;
   }
 
-  .category-form input,
-  .category-form button {
-    font-size: 1rem;
-  }
-
-  .category-form button {
-    padding: 10px;
+  .category-form,
+  .user-list,
+  .category-list {
+    padding: 1rem;
   }
 
   .category-list li {
     font-size: 1rem;
+  }
+  .category-form {
+    border-color: green;
   }
 }
 
 @media (max-width: 480px) {
-  .admin-dashboard {
-    margin-top: 280px;
-    padding: 10px;
-  }
-
-  .admin-header {
-    padding: 10px;
-  }
-
-  h1 {
+  .admin-header h1 {
     font-size: 1.4rem;
-    width: 100%;
-    text-align: center;
   }
 
   .logout-link {
     font-size: 0.9rem;
-    padding: 10px;
-  }
-
-  table th,
-  table td {
-    font-size: 0.8rem;
-    padding: 6px;
-  }
-
-  .category-form,
-  .category-list {
-    padding: 10px;
+    padding: 0.5rem;
   }
 
   .category-form h2,
   .category-list h2 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
 
-  .category-form input {
-    font-size: 0.9rem;
-    padding: 8px;
-  }
-
-  .category-form button {
-    font-size: 1rem;
-    padding: 10px;
-  }
-
-  .category-list li {
-    font-size: 0.95rem;
+  table th,
+  table td {
+    font-size: 0.85rem;
   }
 
   button {
     font-size: 0.9rem;
-    padding: 8px;
+    padding: 0.5rem 0.75rem;
+  }
+  .category-form {
+    border-color: green;
   }
 }
+
+@media (min-width: 768px) {
+
+  .category-list {
+    padding-top: 40px;
+    border-top: 2px solid green;
+    margin-top: 60px;
+    border-radius: 40px;
+  }
+
+  .category-form {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    border: 2px solid green;
+    padding: 20px;
+    border-bottom-right-radius: 200px;
+    display: flex;
+    justify-content: space-around;
+  }
+  }
+  

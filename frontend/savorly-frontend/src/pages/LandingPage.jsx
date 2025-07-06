@@ -3,7 +3,6 @@ import './LandingPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUtensils, faPen, faStar, faUserPlus, faBook, faShare } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
-import Footer from '../components/Footer';
 
 const LandingPage = () => {
   return (
@@ -58,7 +57,6 @@ const LandingPage = () => {
           ))}
         </div>
       </section>
-      <Footer />
     </main>
   );
 };

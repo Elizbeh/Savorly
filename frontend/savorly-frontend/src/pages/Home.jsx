@@ -4,11 +4,11 @@ import "./Home.css";
 import RecipeCard from "../components/RecipeCard";
 import ErrorBoundary from "../components/ErrorBoundary";
 import Toast from "../components/Toast";
-import Footer from "../components/Footer";
-import { useAuth } from "../contexts/AuthContext"; // ✅ use auth context
+import { useAuth } from "../contexts/AuthContext";
 import fetchData from "../utils/fetchData";
 import handleDelete from "../utils/handleDelete";
 import handleSaveToggle from "../utils/handleSaveToggle";
+import HowToTips from "../components/HowToTips";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -99,7 +99,14 @@ const HomePage = () => {
                     .slice()
                     .reverse()
                     .map((r) => (
-                      <RecipeCard key={r.id} recipe={r} onDelete={(id) => handleDelete(id, user, setRecipes, setToastMessage)} onSave={(recipe, isSaved) => handleSaveToggle(recipe, isSaved, setSavedRecipes, setToastMessage)} />
+                      <RecipeCard
+                        key={r.id}
+                        recipe={r}
+                          onDelete={() => {
+                          setRecipes(prev => prev.filter(recipe => recipe.id !== r.id));
+                          setToastMessage("Recipe deleted successfully.");
+                        }}
+                      />
                     ))
                 ) : (
                   <p>No recipes available</p>
@@ -111,8 +118,7 @@ const HomePage = () => {
             </div>
           )}
         </section>
-
-        <Footer />
+        <HowToTips/>
       </div>
     </ErrorBoundary>
   );

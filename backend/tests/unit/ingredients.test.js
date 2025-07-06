@@ -12,7 +12,7 @@ describe('Ingredient Model', () => {
   const ingredients = ['Salt', 'Pepper', 'Olive Oil'];
 
   beforeEach(() => {
-    jest.clearAllMocks(); // Clear any previous mock calls before each test
+    jest.clearAllMocks();
   });
 
   describe('addIngredientsToRecipe', () => {
@@ -70,5 +70,10 @@ describe('Ingredient Model', () => {
         'Error fetching ingredients: Database error'
       );
     });
+  });
+   afterAll(async () => {
+    if (typeof pool.end === 'function') {
+      await pool.end();
+    }
   });
 });

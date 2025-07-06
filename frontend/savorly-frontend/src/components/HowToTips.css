@@ -1,0 +1,121 @@
+.how-to-tips {
+  padding: 50px 20px;
+  border: 2px solid var(--secondary-color);
+  margin: 40px;
+  border-radius: 50px;
+  background-color: #fffdf4;
+}
+
+.how-to-tips h2 {
+  font-size: 28px;
+  color: var(--secondary-color);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.tips-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* GIF Styling */
+.tip-gif img {
+  width: 300px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Tip cards layout */
+.tips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.tip-card {
+  width: 180px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  padding: 15px;
+  transition: transform 0.2s ease;
+}
+
+.tip-card:hover {
+  transform: translateY(-4px);
+}
+
+.tip-card h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #e06700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tip-card p {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Scrollable Tips on Small Screens */
+@media screen and (max-width: 768px) {
+   .how-to-tips {
+    padding: 30px 10px;
+    margin: 20px 10px;
+    border-radius: 20px;
+  }
+
+  .tips-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tip-gif img {
+    width: 90%;
+    max-width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .tips-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    width: 100%;
+    padding: 10px 0;
+    gap: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .tip-card {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: 200px;
+    min-width: 180px;
+  }
+
+  .tips-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tips-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

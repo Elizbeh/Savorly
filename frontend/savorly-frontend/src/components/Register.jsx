@@ -52,7 +52,7 @@ const Register = () => {
     try {
       setIsLoading(true);
       setError("");
-      setMessage(""); // Reset success message
+      setMessage("");
   
       // ✅ Sending registration request via Axios
       const { data } = await api.post("/api/auth/register", formData);
@@ -62,8 +62,8 @@ const Register = () => {
     } catch (err) {
       const errorMsg =
         err.response?.data?.message || "Error submitting form. Please try again.";
-      setError(errorMsg); // Set the error message here
-      console.log(errorMsg); // Log the error message
+      setError(errorMsg);
+      console.log(errorMsg);
     } finally {
       setIsLoading(false);
     }

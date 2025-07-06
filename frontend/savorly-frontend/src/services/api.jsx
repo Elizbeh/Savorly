@@ -1,29 +1,40 @@
-import axios from 'axios';
-import https from 'https';  // Import the https module
+import axios from "axios";
 
-// Define the HTTPS base URL
-const API_BASE_URL = 'https://localhost:5001';
+const isDev = import.meta.env.DEV;
+const isProd = import.meta.env.PROD;
 
-// Create an Axios instance
+let httpsAgent;
+
+if (isDev) {
+  const httpsModule = await import("https");
+  httpsAgent = new httpsModule.Agent({
+    rejectUnauthorized: false,
+  });
+}
+
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,  // Ensure cookies are included in requests
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,  // Allow self-signed certificates during local development (only for dev!)
-  }),
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+  ...(isDev && httpsAgent ? { httpsAgent } : {}),
 });
 
-// Add an interceptor for handling errors
+const loginRedirectUrl = isProd
+  ? `${import.meta.env.VITE_CLIENT_URL}/login`
+  : `${import.meta.env.VITE_CLIENT_URL}/login`;
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Avoid redirect loop
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      // Only redirect if not already on public pages like landing, login, register
+      const publicPaths = ["/", "/login", "/register", "/verify-email"];
+      const currentPath = window.location.pathname;
+
+      if (!publicPaths.includes(currentPath)) {
+        window.location.href = loginRedirectUrl;
       }
     } else {
-      console.error('API Error:', error.response?.data || error.message);
+      console.error("API Error:", error.response?.data || error.message);
     }
     return Promise.reject(error);
   }

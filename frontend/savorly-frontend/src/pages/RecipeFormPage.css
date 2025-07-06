@@ -1,30 +1,5 @@
-:root {
-  --color-background: white;
-  --color-form-background: rgba(255, 255, 255, 0.95);
-  --color-text: green;
-  --color-border: #ccc;
-  --color-focus-border: green;
-  --color-button-bg: linear-gradient(135deg, #ff8c42, #f76408);
-  --color-button-hover: #d55d13;
-  --color-button-disabled: #d3d3d3;
-  --color-ingredient-chip: #f2f2f2;
-  --color-remove-btn: #ff0000;
-  --color-add-btn: #ff8c42;
-  --color-add-btn-hover: #e0891c;
-  --color-modal-bg: rgba(0, 0, 0, 0.5);
-  --color-modal-content-bg: rgb(153, 198, 153);
-  --color-modal-border: green;
-  --color-modal-text: green;
-  --color-modal-button: green;
-  --color-modal-button-hover: rgb(182, 217, 182);
-  --color-dark-gradient-start: #1e1e1e;
-  --color-dark-gradient-end: #4a4747;
-}
-
 /* Container for the entire layout */
 .recipe-form-container {
-  margin-top: 40px;
-  padding-top: 20px;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -46,9 +21,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
-  margin: 1rem;
-  height: 100%;
-  max-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -193,6 +166,7 @@ label img {
   border-radius: 8px;
 }
 
+/* Responsive styles */
 @media (max-width: 768px) {
   .recipe-form-container {
     flex-direction: column;
@@ -244,15 +218,15 @@ label img {
 @media (min-width: 1024px) {
   .recipe-form-container {
     flex-direction: row;
-    background: linear-gradient(135deg, var(--color-dark-gradient-start), var(--color-dark-gradient-end));
+    height: 100%;
   }
 
   .background-image {
     display: block;
     flex: 3;
     background: url('../assets/images/blackmanjuice.avif') no-repeat center center;
-    background-size: contain;
-    height: 100%;
+    background-size: cover;
+    
   }
 
   .create-recipe-form {

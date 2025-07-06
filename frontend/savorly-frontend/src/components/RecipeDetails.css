@@ -1,7 +1,7 @@
 .recipe-detail-container {
-  max-width: var(--max-width);
-  margin: 2rem auto;
+  max-width: 70vw;
   padding: 2rem;
+  margin: 0 auto;
   background-color: var(--recipe-bg);
   border-radius: var(--card-radius);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -9,12 +9,10 @@
 }
 
 .recipe-detail-featured-img {
-  width: 100%;
-  height: auto;
-  max-height: 450px;
-  object-fit: cover;
+  margin-left: 25%;
+  margin-right: 25%;
+  width: 50%;
   border-radius: var(--card-radius);
-  margin-bottom: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -28,8 +26,11 @@
   font-size: 2.5rem;
   color: var(--primary-color);
   font-weight: 700;
-  border-bottom: 2px solid var(--primary-color);
+  border-bottom: 10px double var(--secondary-color);
+  border-radius: 50px;
   padding-bottom: 0.5rem;
+  margin-top: 2rem;
+  text-align: center;
   margin-bottom: 1rem;
 }
 

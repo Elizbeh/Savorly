@@ -1,32 +1,60 @@
 import request from 'supertest';
-import app from '../../app';  // Assuming 'app' is your Express app instance
-import pool from '../../config/db';  // Database connection
+import bcrypt from 'bcrypt';
+import app from '../../app.js';
+import pool from '../../config/db';
 
-// Clean up the database before and after tests
 beforeAll(async () => {
-  // Disable foreign key checks temporarily
+  // Disable foreign key checks
   await pool.query('SET foreign_key_checks = 0');
-  
-  // Clear the users and recipes tables
+
+  // Clean the database
   await pool.query('TRUNCATE TABLE users');
   await pool.query('TRUNCATE TABLE recipes');
-  
-  // Enable foreign key checks again
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash('Password123!', 10);
+
+  // Insert a verified test user
+  await pool.query(
+  `INSERT INTO users (
+    email, password_hash, first_name, last_name, role,
+    verification_token, verification_token_expires_at,
+    is_verified
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    'test@example.com',
+    hashedPassword,
+    'John',
+    'Doe',
+    'user',
+    null,
+    null,
+    1
+  ]
+);
+
+
+
+  // Insert a test recipe for that user (user_id = 1)
+  await pool.query(
+    'INSERT INTO recipes (title, description, user_id) VALUES (?, ?, ?)',
+    ['Test Recipe', 'Description', 1]
+  );
+
+  // Re-enable foreign key checks
   await pool.query('SET foreign_key_checks = 1');
 });
 
-
 afterAll(async () => {
-  await pool.end();  // Close the database connection after all tests
+  await pool.end();
 });
 
 describe('User Authentication Tests', () => {
-  // Test user registration
   it('should register a new user successfully', async () => {
     const userData = {
-      email: 'test@example.com',
-      password: 'password123',
-      first_name: 'John',
+      email: 'newuser@example.com',
+      password: 'Password123!',
+      first_name: 'Jane',
       last_name: 'Doe'
     };
 
@@ -34,27 +62,30 @@ describe('User Authentication Tests', () => {
       .post('/api/auth/register')
       .send(userData);
 
-    expect(response.status).toBe(201);  // HTTP status 201 Created
-    expect(response.body).toHaveProperty('email', userData.email);
-    expect(response.body).toHaveProperty('first_name', userData.first_name);
+    expect(response.status).toBe(201);
+    expect(response.body.user).toHaveProperty('email', userData.email);
+    expect(response.body.user).toHaveProperty('first_name', userData.first_name);
   });
 
-  // Test user login
   it('should log in an existing user', async () => {
-    const loginData = {
-      email: 'test@example.com',
-      password: 'password123'
-    };
+  const loginData = {
+    email: 'test@example.com',
+    password: 'Password123!'
+  };
 
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send(loginData);
+  const response = await request(app)
+    .post('/api/auth/login')
+    .send(loginData);
 
-    expect(response.status).toBe(200);  // HTTP status 200 OK
-    expect(response.body).toHaveProperty('token');  // Expect a token on login
-  });
+  expect(response.status).toBe(200);
+  expect(response.headers['set-cookie']).toBeDefined();
 
-  // Test login with wrong credentials
+  const cookies = response.headers['set-cookie'].join(';');
+  expect(cookies).toMatch(/authToken=/);
+  expect(cookies).toMatch(/refreshToken=/);
+});
+
+
   it('should return 401 for invalid login credentials', async () => {
     const loginData = {
       email: 'test@example.com',
@@ -65,7 +96,7 @@ describe('User Authentication Tests', () => {
       .post('/api/auth/login')
       .send(loginData);
 
-    expect(response.status).toBe(401);  // Unauthorized
+    expect(response.status).toBe(401);
     expect(response.body).toHaveProperty('message', 'Invalid credentials');
   });
 });

@@ -15,6 +15,7 @@ const VerifyEmail = () => {
   const token = params.get("token");
 
   useEffect(() => {
+     console.log("Token from URL:", token)
     if (!token) {
       setError("Verification token is missing.");
       setLoading(false);

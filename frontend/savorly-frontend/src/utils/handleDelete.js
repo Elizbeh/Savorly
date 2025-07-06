@@ -1,17 +1,43 @@
 import api from '../services/api';
 
-const handleDelete = async (recipeId, user, setRecipes, setToastMessage) => {
-  if (!user) return setToastMessage("Please log in to delete recipes.");
+const handleDelete = async ({
+  recipeId,
+  user,
+  onSuccess,
+  onError,
+  setMessage = () => {}
+}) => {
+  if (!user) {
+    setMessage("Please log in to delete recipes.");
+    return;
+  }
+
+  if (!recipeId) {
+    setMessage("Invalid recipe ID.");
+    return;
+  }
 
   try {
-    await api.delete(`/recipes/${recipeId}`, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
+    const response = await api.delete(`/api/recipes/${recipeId}`);
 
-    setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
+    if (response.status === 200 || response.status === 204) {
+      setMessage("Recipe deleted successfully.");
+      onSuccess?.();
+    } else {
+      console.error("Unexpected response:", response);
+      setMessage("Unexpected server response. Please try again.");
+      onError?.(response);
+    }
   } catch (error) {
-    console.error("Error deleting recipe:", error);
-    setToastMessage("Failed to delete recipe. Please try again later.");
+    if (error.response?.status === 404) {
+      setMessage("Recipe was already deleted or not found.");
+    } else if (error.response?.status === 401) {
+      setMessage("You must be logged in to delete recipes.");
+    } else {
+      setMessage("Failed to delete recipe. Please try again later.");
+    }
+    console.error("❌ Delete failed:", error);
+    onError?.(error);
   }
 };
 

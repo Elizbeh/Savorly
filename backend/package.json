@@ -8,9 +8,10 @@
     "dev": "cross-env NODE_ENV=development nodemon server.js",
     "migrate": "node ./migrations/runMigrations.js",
     "start": "node server.js",
-    "test": "jest --watch",
-    "test:unit": "jest --watch --testPathPattern=tests/unit",
-    "test:integration": "jest --watch --testPathPattern=tests/integration"
+    "test": "npx jest --watch",
+    "test:unit": "npx jest --watch --testPathPattern=tests/unit",
+    "test:integration": "npx jest --watch --testPathPattern=tests/integration",
+    "test:ci": "npx jest"
   },
   "keywords": [],
   "author": "",
@@ -31,20 +32,20 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
+    "mysql2": "^3.14.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
     "streamifier": "^0.1.1",
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.27.1",
     "@babel/preset-env": "^7.26.0",
     "@types/jsonwebtoken": "^9.0.7",
     "babel-jest": "^29.7.0",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "mockdate": "^3.0.5",
-    "mysql2": "^3.14.1",
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0"
   },
@@ -54,6 +55,12 @@
       "src",
       "config"
     ],
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": [
+      "dotenv/config"
+    ],
+    "moduleNameMapper": {
+      "^bcrypt$": "bcryptjs"
+    }
   }
 }

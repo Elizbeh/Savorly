@@ -1,61 +1,89 @@
-import { vi } from "vitest"; // Import Vitest mocking functions
-import api from "../../services/api"; // Import the API module
-import handleDelete from "../../utils/handleDelete"; // Import the function to test
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import handleDelete from '../../utils/handleDelete';
 
-vi.mock("../../services/api"); // Mock the API module
+vi.mock('../../services/api', () => ({
+  default: {
+    delete: vi.fn()
+  }
+}));
 
-describe("handleDelete", () => {
-  // Mocking setState functions
-  const mockSetRecipes = vi.fn();
-  const mockSetToastMessage = vi.fn();
+import api from '../../services/api';
 
-  const user = { token: "mocked-token" }; // Mocked user for testing
+describe('handleDelete', () => {
+  const user = { id: 'user123' };
+  const recipeId = 'recipe456';
+
+  const onSuccess = vi.fn();
+  const onError = vi.fn();
+  const setMessage = vi.fn();
 
   beforeEach(() => {
-    mockSetRecipes.mockClear(); // Clear previous calls before each test
-    mockSetToastMessage.mockClear(); // Clear previous calls before each test
+    vi.clearAllMocks();
   });
 
-  it("should show an error message if user is not logged in", async () => {
-    // Call handleDelete with no user (user is null)
-    await handleDelete(null, null, mockSetRecipes, mockSetToastMessage);
+  it('should call onSuccess and set success message on 200 response', async () => {
+    api.delete.mockResolvedValue({ status: 200 });
 
-    // Verify that the toast message was set for not being logged in
-    expect(mockSetToastMessage).toHaveBeenCalledWith("Please log in to delete recipes.");
+    await handleDelete({ recipeId, user, onSuccess, onError, setMessage });
+
+    expect(api.delete).toHaveBeenCalledWith(`/api/recipes/${recipeId}`);
+    expect(setMessage).toHaveBeenCalledWith('Recipe deleted successfully.');
+    expect(onSuccess).toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
   });
 
-  it("should delete the recipe and update the recipes list on success", async () => {
-    const recipeId = 1; // Example recipeId
-    const recipesBefore = [{ id: 1, name: "Recipe 1" }, { id: 2, name: "Recipe 2" }];
-    const recipesAfter = [{ id: 2, name: "Recipe 2" }];
+  it('should show login message if user is not provided', async () => {
+    await handleDelete({ recipeId, user: null, onSuccess, onError, setMessage });
 
-    // Mock the successful API delete response
-    api.delete.mockResolvedValueOnce({});
-
-    // Call handleDelete with the user and mocked setRecipes
-    await handleDelete(recipeId, user, mockSetRecipes, mockSetToastMessage);
-
-    // Check if the recipe was deleted from the recipes list
-    expect(mockSetRecipes).toHaveBeenCalledWith(expect.any(Function));
-
-    // The update function passed to setRecipes should filter out the deleted recipe
-    const setRecipesCallback = mockSetRecipes.mock.calls[0][0];
-    expect(setRecipesCallback(recipesBefore)).toEqual(recipesAfter);
-
-    // Ensure that no toast message was shown for errors
-    expect(mockSetToastMessage).not.toHaveBeenCalled();
+    expect(setMessage).toHaveBeenCalledWith('Please log in to delete recipes.');
+    expect(api.delete).not.toHaveBeenCalled();
   });
 
-  it("should show an error message if the API call fails", async () => {
-    const recipeId = 1;
+  it('should show invalid ID message if recipeId is missing', async () => {
+    await handleDelete({ recipeId: null, user, onSuccess, onError, setMessage });
 
-    // Mock the API delete call to fail
-    api.delete.mockRejectedValueOnce(new Error("Failed to delete"));
+    expect(setMessage).toHaveBeenCalledWith('Invalid recipe ID.');
+    expect(api.delete).not.toHaveBeenCalled();
+  });
 
-    // Call handleDelete with the user
-    await handleDelete(recipeId, user, mockSetRecipes, mockSetToastMessage);
+  it('should handle 404 error correctly', async () => {
+    const error = { response: { status: 404 } };
+    api.delete.mockRejectedValue(error);
 
-    // Verify that the error toast message is shown
-    expect(mockSetToastMessage).toHaveBeenCalledWith("Failed to delete recipe. Please try again later.");
+    await handleDelete({ recipeId, user, onSuccess, onError, setMessage });
+
+    expect(setMessage).toHaveBeenCalledWith('Recipe was already deleted or not found.');
+    expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it('should handle 401 error correctly', async () => {
+    const error = { response: { status: 401 } };
+    api.delete.mockRejectedValue(error);
+
+    await handleDelete({ recipeId, user, onSuccess, onError, setMessage });
+
+    expect(setMessage).toHaveBeenCalledWith('You must be logged in to delete recipes.');
+    expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it('should handle unknown errors', async () => {
+    const error = new Error('Server crashed');
+    api.delete.mockRejectedValue(error);
+
+    await handleDelete({ recipeId, user, onSuccess, onError, setMessage });
+
+    expect(setMessage).toHaveBeenCalledWith('Failed to delete recipe. Please try again later.');
+    expect(onError).toHaveBeenCalledWith(error);
+  });
+
+  it('should handle unexpected non-200 response', async () => {
+    const response = { status: 500 };
+    api.delete.mockResolvedValue(response);
+
+    await handleDelete({ recipeId, user, onSuccess, onError, setMessage });
+
+    expect(setMessage).toHaveBeenCalledWith('Unexpected server response. Please try again.');
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledWith(response);
   });
 });

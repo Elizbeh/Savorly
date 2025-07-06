@@ -1,14 +1,12 @@
 /* Profile Page Styling */
 .profile-page {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-light); /* Use global background color */
-  padding: 30px;
+  padding: 40px;
   border-radius: 10px;
   max-width: 800px;
-  margin-top: 80px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;
+  margin: 0 auto;
   gap: 20px;
   flex-wrap: wrap;
 }
@@ -16,8 +14,6 @@
 .profile-title {
   font-size: 2.5rem;
   font-weight: 600;
-  margin-bottom: 10px;
-  margin-top: 2rem;
   text-align: center;
   width: 100%;
   color: var(--secondary-color); /* Use global secondary color */
@@ -69,7 +65,7 @@
 }
 
 .retry-btn {
-  background: var(--button-gradient); /* Use global button gradient */
+  background: var(--button-gradient);
   color: white;
   border: none;
   padding: 6px 14px;
@@ -83,7 +79,7 @@
 }
 
 .retry-btn:hover {
-  background-color: var(--btn-hover); /* Use global button hover color */
+  background-color: var(--btn-hover);
 }
 
 .retry-btn svg {
@@ -109,7 +105,7 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 4px solid var(--secondary-color); /* Use global secondary color */
+  border: 4px solid var(--secondary-color);
   object-fit: cover;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
@@ -144,8 +140,8 @@
 }
 
 .custom-file-label:hover {
-  border: 2px dotted var(--btn-hover); /* Use global button hover color */
-  color: var(--btn-hover); /* Use global button hover color */
+  border: 2px dotted var(--btn-hover);
+  color: var(--btn-hover);
 }
 
 .file-instruction,
@@ -176,20 +172,20 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 1rem;
-  background-color: var(--input-bg); /* Use global input background color */
-  color: var(--text-dark); /* Use global text color */
+  background-color: var(--input-bg);
+  color: var(--text-dark);
   transition: border 0.3s ease;
 }
 
 .text-input:focus,
 .bio-input:focus {
-  border: 1px solid var(--primary-color); /* Use global primary color */
+  border: 1px solid var(--primary-color);
   outline: none;
 }
 
 .text-input:disabled,
 .bio-input:disabled {
-  background-color: var(--input-disabled); /* Use global input disabled color */
+  background-color: var(--input-disabled);
 }
 
 .profile-view .text-input,
@@ -221,13 +217,13 @@
 
 .save-btn,
 .edit-btn {
-  background: var(--button-gradient); /* Use global button gradient */
+  background: var(--button-gradient);
   color: white;
 }
 
 .save-btn:hover,
 .edit-btn:hover {
-  background-color: var(--btn-hover); /* Use global button hover color */
+  background-color: var(--btn-hover);
 }
 
 .cancel-btn {
@@ -255,8 +251,6 @@
   .profile-page {
     flex-direction: column;
     max-width: 100%;
-    margin-top: 200px;
-    padding-top: 100px;
     gap: 20px;
   }
 

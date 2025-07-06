@@ -1,6 +1,5 @@
-// src/contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
-import api from "../services/api"; // Import the configured Axios instance
+import api from "../services/api";
 
 const AuthContext = createContext();
 
@@ -15,7 +14,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.get("/api/auth/user");
       setUser(data);
     } catch (err) {
-      console.error("Auth fetch error:", err);
+      console.error("Auth fetch error:", err.response?.data || err.message);
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -23,15 +22,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+  if (!user) fetchUser();
+}, []);
+
 
   const logout = async () => {
     try {
       await api.post("/api/auth/logout");
-      // Clear the authentication token from cookies
-      Cookies.remove("authToken");
-      Cookies.remove("refreshToken");
+      // Backend clears cookies via HTTP-only flags
       setUser(null);
     } catch (err) {
       console.error("Logout error:", err);

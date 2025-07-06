@@ -2,20 +2,22 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh;
-  margin-top: 80px;
+  
 }
 
 /* Hero Section */
 .hero {
   position: relative;
   width: 100vw;
-  padding-top: 100px;
-  background: url('../assets/images/banner.png') no-repeat center center/cover;
+  background: url('../assets/images/banner.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
   justify-content: center;
   align-items: center;
   text-align: center;
   color: white;
+
 }
 
 .hero::before {
@@ -32,14 +34,24 @@
 .landing-page .hero-content {
   position: relative;
   z-index: 2;
-  padding: 70px;
+  padding: 20px;
 }
 
 .hero h1 {
+  margin-top: 120px;
   margin-bottom: 20px;
-  color:  #5aea66;
+  color: white;
+  font-size: 30px;
 }
 
+.hero-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 /* Typewriting Animation */
 @keyframes typewriter {
   0% {
@@ -54,11 +66,11 @@
 
 .hero-subtitle {
   font-size: 20px;
-  color: rgb(252, 238, 238);
+  color: white;
   margin-bottom: 30px;
-  display: inline-block; /* Make it inline-block so width can be controlled */
-  white-space: nowrap; /* Prevents text from wrapping */
-  overflow: hidden; /* Ensures the text starts hidden */
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
   width: 0; /* Start with no visible text */
   border-right: 4px solid #e0771d; /* Simulates a typing cursor */
   animation: typewriter 3s steps(30) 1s 1 normal both; /* 3s duration, steps for each character */
@@ -87,7 +99,7 @@
 
 /* Features Section */
 .features {
-  padding: 80px 20px;
+  padding: 60px 20px;
   text-align: center;
   background: #f9f9f9;
 }
@@ -110,7 +122,7 @@
   background: #fff;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 6px 12px #2C3E50;
+  box-shadow: 0 0px 5px #5aea66;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -127,7 +139,7 @@
 
 /* How It Works Section */
 .how-it-works {
-  padding: 80px 20px;
+  padding:50px 20px;
   background: #fff;
   text-align: center;
 }
@@ -144,7 +156,7 @@
   background: #f9f9f9;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 4px 8px #2C3E50;
+  box-shadow: 0 0px 5px #5aea66;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 

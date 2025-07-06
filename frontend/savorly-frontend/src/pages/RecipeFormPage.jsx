@@ -7,7 +7,7 @@ import { FaExclamationCircle } from 'react-icons/fa';
 
 
 const RecipeForm = () => {
-  const { id } = useParams(); // Get the recipe ID (if editing)
+  const { id } = useParams();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [prepTime, setPrepTime] = useState('');
@@ -17,13 +17,13 @@ const RecipeForm = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null); // For previewing image
-  const [existingImageUrl, setExistingImageUrl] = useState(null); // Store the existing image URL
+  const [imagePreview, setImagePreview] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [errorLoadingCategories, setErrorLoadingCategories] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); // Error message state
-  const [showModal, setShowModal] = useState(false); // State to manage modal visibility
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const navigate = useNavigate();
 
@@ -59,7 +59,7 @@ const RecipeForm = () => {
         const response = await api.get('/api/categories');
         setCategories(response.data);
         setLoadingCategories(false);
-        console.log('Categories fetched:', response.data); // Debug categories response
+        console.log('Categories fetched:', response.data);
       } catch (err) {
         console.error(err);
         setErrorLoadingCategories(true);
@@ -76,7 +76,7 @@ const RecipeForm = () => {
       const fetchRecipe = async () => {
         try {
           const response = await api.get(`/api/recipes/${id}`);
-          console.log("Fetched recipe data:", response.data); // Log the full fetched response data
+          console.log("Fetched recipe data:", response.data);
           
           const data = response.data;
           

@@ -1,69 +1,75 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import "font-awesome/css/font-awesome.min.css";
-import savorlyLogo from "../assets/images/logo.png"; 
+import savorlyLogo from "../assets/images/logo.png";
 import { useAuth } from '../contexts/AuthContext';
-import { validateEmail, validatePassword } from "../utils/validation";  // Imported from utils/validation.js
-import { loginUser } from "../services/auth";  // Imported from services/auth.js
+import { validateEmail, validatePassword } from "../utils/validation";
+import { loginUser } from "../services/auth";
 
 const Login = () => {
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null); // local state for triggering navigation
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
     setError("");
-  
-    // Validate email and password using the imported functions
-    if (!validateEmail(email)) return setError("Invalid email format");
-    console.log("validateEmail:", validateEmail(email));
 
-    if (!validatePassword(password)) return setError("Password must be at least 8 characters long and contain a letter, a number, and a special character");
-  
-    console.log("Sending Login Request:", { email, password });
-  
+    if (!validateEmail(email)) {
+      return setError("Invalid email format");
+    }
+    if (!validatePassword(password)) {
+      return setError("Password must be at least 8 characters long and contain a letter, a number, and a special character");
+    }
+
     try {
-      const user = await loginUser({ email, password });  // Call the loginUser function from services/auth.js
-  
-      console.log("Login successful. User:", user);
-      setUser(user);
-      if (user.role === 'admin') {
+      const userData = await loginUser({ email, password });
+      console.log("Login success:", userData);
+
+      setUser(userData);   
+      console.log("User role:", user.role);
+console.log("Navigating...");
+        // updates global AuthContext
+      setLoggedInUser(userData);   // triggers navigation in useEffect
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || "Something went wrong. Please try again later.";
+      console.error("Login error:", err);
+      setError(errorMsg);
+    }
+  };
+
+  useEffect(() => {
+    if (loggedInUser) {
+      if (loggedInUser.role === 'admin') {
+        console.log("Navigating to admin-dashboard...");
         navigate("/admin-dashboard");
       } else {
+        console.log("Navigating to home...");
         navigate("/home");
       }
-      
-    } catch (err) {
-      console.error("Login error:", err);
-      const errorMsg = err.response?.data?.message || "Something went wrong. Please try again later.";
-      setError(errorMsg);
-      console.log("Error state:", errorMsg);
-
     }
-    
-  };
+  }, [loggedInUser, navigate]);
 
   return (
     <div className="login-container">
       <div className="login-image"></div>
       <div className="login-form-wrapper">
-        <img src={savorlyLogo} alt="Savorly Logo" className="login-logo"  />
+        <img src={savorlyLogo} alt="Savorly Logo" className="login-logo" />
         <p className="subtitle">Log in to explore delicious recipes!</p>
 
-        <form onSubmit={handleSubmit} className="login-form">
         {error && (
-  <p className="error-message">
-    <i className="fa fa-exclamation-circle error-icon" aria-hidden="true"></i>
-    {error}
-  </p>
-)}
+          <p className="error-message">
+            <i className="fa fa-exclamation-circle error-icon" aria-hidden="true"></i>
+            {error}
+          </p>
+        )}
 
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <input
               type="text"
@@ -87,6 +93,7 @@ const Login = () => {
               onClick={() => setPasswordVisible(!passwordVisible)}
             ></i>
           </div>
+
           <button type="submit" className="login-btn">Log In</button>
         </form>
 

@@ -2,24 +2,24 @@ import pool from '../config/db.js';
 
 // Create a user profile
 
-export const createUserProfile = async (profileData) => {
+export const createUserProfile = async (connection, profileData) => {
   try {
-      const query = `
-          INSERT INTO user_profiles 
-          (user_id, first_name, last_name, bio, avatar_url) 
-          VALUES (?, ?, ?, ?, ?)
-      `;
-      const result = await pool.query(query, [
-          profileData.user_id,
-          profileData.first_name,
-          profileData.last_name,
-          profileData.bio,
-          profileData.avatar_url
-      ]);
-      return result;
+    const query = `
+      INSERT INTO user_profiles 
+      (user_id, first_name, last_name, bio, avatar_url) 
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const [result] = await connection.query(query, [
+      profileData.user_id,
+      profileData.first_name,
+      profileData.last_name,
+      profileData.bio,
+      profileData.avatar_url,
+    ]);
+    return result;
   } catch (error) {
-      console.error('Error creating user profile:', error);
-      throw new Error('Failed to create user profile');
+    console.error('Error creating user profile:', error);
+    throw new Error('Failed to create user profile');
   }
 };
 
@@ -28,7 +28,7 @@ export const createUserProfile = async (profileData) => {
 export const getProfileByUserId = async (userId) => {
     const query = 'SELECT * FROM user_profiles WHERE user_id = ?';
     const [rows] = await pool.query(query, [userId]);
-    return rows[0]; // Return the first matching profile
+    return rows[0];
 };
 
 // Update profile (bio and avatar)

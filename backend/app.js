@@ -5,6 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
+
 import authRoutes from './routes/authRoutes.js';
 import recipeRoutes from './routes/recipesRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -14,10 +15,8 @@ import { router as savedRecipesRoutes } from './routes/savedRecipesRoutes.js';
 import { authenticate } from './middleware/authenticate.js';
 import logger from './config/logger.js';
 
-
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
 dotenv.config({ path: path.resolve(process.cwd(), envFile) });
-
 
 if (!process.env.JWT_SECRET) {
   logger.error("JWT_SECRET is missing in environment variables!");
@@ -25,23 +24,25 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+app.set('trust proxy', 1);  // If behind proxy like nginx or hosting platform
 
 const allowedOrigins = [
-   ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
-  'https://localhost:5173',
+  ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
   'https://localhost:5174',
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    console.log('Incoming Origin:', origin);
+    logger.info('Incoming Origin:', origin);
     if (!origin) {
-      callback(null, true);
-    } else if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS`));
+      // Allow non-browser requests like curl or server-to-server calls
+      return callback(null, true);
     }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    logger.warn(`Origin ${origin} not allowed by CORS`);
+    return callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
@@ -56,13 +57,18 @@ app.use(cookieParser());
 
 logger.info('Middlewares applied: CORS, Helmet, JSON Parser, Cookie Parser');
 
-// Static file handling
+// Static file handling with proper CORS headers
 app.use('/uploads', (req, res, next) => {
+  // Set to your frontend origin for credentials to work
+  const origin = req.get('Origin');
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Cache-Control', 'public, max-age=0');
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET'); 
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   next();
 }, express.static(path.join(process.cwd(), 'uploads')));
 
@@ -82,8 +88,8 @@ app.use((err, req, res, next) => {
     logger.warn('Validation error', { message: err.message });
     return res.status(400).json({ message: err.message });
   }
-  if (err.name === 'UnauthorizedError') {
-    logger.warn('Unauthorized access attempt');
+  if (err.name === 'UnauthorizedError' || err.message === 'Not allowed by CORS') {
+    logger.warn('Unauthorized or CORS access attempt', { error: err.message });
     return res.status(401).json({ message: 'Unauthorized, please log in again' });
   }
   logger.error('Unhandled server error', { message: err.message, stack: err.stack });
@@ -106,6 +112,12 @@ app.post('/test-token', (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('Savorly API is running!');
+});
+
+app.get('/test-origin', (req, res) => {
+  const originHeader = req.get('Origin');
+  logger.info('Received request from Origin:', originHeader);
+  res.json({ origin: originHeader });
 });
 
 export default app;

@@ -1,5 +1,5 @@
+import 'dotenv/config'
 import mysql from 'mysql2';
-import 'dotenv/config';
 import logger from '../config/logger.js';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -10,10 +10,9 @@ const pool = mysql
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    // use SSL only for prod
+    // SSL only for prod
     ...(isProd && {
       ssl: {
-        // with TiDB Cloud you usually just need this flag
         rejectUnauthorized: true,
       },
     }),

@@ -1,12 +1,26 @@
-const handleSaveToggle = (recipe, isSaved, setSavedRecipes, setToastMessage) => {
-    if (isSaved) {
-      setSavedRecipes((prev) => [...prev, recipe]);
-    } else {
-      setSavedRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
-    }
-  
-    setToastMessage(isSaved ? "Recipe saved!" : "Recipe removed from saved.");
-  };
-  
-  export default handleSaveToggle;
-  
+import api from '../services/api';
+
+/**
+ * Toggles the save status of a recipe (save or unsave)
+ *  @param {string} userId
+ * @param {string} recipeId - ID of the recipe to toggle
+ * @param {boolean} isCurrentlySaved - Whether it's currently saved
+ * @param {function} onSuccess - Callback when successful
+ * @param {function} onError - Callback when failed
+ */
+const handleSaveToggle = async (recipeId, onSuccess, onError) => {
+  if (!recipeId) {
+    onError?.('Missing recipeId');
+    return;
+  }
+
+  try {
+    const response = await api.post('/api/saved-recipes/toggle-save', { recipeId });
+    onSuccess?.(response.data);
+  } catch (error) {
+    onError?.(error.response?.data?.message || 'Something went wrong');
+  }
+};
+
+
+export default handleSaveToggle;

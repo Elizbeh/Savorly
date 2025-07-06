@@ -9,10 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend/savorly-frontend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,13 +18,29 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Clean workspace
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build the app
+        env:
+          ROLLUP_DISABLE_NATIVE: 1
+          VITE_API_URL: https://savorly-backend-c6hu.onrender.com
+          VITE_CLIENT_URL: https://elizbeh.github.io
         run: npm run build
 
+      - name: Set Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Configure Git for GitHub Pages deploy
+        run: git remote set-url origin https://x-access-token:${{ secrets.PERSONAL_GH_TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Deploy to GitHub Pages
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run deploy
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_GH_TOKEN }}

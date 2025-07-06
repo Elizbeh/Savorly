@@ -1,7 +1,6 @@
-// src/components/RecipeDetail.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../services/api'; // import the Axios instance
+import api from '../services/api';
 import './RecipeDetails.css';
 
 const RecipeDetail = () => {

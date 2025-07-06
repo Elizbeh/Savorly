@@ -2,11 +2,16 @@ import pool from '../config/db.js';
 
 // Save a recipe
 export const saveRecipe = async (userId, recipeId) => {
-  return pool.query(
-    'INSERT INTO saved_recipes (user_id, recipe_id) VALUES (?, ?)',
-    [userId, recipeId]
-  );
+  try {
+    await pool.query(
+      'INSERT IGNORE INTO saved_recipes (user_id, recipe_id) VALUES (?, ?)',
+      [userId, recipeId]
+    );
+  } catch (err) {
+    throw new Error('Could not save recipe');
+  }
 };
+
 
 // Toggle save/unsave
 export const toggleSave = async (userId, recipeId) => {
@@ -23,9 +28,10 @@ export const toggleSave = async (userId, recipeId) => {
     return { saved: false };
   } else {
     await pool.query(
-      'INSERT INTO saved_recipes (user_id, recipe_id) VALUES (?, ?)',
-      [userId, recipeId]
-    );
+  'INSERT INTO saved_recipes (user_id, recipe_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE user_id=user_id',
+  [userId, recipeId]
+);
+
     return { saved: true };
   }
 };

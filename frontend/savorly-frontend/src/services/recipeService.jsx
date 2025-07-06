@@ -15,7 +15,7 @@ export const updateRecipe = async (id, updatedData) => {
 
     if (response.ok) {
       console.log('Recipe updated successfully');
-      return { status: 200 }; // Return the status for consistency
+      return { status: 200 };
     } else {
       const error = await response.json();
       console.error('Error updating recipe:', error.message);
@@ -23,7 +23,7 @@ export const updateRecipe = async (id, updatedData) => {
     }
   } catch (err) {
     console.error('Request failed:', err.message);
-    return { status: 500, message: 'Request failed' }; // Handle errors gracefully
+    return { status: 500, message: 'Request failed' };
   }
 };
 

@@ -1,14 +1,12 @@
-// src/services/auth.js
-import api from './api';
-import Cookies from 'js-cookie';
+// services/auth.js
+import api from "./api";
 
 export const loginUser = async ({ email, password }) => {
   const response = await api.post("/api/auth/login", { email, password });
-  const { token, user } = response.data;
 
-  if (!token) throw new Error("Token missing in response");
+  const { user } = response.data;
 
-  Cookies.set("authToken", token, { expires: 7, sameSite: "Strict", path: '/' });
+  if (!user) throw new Error("User not returned from login response");
 
   return user;
 };

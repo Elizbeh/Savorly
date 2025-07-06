@@ -6,14 +6,13 @@ jest.mock('../../config/db.js');
 describe('Category Model Tests', () => {
 
   beforeAll(() => {
-    // Mock initial queries if necessary
+    // Mock initial queries
     pool.query.mockResolvedValue([]);
+    pool.end = jest.fn();
   });
 
-  afterAll( async () => {
-    // Close the pool after tests
-    await pool.end();
-  });
+  
+
 
   it('should create a category successfully', async () => {
     const mockCategory = { name: 'Dessert' };

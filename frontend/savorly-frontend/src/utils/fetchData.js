@@ -3,8 +3,8 @@ import api from '../services/api';
 const fetchData = async (setRecipes, setCategories, setRecipesError, setCategoriesError, setToastMessage) => {
   try {
         const [recipeResponse, categoryResponse] = await Promise.all([
-          api.get("/api/recipes", { withCredentials: "true" }),
-          api.get("/api/categories", { withCredentials: "true" }),
+          api.get("/api/recipes"),
+          api.get("/api/categories", ),
         ]);
         
     setRecipes(recipeResponse.data);

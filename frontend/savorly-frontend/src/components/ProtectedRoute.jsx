@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-// You can pass `requiredRole` prop to specify the role required for access
+
 const ProtectedRoute = ({ element, requiredRole }) => {
   const { user, isLoading } = useAuth();
 

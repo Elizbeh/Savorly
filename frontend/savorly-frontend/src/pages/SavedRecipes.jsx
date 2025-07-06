@@ -1,69 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import Cookies from 'js-cookie';
 import './SavedRecipes.css';
+import handleSaveToggle from '../utils/handleSaveToggle';
 
 const RECIPES_PER_PAGE = 6;
 
 const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
   const [savedRecipes, setSavedRecipes] = useState(savedRecipesProp || []);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [itemsToShow, setItemsToShow] = useState(6);
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const authToken = Cookies.get('authToken');
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (!savedRecipesProp) {
       const fetchSavedRecipes = async () => {
-        if (!authToken) {
-          setMessage({ type: 'error', text: 'You must be logged in to view saved recipes.' });
-          return;
-        }
-
         try {
-          const response = await api.get('/api/saved-recipes', {
-            headers: { Authorization: `Bearer ${authToken}` },
-          });
+          const response = await api.get('/api/saved-recipes');
           setSavedRecipes(response.data);
         } catch (error) {
           console.error('Error fetching saved recipes:', error);
-          setMessage({ type: 'error', text: 'Failed to load saved recipes. Please try again.' });
+          if (error.response?.status === 401) {
+            setMessage({ type: 'error', text: 'You must be logged in to view saved recipes.' });
+          } else {
+            setMessage({ type: 'error', text: 'Failed to load saved recipes. Please try again.' });
+          }
         }
       };
       fetchSavedRecipes();
     }
-  }, [savedRecipesProp, authToken]);
+  }, [savedRecipesProp]);
 
-  const handleToggleSave = async (recipeId) => {
-    if (!authToken) {
-      setMessage({ type: 'error', text: 'You must be logged in to unsave a recipe.' });
-      return;
-    }
+  const handleToggleSave = (recipeId) => {
+    const isCurrentlySaved = true; // Always true in SavedRecipes (since these are saved)
 
-    try {
-      const response = await api.delete('/api/saved-recipes/unsave', {
-        headers: { Authorization: `Bearer ${authToken}` },
-        data: { recipeId },
-      });
-
-      if (response.status == 200) {
+    handleSaveToggle(
+      recipeId,
+      isCurrentlySaved,
+      () => {
         const updated = savedRecipes.filter((r) => r.id !== recipeId);
         setSavedRecipes(updated);
-      }
- 
-      //Adjust current page if last item on last page was
-      const maxPage = Math.ceil(updated.length /RECIPES_PER_PAGE);
-      if (currentPage > maxPage) {
-        setCurrentPage(maxPage);
-      }
 
-      setMessage({type: 'success', text: 'Recipe removed from saved.'})
-    } catch (error) {
-      console.error('Error unsaving recipe:', error);
-      setMessage({ type: 'error', text: 'Failed to unsave recipe. Try again.' });
-    } 
+        // Adjust current page if needed
+        const maxPage = Math.ceil(updated.length / RECIPES_PER_PAGE) || 1;
+        if (currentPage > maxPage) setCurrentPage(maxPage);
+
+        setMessage({ type: 'success', text: 'Recipe removed from saved.' });
+      },
+      (error) => {
+        const errorMsg =
+          error.response?.data?.message || error.message || 'Failed to update save state. Try again.';
+        if (error.response?.status === 401) {
+          setMessage({ type: 'error', text: 'You must be logged in to change save state.' });
+        } else {
+          setMessage({ type: 'error', text: errorMsg });
+        }
+      }
+    );
   };
 
   const totalPages = Math.ceil(savedRecipes.length / RECIPES_PER_PAGE);
@@ -85,7 +77,7 @@ const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
       {currentRecipes.length ? (
         <>
           <div className="recipes-grid">
-            {currentRecipes.slice(0, itemsToShow).map((recipe) => (
+            {currentRecipes.map((recipe) => (
               <div key={recipe.id} className="saved-recipe-item">
                 <img
                   src={recipe.image_url || '/default_recipe_image.png'}
@@ -100,7 +92,9 @@ const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
                     Remove from Saved
                   </button>
                   <Link to={`/recipe/${recipe.id}`} className="info-link" title="View Details">
-                    <span role="img" aria-label="info">ℹ️</span>
+                    <span role="img" aria-label="info">
+                      ℹ️
+                    </span>
                   </Link>
                 </div>
               </div>
@@ -129,7 +123,7 @@ const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
           </div>
         </>
       ) : (
-        <p>No saved recipes found.</p>
+        <p className='empty'>No saved recipes found.</p>
       )}
     </div>
   );

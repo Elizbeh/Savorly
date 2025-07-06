@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
-import api from '../services/api'; // Custom Axios instance
+import api from '../services/api';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
       const { data } = await api.post('/api/categories', { name: categoryName });
       setCategories([...categories, data]);
       setCategoryName('');
-      setCategoryError(null); // Clear error if category creation is successful
+      setCategoryError(null);
     } catch (err) {
       setCategoryError('Failed to create category.');
     }
@@ -113,7 +113,7 @@ const AdminDashboard = () => {
       <div className="category-form">
         <h2>Create New Category</h2>
         <form onSubmit={handleCreateCategory}>
-          <div>
+          <div className='form-label-input'>
             <label htmlFor="categoryName">Category Name</label>
             <input
               type="text"

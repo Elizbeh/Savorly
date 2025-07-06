@@ -1,50 +1,64 @@
-import { vi } from "vitest"; // Import Vitest mocking functions
-import handleSaveToggle from "../../utils/handleSaveToggle"; // Import the function to test
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import handleSaveToggle from "../../utils/handleSaveToggle";
+import api from "../../services/api";
+
+// Mock the `api.post` method
+vi.mock("../../services/api", () => ({
+  default: {
+    post: vi.fn()
+  }
+}));
 
 describe("handleSaveToggle", () => {
-  const mockSetSavedRecipes = vi.fn();
-  const mockSetToastMessage = vi.fn();
-
-  const recipe = { id: 1, name: "Recipe 1" };
+  const recipeId = "abc123";
+  const mockOnSuccess = vi.fn();
+  const mockOnError = vi.fn();
 
   beforeEach(() => {
-    mockSetSavedRecipes.mockClear(); // Clear previous calls before each test
-    mockSetToastMessage.mockClear(); // Clear previous calls before each test
+    vi.clearAllMocks();
   });
 
-  it("should add recipe to saved list and show 'Recipe saved!' when isSaved is true", () => {
-    const isSaved = true;
+  it("should call onSuccess with data when toggle is successful", async () => {
+    const mockResponseData = { saved: true };
 
-    // Call handleSaveToggle with isSaved = true
-    handleSaveToggle(recipe, isSaved, mockSetSavedRecipes, mockSetToastMessage);
+    api.post.mockResolvedValueOnce({ data: mockResponseData });
 
-    // Ensure that setSavedRecipes is called with the new saved recipe
-    expect(mockSetSavedRecipes).toHaveBeenCalledWith(expect.any(Function));
+    await handleSaveToggle(recipeId, mockOnSuccess, mockOnError);
 
-    // Check that the function passed to setSavedRecipes adds the recipe to the saved list
-    const setSavedRecipesCallback = mockSetSavedRecipes.mock.calls[0][0];
-    expect(setSavedRecipesCallback([])).toEqual([recipe]); // Assuming the previous saved list is empty
-
-    // Ensure the toast message is set to "Recipe saved!"
-    expect(mockSetToastMessage).toHaveBeenCalledWith("Recipe saved!");
+    expect(api.post).toHaveBeenCalledWith("/api/saved-recipes/toggle-save", { recipeId });
+    expect(mockOnSuccess).toHaveBeenCalledWith(mockResponseData);
+    expect(mockOnError).not.toHaveBeenCalled();
   });
 
-  it("should remove recipe from saved list and show 'Recipe removed from saved.' when isSaved is false", () => {
-    const isSaved = false;
-    const savedRecipesBefore = [{ id: 1, name: "Recipe 1" }, { id: 2, name: "Recipe 2" }];
-    const savedRecipesAfter = [{ id: 2, name: "Recipe 2" }];
+  it("should call onError with message when API call fails with message", async () => {
+    const errorMessage = "Unauthorized";
+    api.post.mockRejectedValueOnce({
+      response: {
+        data: {
+          message: errorMessage
+        }
+      }
+    });
 
-    // Call handleSaveToggle with isSaved = false
-    handleSaveToggle(recipe, isSaved, mockSetSavedRecipes, mockSetToastMessage);
+    await handleSaveToggle(recipeId, mockOnSuccess, mockOnError);
 
-    // Ensure that setSavedRecipes is called with the updated saved list (excluding the removed recipe)
-    expect(mockSetSavedRecipes).toHaveBeenCalledWith(expect.any(Function));
+    expect(mockOnError).toHaveBeenCalledWith(errorMessage);
+    expect(mockOnSuccess).not.toHaveBeenCalled();
+  });
 
-    // Check that the function passed to setSavedRecipes filters out the removed recipe
-    const setSavedRecipesCallback = mockSetSavedRecipes.mock.calls[0][0];
-    expect(setSavedRecipesCallback(savedRecipesBefore)).toEqual(savedRecipesAfter);
+  it("should call onError with fallback message if no error message is provided", async () => {
+    api.post.mockRejectedValueOnce(new Error("Network error"));
 
-    // Ensure the toast message is set to "Recipe removed from saved."
-    expect(mockSetToastMessage).toHaveBeenCalledWith("Recipe removed from saved.");
+    await handleSaveToggle(recipeId, mockOnSuccess, mockOnError);
+
+    expect(mockOnError).toHaveBeenCalledWith("Something went wrong");
+  });
+
+  it("should call onError with 'Missing recipeId' if recipeId is missing", async () => {
+    await handleSaveToggle(undefined, mockOnSuccess, mockOnError);
+
+    expect(mockOnError).toHaveBeenCalledWith("Missing recipeId");
+    expect(api.post).not.toHaveBeenCalled();
+    expect(mockOnSuccess).not.toHaveBeenCalled();
   });
 });

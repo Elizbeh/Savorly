@@ -5,29 +5,31 @@
   justify-content: space-between;
   align-items: center;
   background: var(--navbar-gradient, linear-gradient(135deg, #1e1e1e, #4a4747)); /* Use global gradient or fallback */
-  padding: 15px 40px;
+  padding: 0px 20px;
   width: 100%;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
   height: var(--navbar-height); /* Navbar height using global variable */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 6px  #5aea66;;
   flex-wrap: nowrap; /* Prevent wrapping on larger screens */
-  margin-bottom: 100px ;
+
+
 }
 
 /* Logo Styling */
 .logo {
   display: flex;
+  justify-content: center;
   align-items: center;
   text-decoration: none;
   flex-shrink: 0;
-  min-width: 80px;
+  min-width: 70px;
 }
 
 .logo-icon {
-  height: 32px;
+  height: 30px;
   margin-right: 12px;
 }
 
@@ -71,7 +73,7 @@
   border-radius: 50%;
   object-fit: cover;
   transition: transform 0.3s ease;
-  margin-left: 15px;
+  margin-left: 20px;
 }
 
 .user-avatar:hover {
@@ -100,18 +102,25 @@
   transform: translateY(-3px);
 }
 
+.navbar-right .login-btn {
+  background-color: var(--primary-color);
+  text-decoration: none;
+  margin: 0px;
+}
+
+
 /* Hamburger Menu */
 .hamburger {
   display: none;
   flex-direction: column;
   cursor: pointer;
-  z-index: 1100;
-  margin-left: 15px;
+  z-index: 1000;
+  margin-left: 20px;
 }
 
 .hamburger span {
-  width: 30px;
-  height: 3px;
+  width: 20px;
+  height: 2.6px;
   background-color: white;
   margin: 5px 0;
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -135,6 +144,10 @@
   align-items: center;
   gap: 15px;
   flex-shrink: 0;
+  margin-right: 20px;
+}
+.navbar-right .login-btn {
+  margin-left: 160px
 }
 
 /* DESKTOP (769px and above) */
@@ -153,12 +166,13 @@
   }
 }
 
+
 /* TABLET & SMALLER (768px and below) */
 @media screen and (max-width: 768px) {
   .navbar {
     flex-wrap: wrap;
   }
-
+  
   .logo-text {
     font-size: 1.3rem;
   }
@@ -166,11 +180,12 @@
   .nav-links {
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease;
     position: absolute;
-    top: var(--navbar-height); /* Using global navbar height */
+    top: var(--navbar-height);
     left: 0;
     right: 0;
     background: var(--navbar-gradient, linear-gradient(135deg, #1e1e1e, #4a4747)); /* Fallback or global gradient */
@@ -182,6 +197,7 @@
     max-height: 500px;
     padding: 20px 0;
   }
+ 
 
   .nav-links a {
     padding: 15px 0;
@@ -202,11 +218,7 @@
     padding: 10px 20px;
   }
 
-  .logo {
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-left: 20px;
-  }
+ 
 
   .logo-text {
     font-size: 1.2rem;
@@ -215,7 +227,7 @@
 
   .navbar-right {
     justify-content: center;
-    margin-left: 20px;
+    margin-right: 4rem;
   }
 
   .nav-links a {

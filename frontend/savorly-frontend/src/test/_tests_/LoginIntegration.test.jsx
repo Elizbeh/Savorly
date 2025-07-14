@@ -1,11 +1,10 @@
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import Login from "../../components/Login";  // Path to your Login component
+import Login from "../../components/Login";
 import { vi } from "vitest";
-import { BrowserRouter as Router } from "react-router-dom";  // Wrap your component in Router
-import { useAuth } from "../../contexts/AuthContext"; // Custom hook for context
-import { loginUser } from "../../services/auth"; // Service for login
-import Cookies from "js-cookie"; // For mocking cookies
+import { BrowserRouter as Router } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { loginUser } from "../../services/auth";
 
 // Mock the loginUser function to avoid actual API calls
 vi.mock("../../services/auth", () => ({
@@ -17,11 +16,11 @@ vi.mock("../../contexts/AuthContext", () => ({
   useAuth: vi.fn(),
 }));
 
-// Mock Cookies.set to track if the auth token is set correctly
+/*// Mock Cookies.set to track if the auth token is set correctly
 vi.mock("js-cookie", () => ({
   set: vi.fn(),
   get: vi.fn(),
-}));
+}));*/
 
 
 describe("Login Component", () => {

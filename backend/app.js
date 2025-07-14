@@ -5,7 +5,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
-
+import xss from 'xss-clean';
 import authRoutes from './routes/authRoutes.js';
 import recipeRoutes from './routes/recipesRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -24,11 +24,15 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
-app.set('trust proxy', 1);  // If behind proxy like nginx or hosting platform
+
+app.use(xss());
+
+app.set('trust proxy', 1);
 
 const allowedOrigins = [
   ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
-  'https://localhost:5174',
+   'https://elizbeh.github.io',
+  'https://localhost:5173',
 ];
 
 const corsOptions = {
@@ -56,21 +60,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 logger.info('Middlewares applied: CORS, Helmet, JSON Parser, Cookie Parser');
-
-// Static file handling with proper CORS headers
-app.use('/uploads', (req, res, next) => {
-  // Set to your frontend origin for credentials to work
-  const origin = req.get('Origin');
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-  res.setHeader('Cache-Control', 'public, max-age=0');
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-}, express.static(path.join(process.cwd(), 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);

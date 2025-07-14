@@ -11,8 +11,12 @@ const VerifyEmail = () => {
   const [showResend, setShowResend] = useState(false);
   const navigate = useNavigate();
 
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
+  /*const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");*/
+  
+  const hashParams = new URLSearchParams(window.location.hash.split("?")[1]);
+  const token = hashParams.get("token");
+
 
   useEffect(() => {
      console.log("Token from URL:", token)

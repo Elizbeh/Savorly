@@ -50,6 +50,7 @@ export default defineConfig({
   optimizeDeps: { exclude: ['bcryptjs', 'mysql2'] },
 
   server: {
+    port: 5174,   
     https : httpsConfig,        // ← only in dev
     watch : { usePolling: true },
     proxy : {

@@ -28,7 +28,7 @@ const runMigrations = async () => {
       await pool.query(statement);
     }
 
-    // Step 2: Add missing columns to users table
+    //Add missing columns to users table
     if (!(await columnExists('users', 'verification_token'))) {
       await pool.query(
         'ALTER TABLE users ADD COLUMN verification_token VARCHAR(255) NULL'
@@ -42,13 +42,21 @@ const runMigrations = async () => {
       );
       console.log('Added column verification_token_expires_at');
     }
+    if (!(await columnExists('user_profiles', 'first_name'))) {
+      await pool.query('ALTER TABLE user_profiles ADD COLUMN first_name VARCHAR(255)');
+      console.log('Added column first_name to user_profiles');
+    }
+
+    if (!(await columnExists('user_profiles', 'last_name'))) {
+      await pool.query('ALTER TABLE user_profiles ADD COLUMN last_name VARCHAR(255)');
+      console.log('Added column last_name to user_profiles');
+    }
+
 
     console.log('Migrations executed successfully!');
   } catch (error) {
     console.error('Error running migrations:', error);
-  } finally {
-    pool.end();
-  }
+  } 
 };
 
-runMigrations();
+export default runMigrations;

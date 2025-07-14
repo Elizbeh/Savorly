@@ -1,0 +1,38 @@
+/* Error.css */
+.error-page {
+  min-height: calc(100vh - var(--navbar-height) - 100px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--padding);
+  background-color: var(--bg-light);
+  text-align: center;
+}
+
+.error-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.error-page p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.error-page button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background: var(--color-button-bg);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+.error-page button:hover {
+  background: var(--color-button-hover);
+}

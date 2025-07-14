@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: production
+      NODE_ENV: development
+      DB_REQUIRE_SSL: true
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_PORT: ${{ secrets.DB_PORT }}
       DB_USER: ${{ secrets.DB_USER }}
@@ -25,6 +26,7 @@ jobs:
       CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+      LOCAL_HTTPS: false
 
     steps:
       - name: 🧾 Checkout code
@@ -46,12 +48,58 @@ jobs:
       - name: 📦 Install dependencies (including dev)
         run: npm ci
 
+      - name: 🐛 Debug environment variables (non-sensitive)
+        run: |
+          echo "NODE_ENV=$NODE_ENV"
+          echo "DB_HOST=$DB_HOST"
+          echo "DB_USER=$DB_USER"
+          echo "DB_NAME=$DB_NAME"
+
+      - name: 🐛 Debug env in test step
+        run: env | grep DB_NAME
+
+      - name: 🛠️ Create DB if not exists
+        run: |
+          mysql -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
+
+        env:
+          MYSQL_PWD: ${{ secrets.DB_PASSWORD }}
+
+      - name: 🧪 Test DB connection
+        run: |
+          node -e "
+            import('mysql2/promise').then(async mysql => {
+              try {
+                const connection = await mysql.createConnection({
+                  host: process.env.DB_HOST,
+                  user: process.env.DB_USER,
+                  password: process.env.DB_PASSWORD,
+                  database: process.env.DB_NAME,
+                  port: process.env.DB_PORT,
+                  ssl: { rejectUnauthorized: true }
+                });
+                console.log('✅ DB connection successful');
+                await connection.end();
+                process.exit(0);
+              } catch (err) {
+                console.error('❌ DB connection failed:', err.message);
+                process.exit(1);
+              }
+            });
+          "
+
+      - name: 🔄 Run DB migrations
+        run: npm run migrate
+
+      - name: 🧪 Show DB tables after migration
+        run: |
+          mysql -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD -e "SHOW TABLES IN \`${DB_NAME}\`;"
+
+      - name: 🌱 Seed the database
+        run: npm run seed
+
       - name: 🧪 Run unit tests
-        run: npm run test:unit -- --watchAll=false
+        run: npm run test:unit
 
       - name: 🔌 Run integration tests
-        run: npm run test:integration -- --watchAll=false
-
-      - name: 🛠 Run DB migrations
-        run: npm run migrate
-        
+        run: npm run test:integration

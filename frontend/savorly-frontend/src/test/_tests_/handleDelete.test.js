@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import handleDelete from '../../utils/handleDelete';
 
+vi.mock('axios');
+
 vi.mock('../../services/api', () => ({
   default: {
     delete: vi.fn()

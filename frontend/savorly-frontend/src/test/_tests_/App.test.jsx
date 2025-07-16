@@ -1,10 +1,8 @@
-// src/test/_tests_/App.test.jsx
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../App.jsx';
 import '@testing-library/jest-dom';
 
-// ✅ Mock useAuth from AuthContext directly
 vi.mock('../../contexts/AuthContext.jsx', () => ({
   useAuth: () => ({
     user: { id: 1, email: 'test@example.com', role: 'user' },

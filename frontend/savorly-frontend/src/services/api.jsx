@@ -23,22 +23,24 @@ const loginRedirectUrl = isProd
   ? `${import.meta.env.VITE_CLIENT_URL}/savorly-frontend/#/login`
   : `${import.meta.env.VITE_CLIENT_URL}/#/login`;
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      const publicHashes = ["", "#/", "#/login", "#/register", "#/verify-email"];
-      const currentHash = window.location.hash;
+// Guard the interceptor to only run in the browser
+if (typeof window !== "undefined") {
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        const publicHashes = ["", "#/", "#/login", "#/register", "#/verify-email"];
+        const currentHash = window.location.hash;
 
-      if (!publicHashes.includes(currentHash)) {
-        window.location.href = loginRedirectUrl;
+        if (!publicHashes.includes(currentHash)) {
+          window.location.href = loginRedirectUrl;
+        }
+      } else {
+        console.error("API Error:", error.response?.data || error.message);
       }
-    } else {
-      console.error("API Error:", error.response?.data || error.message);
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
-
+  );
+}
 
 export default api;

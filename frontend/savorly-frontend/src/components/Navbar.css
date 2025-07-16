@@ -147,8 +147,10 @@
   margin-right: 20px;
 }
 .navbar-right .login-btn {
-  margin-left: 160px
+  margin-left: auto;
 }
+
+
 
 /* DESKTOP (769px and above) */
 @media screen and (min-width: 769px) {
@@ -244,4 +246,15 @@
     width: 20px;
     height: 2px;
   }
+  .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0;
+  margin-right: 20px;
+}
+.navbar-right .login-btn {
+  margin-left: 80px;
+}
+
 }

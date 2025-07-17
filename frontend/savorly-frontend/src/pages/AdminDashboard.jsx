@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
       try {
         const { data } = await api.get('/api/admin/users');
-        console.log('Users fetched:', data); // Log to check the data
+        console.log('Users fetched:', data);
         setUsers(data);
         setLoading(false);
       } catch (err) {

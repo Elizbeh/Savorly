@@ -5,39 +5,6 @@ Savorly is a full-stack web application that allows users to browse, create, sav
 
 ---
 
-## 🖼️ Screenshots
-
-### Landing Page
-
-![Landing Page](./screenshots/landingPage.png)
-
-> The welcoming and clean landing page for Savorly.
-
-### Home Page
-
-![Home Page](./screenshots/home.png)
-
-> A clean and responsive homepage featuring categories and tips.
-
-### Admin Dashboard
-
-![Admin Dashboard](./screenshots/dashbord.png)
-
-> Admin interface for managing recipes and users.
-
-### Recipe Form
-
-![Recipe Form](./screenshots/recipeForm.png)
-
-> Form for creating or editing recipes with validation.
-
-### Saved Recipes
-
-![Saved Recipes](./screenshots/savedRecipes.png)
-
-> User's personalized collection of saved recipes.
-
-
 ## 📌 Features
 
 - ✅ User registration, login, and email verification  
@@ -88,19 +55,21 @@ Savorly is a full-stack web application that allows users to browse, create, sav
 
 ---
 
+
 ## 🧭 Project Structure
 
+```
 savorly-frontend/
-├── components/ # Reusable UI components (Navbar, Footer, etc.)
-├── contexts/ # React Context for authentication
-├── pages/ # Route-level components (Home, Category, Profile, etc.)
-├── App.jsx # Main app with route definitions
-├── App.css # Global styles
-├── index.html # Entry point
-├── main.jsx # React root
+├── components/     # Reusable UI components (Navbar, Footer, etc.)
+├── contexts/       # React Context for authentication
+├── pages/          # Route-level components (Home, Category, Profile, etc.)
+├── App.jsx         # Main app with route definitions
+├── App.css         # Global styles
+├── index.html      # Entry point
+├── main.jsx        # React root
 └── ...
+```
 
----
 ## 🚀 Getting Started Locally
 
 Clone the repository and install dependencies:

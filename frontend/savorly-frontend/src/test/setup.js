@@ -1,13 +1,15 @@
+// src/test/setup.js
 import { vi } from 'vitest';
 
-// Global mock for useAuth
-vi.mock('@contexts/AuthContext.jsx', async () => {
+vi.mock('@contexts/AuthContext', async () => {
   const actual = await vi.importActual('@contexts/AuthContext');
   return {
     ...actual,
     useAuth: () => ({
-      user: { name: 'Test User' },
+      user: { id: 1, name: 'Test User', email: 'test@example.com', role: 'user' },
       setUser: vi.fn(),
+      logout: vi.fn(),
+      isLoading: false,
     }),
   };
 });

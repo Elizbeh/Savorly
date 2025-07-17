@@ -18,6 +18,7 @@ const RecipeForm = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
@@ -236,7 +237,7 @@ const RecipeForm = () => {
           </label>
 
           <label>
-            Calories:
+            Calories (kilocalorie):
             <input
               type="number"
               min="0"
@@ -317,13 +318,39 @@ const RecipeForm = () => {
             onChange={(e) => {
               const file = e.target.files[0];
               if (file) {
+                setIsUploadingImage(true);
                 setImage(file);
-                setImagePreview(URL.createObjectURL(file));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setImagePreview(reader.result);
+                  setIsUploadingImage(false);
+                };
+                reader.readAsDataURL(file);
               }
             }}
           />
-          {imagePreview && <img src={imagePreview} alt="Preview" />}
-          {!imagePreview && existingImageUrl && <img src={existingImageUrl} alt="Existing" />}
+
+          {isUploadingImage && (
+            <div className="spinner" style={{ marginTop: '10px' }}>
+              <div className="loader"></div>
+              <p>Uploading image...</p>
+            </div>
+          )}
+
+          {!isUploadingImage && (imagePreview || existingImageUrl) && (
+            <img
+              src={imagePreview || existingImageUrl}
+              alt="Recipe preview"
+              className="image-preview"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '200px',
+                borderRadius: '8px',
+                objectFit: 'cover',
+                marginTop: '10px'
+              }}
+            />
+          )}
         </label>
 
         <button type="submit" disabled={isLoading}>

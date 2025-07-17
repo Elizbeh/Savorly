@@ -99,12 +99,13 @@
   border-radius: 20px;
 }
 
-.remove-ingredient-button {
-  margin-left: 0.5rem;
+.ingredient-list .remove-ingredient-button {
+  margin: 6px;
+  margin-right: 0;
   cursor: pointer;
   background: none;
-  border: none;
-  color: var(--color-remove-btn);
+  border: 2px solid var(--primary-color);
+  padding: 5px;
 }
 
 .add-ingredient-button {
@@ -165,6 +166,21 @@ label img {
   height: auto;
   border-radius: 8px;
 }
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #f97316;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 /* Responsive styles */
 @media (max-width: 768px) {
@@ -219,6 +235,10 @@ label img {
   .recipe-form-container {
     flex-direction: row;
     height: 100%;
+  }
+  .time-calorie-inputs {
+    display: flexbox;
+    flex-direction: row;
   }
 
   .background-image {

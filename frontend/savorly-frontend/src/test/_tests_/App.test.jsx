@@ -3,7 +3,13 @@ import { MemoryRouter } from 'react-router-dom';
 import App from '../../App.jsx';
 import '@testing-library/jest-dom';
 
-vi.mock('../../contexts/AuthContext.jsx', () => ({
+// ✅ Mock the ProtectedRoute component
+vi.mock('../../components/ProtectedRoute', () => ({
+  default: ({ element }) => element, // just render the protected element directly
+}));
+
+// ✅ Mock AuthContext to simulate a logged-in user
+vi.mock('../../contexts/AuthContext', () => ({
   useAuth: () => ({
     user: { id: 1, email: 'test@example.com', role: 'user' },
     setUser: () => {},
@@ -13,18 +19,18 @@ vi.mock('../../contexts/AuthContext.jsx', () => ({
 }));
 
 describe('App component routing and layout', () => {
-  test('renders Navbar on the landing page ("/")', () => {
+  test('renders Navbar on the landing page ("/")', async () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
     );
 
-    const loginLink = screen.getByRole('link', { name: /login/i });
+    const loginLink = await screen.findByRole('link', { name: /login/i });
     expect(loginLink).toBeInTheDocument();
   });
 
-  test('does not render Navbar or Footer on /login route', () => {
+  test('does not render Navbar or Footer on /login route', async () => {
     render(
       <MemoryRouter initialEntries={['/login']}>
         <App />
@@ -34,19 +40,18 @@ describe('App component routing and layout', () => {
     const nav = screen.queryByRole('navigation');
     expect(nav).not.toBeInTheDocument();
 
-    const loginButton = screen.getByRole('button', { name: /log in/i }); // ✅ fixed name
+    const loginButton = await screen.findByRole('button', { name: /log in/i });
     expect(loginButton).toBeInTheDocument();
   });
 
-  test('renders protected HomePage when logged in', () => {
-  render(
-    <MemoryRouter initialEntries={['/home']}>
-      <App />
-    </MemoryRouter>
-  );
+  test('renders protected HomePage when logged in', async () => {
+    render(
+      <MemoryRouter initialEntries={['/home']}>
+        <App />
+      </MemoryRouter>
+    );
 
-  const welcomeText = screen.getByText(/welcome to savorly/i);
-  expect(welcomeText).toBeInTheDocument();
-});
-
+    const welcomeText = await screen.findByText(/welcome to savorly/i);
+    expect(welcomeText).toBeInTheDocument();
+  });
 });

@@ -12,7 +12,7 @@ The active and CI/CD-integrated versions of the frontend and backend are maintai
 ------------
 
 -   **Frontend (React + Vite):**\
-    🔗 <https://elizbeh.github.io/savorly-frontend>
+    🔗 <https://Elizbeh.github.io/savorly-frontend>
 
 -   **Backend API (Node.js + Express + MySQL/TiDB):**\
     ⚙️ <https://savorly-backend-c6hu.onrender.com>
@@ -22,11 +22,11 @@ The active and CI/CD-integrated versions of the frontend and backend are maintai
 📦 Repository Links
 -------------------
 
-| Layer | Repository | Deployment |
-| --- | --- | --- |
-| **Frontend** | [elizbeh/savorly-end](https://github.com/Elizbeh/savorly-frontend) | GitHub Pages |
-| **Backend** | [elizbeh/savorly-backend](https://github.com/elizbeh/savorly-backend) | Render |
-| **Full Project (this repo)** | [elizbeh/savorly](https://github.com/Elizbeh/Savorly) | --- |
+| Layer                         | Repository                                                              | Deployment |
+| ------------------------------| ----------------------------------------------------------------------- | ---------- |
+| **Frontend**                  | [Elizbeh/savorly-frontend](https://github.com/Elizbeh/savorly-frontend) | GitHub Pages      |
+| **Backend**                   | [Elizbeh/savorly-backend](https://github.com/Elizbeh/savorly-backend)   | Render     |
+| **Full Project (this repo)**  | [Elizbeh/Savorly](https://github.com/Elizbeh/Savorly)                   | ---        |
 
 * * * * *
 
@@ -190,7 +190,7 @@ Both the frontend and backend are managed independently for deployment:
 🧭 Documentation Links
 ----------------------
 
--   🖥️ [Frontend README (savorly-end)](https://github.com/Elizbeh/savorly-frontend/blob/main/README.md)
+-   🖥️ [Frontend README (savorly-frontend)](https://github.com/Elizbeh/savorly-frontend/blob/main/README.md)
 
 -   ⚙️ [Backend README (savorly-backend)](https://github.com/Elizbeh/savorly-backend/blob/main/README.md)
 

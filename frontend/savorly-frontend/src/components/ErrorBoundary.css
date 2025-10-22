@@ -1,0 +1,44 @@
+/* ErrorBoundary.css */
+
+.error-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; position:absolute;
+}
+
+.error-boundary-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: #fffdfd;
+  color: #333;
+}
+
+.error-boundary-container h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-container p {
+  margin-bottom: 1.5rem;
+  color: #aa0000;
+}
+
+.error-boundary-container button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #dc2626;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.error-boundary-container button:hover {
+  background-color: #b91c1c;
+}

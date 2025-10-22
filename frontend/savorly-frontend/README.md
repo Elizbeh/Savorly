@@ -1,70 +1,233 @@
-# Getting Started with Create React App
+🧩 README for `savorly-frontend`
+-------------------------------
+`# 🥗 Savorly Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Savorly** is a full-stack recipe management web application that helps users discover, create, save, and share their favorite recipes --- all within a secure, responsive interface.
 
-## Available Scripts
+This repository contains the **frontend** of Savorly, built with **React.js (Vite)** and integrated with the [Savorly Backend API](https://savorly-backend-c6hu.onrender.com).
+The frontend is deployed via **GitHub Pages** and includes authentication, admin access, and interactive UI features.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌐 Live Demo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+👉 **Frontend:** [https://elizbeh.github.io/savorly-end](https://Elizbeh.github.io/savorly-frontend)
+⚙️ **Backend API:** [https://savorly-backend-c6hu.onrender.com](https://savorly-backend-c6hu.onrender.com)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🧱 Project Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+savorly-frontend/
+├── public/
+│   └── assets/             # Static images, icons
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── VerifyEmail.jsx
+│   │   ├── RecipeDetail.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   └── ErrorBoundary.jsx
+│   │
+│   ├── contexts/
+│   │   └── AuthContext.jsx   # Handles global user state and authentication
+│   │
+│   ├── pages/
+│   │   ├── LandingPage.jsx
+│   │   ├── Home.jsx
+│   │   ├── RecipeFormPage.jsx
+│   │   ├── Profile.jsx
+│   │   ├── SavedRecipes.jsx
+│   │   ├── AdminDashboard.jsx
+│   │   ├── CategoryPage.jsx
+│   │   └── AboutPage.jsx
+│   │
+│   ├── App.jsx               # Routing and layout
+│   ├── index.jsx             # Application entry point
+│   ├── App.css               # Global styling
+│   └── index.css
+│
+├── .env.example              # Example environment variables
+├── package.json
+└── vite.config.js ```
 
-### `npm run build`
+* * * * *
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+💡 Key Features
+---------------
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+✅ **Secure Authentication**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+-   Login, Register, and Email Verification
 
-### `npm run eject`
+-   JWT + Secure cookies (handled by backend)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+-   Protected routes using `ProtectedRoute` component
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+✅ **User Dashboard**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+-   Personalized Home with categories and tips
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+-   Profile management (view and edit info)
 
-## Learn More
+-   Saved Recipes (add/remove/view)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+✅ **Recipe Management**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+-   Create, edit, and delete recipes
 
-### Code Splitting
+-   Cloudinary image upload
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+-   Recipe detail page with comments and ratings
 
-### Analyzing the Bundle Size
+✅ **Admin Dashboard**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+-   Manage users and categories
 
-### Making a Progressive Web App
+-   Role-based access control via AuthContext
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+✅ **Modern UI**
 
-### Advanced Configuration
+-   Fully responsive design
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+-   Reusable components (Navbar, Footer, Cards)
 
-### Deployment
+-   Error handling via `ErrorBoundary`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+✅ **Security & Performance**
 
-### `npm run build` fails to minify
+-   HTTPS-only environment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-   Environment variables for API URLs
+
+-   Client-side input validation
+
+* * * * *
+
+🧰 Tech Stack
+-------------
+
+| Layer | Technology |
+| --- | --- |
+| **Frontend** | React.js (Vite), JSX, React Router |
+| **State Management** | Context API |
+| **Styling** | CSS3, Flexbox, custom responsive design |
+| **Backend API** | Node.js, Express, MySQL (TiDB) |
+| **Deployment** | GitHub Pages (Frontend), Render (Backend) |
+| **Version Control** | Git / GitHub |
+| **Auth Security** | JWT, Secure Cookies |
+| **Testing (planned)** | React Testing Library, Jest |
+
+* * * * *
+
+⚙️ Environment Configuration
+----------------------------
+
+Create a `.env` file in the root directory (not committed to Git):
+
+`LOCAL_HTTPS=true
+
+# Backend API URL (production or local)
+VITE_API_URL=https://savorly-backend-c6hu.onrender.com
+
+# Frontend base URL
+VITE_CLIENT_URL=https://Elizbeh.github.io`
+
+* * * * *
+
+🧪 Local Setup
+--------------
+
+### 1️⃣ Clone the repo
+
+`git clone https://github.com/Elizbeh/savorly-frontend.git
+cd savorly-end`
+
+### 2️⃣ Install dependencies
+
+`npm install`
+
+### 3️⃣ Set up your `.env` file
+
+Refer to the section above and configure your environment variables.
+
+### 4️⃣ Run the development server
+
+`npm run dev`
+
+Frontend will start on\
+👉 `https://localhost:5174` (with HTTPS)
+
+* * * * *
+
+🔐 Routing Overview
+-------------------
+
+| Path | Component | Access |
+| --- | --- | --- |
+| `/` | LandingPage | Public |
+| `/about` | AboutPage | Public |
+| `/login` | Login | Public |
+| `/register` | Register | Public |
+| `/verify-email` | VerifyEmail | Public |
+| `/home` | HomePage | Protected |
+| `/create-recipe` | RecipeFormPage | Protected |
+| `/recipe/:id` | RecipeDetail | Public |
+| `/recipe-form/:id` | RecipeFormPage | Protected |
+| `/categories/:categoryId` | CategoryPage | Public |
+| `/profile` | ProfilePage | Protected |
+| `/saved-recipes` | SavedRecipes | Protected |
+| `/admin-dashboard` | AdminDashboard | Admin Only |
+
+* * * * *
+
+🧩 Integration with Backend
+---------------------------
+
+The frontend communicates with the backend via REST API calls using the base URL defined in your `.env` file:
+
+`VITE_API_URL=https://savorly-backend-c6hu.onrender.com`
+
+All authentication and data operations (recipes, profiles, comments, ratings) are securely handled via the backend's endpoints.\
+The frontend uses **secure cookies** to maintain sessions and `ProtectedRoute` to block unauthorized access.
+
+* * * * *
+
+🚀 Deployment
+-------------
+
+Deployed using **GitHub Pages** with automatic CI/CD from the `main` branch.
+
+`npm run build
+npm run deploy`
+
+Your production site will be available at:\
+👉 https://Elizbeh.github.io/savorly-end
+
+* * * * *
+
+🧑‍💻 Author
+------------
+
+**Elizabeth** -- Full-Stack Developer\
+🎓 Graduate of Holberton School\
+🔐 Focused on secure, scalable web application development.\
+🌍 [GitHub Profile](https://github.com/Elizbeh)
+
+* * * * *
+
+📜 License
+----------
+
+This project is licensed under the **MIT License**.
+
+* * * * *
+
+> 💡 This frontend is the client part of the Savorly project.\
+> To view the backend (API + database + CI/CD):\
+> 🔗 [Savorly Backend Repository](https://github.com/Elizbeh/savorly-backend)

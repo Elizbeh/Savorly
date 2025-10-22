@@ -353,7 +353,7 @@ const RecipeForm = () => {
           )}
         </label>
 
-        <button type="submit" disabled={isLoading}>
+        <button className='submit' type="submit" disabled={isLoading}>
           {isLoading ? 'Submitting...' : 'Submit Recipe'}
         </button>
 

@@ -1,143 +1,216 @@
-# Savorly 🍲  
-**A secure and responsive recipe-sharing platform**
+🧩 Savorly --- Full-Stack Recipe Management Application
+=====================================================
 
-Savorly is a full-stack web application that allows users to browse, create, save, and share recipes. This repository contains the **frontend** of the application, developed with React and deployed to GitHub Pages. It features protected routes, user authentication, role-based access (user/admin), and responsive design.
+**Savorly** is a secure, full-stack recipe management web application that allows users to discover, create, save, and share their favorite recipes through an intuitive and responsive interface.
 
----
+This main repository (`savorly/`) contains **the complete project source code** --- both the frontend (React.js) and backend (Node.js + MySQL/TiDB) --- as originally developed during training at Holberton School.\
+The active and CI/CD-integrated versions of the frontend and backend are maintained in their respective repositories below.
 
-## 📌 Features
+* * * * *
 
-- ✅ User registration, login, and email verification  
-- 🔐 Protected routes using JWT-based authentication via secure HTTP-only cookies  
-- 👤 Role-based access control (admin/user)  
-- 🗂️ Recipe browsing by category  
-- 📝 Create, update, and delete recipes (authenticated users)  
-- 💾 Save recipes to personal profile  
-- ⚙️ Admin dashboard to manage content  
-- 📱 Mobile-first responsive design  
-- 🌐 Deployed via CI/CD to GitHub Pages (frontend) and Render (backend)  
+🌐 Live Demo
+------------
 
----
+-   **Frontend (React + Vite):**\
+    🔗 <https://elizbeh.github.io/savorly-frontend>
 
-## 🛠️ Technologies Used
+-   **Backend API (Node.js + Express + MySQL/TiDB):**\
+    ⚙️ <https://savorly-backend-c6hu.onrender.com>
 
-### Frontend
+* * * * *
 
-- **React 19**  
-- **React Router DOM v7**  
-- **Axios** for API communication  
-- **Vite** for fast bundling and hot reload  
-- **FontAwesome & React Icons** for UI elements  
-- **Vitest & Testing Library** for unit testing  
+📦 Repository Links
+-------------------
 
-### Backend (in production)
+| Layer | Repository | Deployment |
+| --- | --- | --- |
+| **Frontend** | [elizbeh/savorly-end](https://github.com/Elizbeh/savorly-frontend) | GitHub Pages |
+| **Backend** | [elizbeh/savorly-backend](https://github.com/elizbeh/savorly-backend) | Render |
+| **Full Project (this repo)** | [elizbeh/savorly](https://github.com/Elizbeh/Savorly) | --- |
 
-- Hosted on **Render**  
-- Connected to a **TiDB Cloud** (MySQL-compatible) production database  
+* * * * *
 
-### CI/CD & Deployment
+🧱 Project Architecture
+-----------------------
 
-- **GitHub Actions** for automated deployment  
-- **gh-pages** to deploy the frontend to GitHub Pages  
-
----
-
-## 🔐 Security Measures
-
-- ✅ Secure HTTP-only cookies for authentication  
-- ✅ Passwords hashed using `bcryptjs`  
-- ✅ Email verification flow before granting access  
-- ✅ Protected frontend routes using a `ProtectedRoute` wrapper  
-- ✅ Role-based access for admin and user accounts  
-- ✅ Client-side form validation  
-- ✅ Input sanitation and validation on the backend  
-- ✅ HTTPS enforced via GitHub Pages and Render  
-
----
-
-
-## 🧭 Project Structure
-
-```
-savorly-frontend/
-├── components/     # Reusable UI components (Navbar, Footer, etc.)
-├── contexts/       # React Context for authentication
-├── pages/          # Route-level components (Home, Category, Profile, etc.)
-├── App.jsx         # Main app with route definitions
-├── App.css         # Global styles
-├── index.html      # Entry point
-├── main.jsx        # React root
-└── ...
+```savorly/
+├── backend/                  # Backend (Node.js + Express + MySQL/TiDB)
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── config/
+│   ├── migrations/
+│   ├── tests/
+│   ├── server.js
+│   └── package.json
+│
+├── frontend/                 # Folder for frontend
+│   └── savorly-frontend/     # Actual frontend project (React.js + Vite)
+│       ├── src/
+│       ├── public/
+│       ├── package.json
+│       └── vite.config.js
+│
+└── README.md                 # General project overview (this file)
 ```
 
-## 🚀 Getting Started Locally
+* * * * *
 
-Clone the repository and install dependencies:
+💡 Main Features
+----------------
 
-```bash
-git clone https://github.com/elizbeh/savorly-frontend.git
-cd savorly-frontend
-npm install
+✅ **Secure Authentication**
+
+-   Login, Register, and Email Verification
+
+-   JWT + Secure HTTP-only cookies
+
+-   Role-based access (User / Admin)
+
+✅ **Recipe Management**
+
+-   Create, edit, delete, and view recipes
+
+-   Cloudinary integration for image uploads
+
+-   Commenting and rating system
+
+✅ **User Dashboard**
+
+-   Profile management (update info and avatar)
+
+-   Saved recipes section
+
+-   Personalized home feed
+
+✅ **Admin Dashboard**
+
+-   Manage users, categories, and reported content
+
+✅ **Responsive UI & Accessibility**
+
+-   Mobile-first layout
+
+-   Navigation optimized for keyboard and touch
+
+-   Accessible form elements and semantic markup
+
+✅ **Security & Deployment**
+
+-   Sanitized SQL queries (MySQL2 prepared statements)
+
+-   `helmet`, `xss-clean`, `express-rate-limit` middleware
+
+-   CI/CD pipelines for automated testing and deployment
+
+* * * * *
+
+🧰 Tech Stack
+-------------
+
+| Layer | Technologies |
+| --- | --- |
+| **Frontend** | React.js (Vite), React Router, Context API, CSS3 |
+| **Backend** | Node.js, Express.js |
+| **Database** | MySQL / TiDB |
+| **Authentication** | JWT, bcryptjs, Secure Cookies |
+| **Storage** | Cloudinary |
+| **Email** | Nodemailer (verification) |
+| **Security** | Helmet, XSS-Clean, Rate-Limit |
+| **Testing** | Jest, Supertest |
+| **Deployment** | GitHub Pages (Frontend), Render (Backend) |
+| **CI/CD** | GitHub Actions |
+
+* * * * *
+
+⚙️ Setup Overview
+-----------------
+
+### 🧩 Local Installation
+
+1️⃣ **Clone the main repo**
+
+`git clone https://github.com/Elizbeh/Savorly.git
+cd savorly`
+
+2️⃣ **Install dependencies** for both layers:
+
+`cd savorly-end && npm install
+cd ../savorly-backend && npm install`
+
+3️⃣ **Configure environment variables** in each folder (`.env` files):\
+Frontend → `.env` with `VITE_API_URL` and `VITE_CLIENT_URL`\
+Backend → `.env` with DB credentials, JWT secrets, and Cloudinary keys
+
+4️⃣ **Run the apps**
+
+`# Backend
+cd backend
 npm run dev
-⚙️ Environment Variables
-Create a .env file at the root of the project with the following environment variables depending on your environment:
 
-Local development .env
+# Frontend
+cd ../savorly-frontend
+npm run dev`
 
-LOCAL_HTTPS=true
-VITE_API_URL=https://localhost:5001
-VITE_CLIENT_URL=https://localhost:5174
+* * * * *
 
-Production .env
+🧪 Continuous Integration & Deployment
+--------------------------------------
 
-VITE_API_URL=https://savorly-backend-c6hu.onrender.com
-VITE_CLIENT_URL=https://elizbeh.github.io
-Note: Actual secrets such as API keys, database credentials, JWT secrets, and email passwords should be stored securely and never committed to source code.
+Both the frontend and backend are managed independently for deployment:
 
-## 🔄 Deployment
+-   **Frontend CI/CD:**\
+    GitHub Actions → GitHub Pages (`main` branch)\
+    Builds automatically and deploys static assets via `gh-pages`.
 
-### 🌐 Production Deployment
+-   **Backend CI/CD:**\
+    GitHub Actions → Render deployment.\
+    Workflow includes migrations, seeders, and automated tests.
 
-- Frontend deployed to GitHub Pages:  
-  https://elizbeh.github.io/savorly-frontend
+* * * * *
 
-- Backend deployed on Render:  
-  https://savorly-backend-c6hu.onrender.com
+🔒 Security Highlights
+----------------------
 
-- Production database hosted on TiDB Cloud, a scalable MySQL-compatible cloud database.
+-   HTTPS-only communication
 
-### 🚀 CI/CD Workflow
+-   Environment-isolated credentials
 
-This project uses GitHub Actions for continuous integration and deployment:
+-   Rate limiting and input sanitization
 
-- Triggered automatically on push to the `master` branch
-- Builds the React app using Vite
-- Publishes the build to GitHub Pages via the `gh-pages` package
-- Uses a GitHub secret token (`PERSONAL_GH_TOKEN`) for authentication
+-   Secure token storage with cookies
 
-Workflow file: `.github/workflows/deploy.yml`
+-   Server-side validation using Joi
 
-### 🛠️ Manual Deployment
+-   Role-based route protection (Admin/User)
 
-To manually deploy the frontend:
+* * * * *
 
-```bash
-npm run build
-npm run deploy
+🧭 Documentation Links
+----------------------
 
-## 🧪 Testing
+-   🖥️ [Frontend README (savorly-end)](https://github.com/Elizbeh/savorly-frontend/blob/main/README.md)
 
-This project uses Vitest and React Testing Library for unit and UI testing.
+-   ⚙️ [Backend README (savorly-backend)](https://github.com/Elizbeh/savorly-backend/blob/main/README.md)
 
-Run tests with:
+* * * * *
 
-```bash
-npm run test
+🧑‍💻 Author
+------------
 
-Open interactive test UI with:
+**Elizabeth**\
+🎓 Full-Stack Developer --- Holberton School Graduate\
+💡 Focused on secure, scalable, and user-friendly web applications\
+🌍 [GitHub Profile](https://github.com/Elizbeh)
 
-bash
-npm run test:ui
+* * * * *
 
-📄 License
-This project is licensed under the MIT License.
+📜 License
+----------
+
+This project is released under the **MIT License**.
+
+* * * * *
+
+> 💬 *Savorly is the result of a full-stack development training project, later refactored into separate frontend and backend repositories with automated CI/CD integration. This main repository serves as the complete reference and documentation hub for the project.*

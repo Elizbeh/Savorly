@@ -92,6 +92,7 @@ h2 {
 .unsave-button {
   background: var(--button-gradient);
   color: white;
+  font-weight: bold;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -163,6 +164,7 @@ h2 {
 
   .saved-recipe-item p {
     font-size: 0.9rem;
+    color: black;
   }
 
   .unsave-button {

@@ -219,6 +219,7 @@
 .edit-btn {
   background: var(--button-gradient);
   color: white;
+  font-weight: bold;
 }
 
 .save-btn:hover,
@@ -229,10 +230,13 @@
 .cancel-btn {
   background-color: #9c9a9a;
   color: white;
+  font-weight: bold;
 }
 
 .cancel-btn:hover {
   background-color: #8c8888;
+  font-weight: bold;
+
 }
 
 .edit-btn,

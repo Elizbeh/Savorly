@@ -6,7 +6,7 @@ import handleDelete from '../utils/handleDelete';
 import api from '../services/api';
 import Toast from './Toast';
 import { useAuth } from '../contexts/AuthContext';
-
+import { Link } from 'react-router-dom';
 
 const RecipeCard = ({ recipe, onDelete, onSave }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -99,12 +99,13 @@ const RecipeCard = ({ recipe, onDelete, onSave }) => {
         </button>
         {menuOpen && (
           <div className="menu-dropdown">
-            <a href={`/recipe-form/${recipe.id}`} className="menu-item">
-              <FaEdit /> Edit
-            </a>
-            <a href={`/recipe/${recipe.id}`} className="menu-item">
+            <Link to={`/recipe/${recipe.id}`} className="menu-item">
               <FaEye /> View
-            </a>
+            </Link>
+
+            <Link to={`/recipe-form/${recipe.id}`} className="menu-item">
+              <FaEdit /> Edit
+            </Link>
             <button className="menu-item saved" onClick={handleToggleClick}>
               <FaHeart /> {saved ? 'Saved' : 'Save Recipe'}
             </button>

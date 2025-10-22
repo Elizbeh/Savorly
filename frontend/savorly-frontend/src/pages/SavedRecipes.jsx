@@ -31,7 +31,7 @@ const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
   }, [savedRecipesProp]);
 
   const handleToggleSave = (recipeId) => {
-    const isCurrentlySaved = true; // Always true in SavedRecipes (since these are saved)
+    const isCurrentlySaved = true;
 
     handleSaveToggle(
       recipeId,
@@ -40,7 +40,7 @@ const SavedRecipes = ({ savedRecipesProp, setSavedRecipesProp }) => {
         const updated = savedRecipes.filter((r) => r.id !== recipeId);
         setSavedRecipes(updated);
 
-        // Adjust current page if needed
+        
         const maxPage = Math.ceil(updated.length / RECIPES_PER_PAGE) || 1;
         if (currentPage > maxPage) setCurrentPage(maxPage);
 

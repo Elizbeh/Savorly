@@ -1,27 +1,41 @@
-// src/components/Footer.js
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = () => {
   return (
-    <footer>
-      <div className="footer-links">
+    <footer role="contentinfo">
+      <nav className="footer-links" aria-label="Footer navigation">
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/privacy">Privacy Policy</Link>
         <Link to="/terms">Terms of Service</Link>
-      </div>
+      </nav>
 
-      <div className="social-media">
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-          <i className="fab fa-twitter"></i>
+      <div className="social-media" aria-label="Social media links">
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our Twitter page"
+        >
+          <i className="fab fa-twitter" aria-hidden="true"></i>
         </a>
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-          <i className="fab fa-facebook"></i>
+        <a
+          href="https://facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our Facebook page"
+        >
+          <i className="fab fa-facebook" aria-hidden="true"></i>
         </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-          <i className="fab fa-instagram"></i>
+        <a
+          href="https://instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Visit our Instagram page"
+        >
+          <i className="fab fa-instagram" aria-hidden="true"></i>
         </a>
       </div>
 

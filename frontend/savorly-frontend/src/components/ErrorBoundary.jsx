@@ -1,5 +1,6 @@
+// components/ErrorBoundary.js
 import React from 'react';
-import './ErrorBoundary.css';
+import './ErrorBoundary.css'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -24,10 +25,12 @@ class ErrorBoundary extends React.Component {
 
     if (hasError) {
       return (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <h1>Something went wrong.</h1>
-          <p>{error?.message || 'An unexpected error occurred.'}</p>
-          <button onClick={this.handleReload}>Reload</button>
+        <div className="app-wrapper">
+          <main className="error-boundary-container">
+            <h1>Something went wrong.</h1>
+            <p>{error?.message || 'An unexpected error occurred.'}</p>
+            <button onClick={this.handleReload}>Reload</button>
+          </main>
         </div>
       );
     }

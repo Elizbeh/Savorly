@@ -7,6 +7,19 @@
   width: 100vw;
   overflow-x: hidden;
 }
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  z-index: 1000;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 10px;
+}
 
 /* ========================
    Hero Section
@@ -43,36 +56,27 @@
 .home-page .hero h1 {
   font-size: 46px;
   font-weight: bold;
-  margin-bottom: 20px;
-  line-height: 1.5;
   color: white;
   z-index: 1;
 }
 
 /* Hero Paragraph */
 .home-page .hero p {
-  font-size: 20px;
-  margin-bottom: 30px;
+  
   line-height: 1.5;
 }
 
 .home-page .hero .user-greeting {
   z-index: 1;
-  color: rgb(228, 223, 223);
-  font-size: 18px;
+  color: #f0f0f0;
+  font-size: 24px;
+   text-shadow: 5px 0px 5px#111111;
 }
 
 .home-page .hero .username {
   color: white;
   font-weight: bold;
   font-size: 20px;
-}
-
-/* CTA Buttons */
-.cta-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
 }
 
 /* ========================
@@ -87,8 +91,10 @@
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 10;
+  z-index: 1;
   position: relative;
+  display: inline-block;
+  margin-top: 30px;
 }
 
 .cta-btn:hover {
@@ -146,33 +152,26 @@
 .home-page .hero h1 {
   font-size: 40px;
   margin: 0;
+
 }
 }
 
 @media (max-width: 480px) {
   .home-page .hero h1 {
-    font-size: 28px;
+    font-size: 32px;
   }
    
-
-  .home-page .hero p {
-    font-size: 14px;
-  }
-
   .home-page .hero .user-greeting {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .cta-btn {
-    font-size: 16px;
-    padding: 12px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 40px
   }
 
-  .categories h2,
-  .recipe-list h2 {
-    font-size: 22px;
-  }
-
+ 
   .category-name a {
     font-size: 1rem;
   }
@@ -196,9 +195,10 @@
    Categories Section
 ======================== */
 .categories {
-  padding: 50px 40px;
+  padding: 100px 20px;
   width: 100vw;
   text-align: center;
+  margin: 0 auto;
 }
 
 .category-list {
@@ -225,14 +225,28 @@
 /* Large Screens: Grid Layout */
 @media (min-width: 1024px) {
   .home-page .hero {
-    padding-top: 0;
+    padding: 100px;
+    background-size: cover;
+    justify-content: center;
+    align-items: center;
   }
+
+    .home-page .hero h1 {
+      display: inline-block;
+      margin-bottom: 0;
+      
+    }
+    .cta-btn {
+      font-weight: bold;
+    }
   .category-list {
     display: grid;
     grid-template-columns: repeat(3, minmax(300px, 1fr));
     gap: 30px;
     justify-content: center;
+    
   }
+
   .recipe-list {
     display: flex;
     flex-direction: column;
@@ -275,7 +289,7 @@
 .category-name {
   font-size: 22px;
   font-weight: bold;
-  color: #222;
+  color: rgb(21, 21, 21);
 }
 
 /* Small Screens: Show as Carousel */
@@ -283,7 +297,10 @@
 
   .home-page .hero{ 
     background-size: cover;
+    padding: 40px;
+    height: 100vh;
   }
+
   .category-list {
     display: flex;
     flex-direction: column;
@@ -294,13 +311,15 @@
     display: none;
   }
 
-  .home-page .hero h1{
-   padding-top: 120px;
+
+  .home-page .hero .user-greeting {
+    font-size: 18px;
+  }
+  
+  .home-page .hero h1 {
+    margin-top: 50px;
   }
 
-  .recipe-list {
-    padding: 40px;
-  }
 }
 
 /* ========================
@@ -312,25 +331,22 @@
   padding-top: 20px;
   text-align: center;
   width: 100vw;
-
-  margin-left: 40px;
-  margin-right: 40px;
-
-}
-
-.recipe-list h2 {
-  margin-top: 20px;
-  color: var(--secondary-color);
+  margin: 0 auto;
 }
 
 .scroll-container {
   position: relative;
   display: flex;
   justify-content: center;
+  padding: 30px;
   align-items: center;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient( to right, rgb(226, 243, 226), #f1e8de)
+  background: linear-gradient( to right, rgb(233, 251, 233), #feefde);
+  border-top-left-radius: 20px ;
+  border-top-right-radius: 20px;
+  margin-bottom: 100px;
+  margin-top: 20px;
   
 }
 
@@ -339,8 +355,8 @@
   gap: 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
   scrollbar-width: none;
+  
 }
 
 .recipes::-webkit-scrollbar {
@@ -356,12 +372,12 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   z-index: 2;
 }
 
@@ -376,11 +392,12 @@
 .recipe-card {
   flex: 0 0 auto;
   width: 200px;
-  background: #fff;
+  background: #f8f5f5fd;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   text-align: center;
+  border: 4px double #cbf2ce;
 }
 
 .recipe-image {

@@ -31,7 +31,7 @@ const AboutPage = () => {
           </p>
 
           <h3>Contact Us</h3>
-          <p>
+          <p class="last">
             Have any questions or feedback? Feel free to reach out to us at <a href="mailto:contact@savorly.com">contact@savorly.com</a>.
           </p>
         </section>

@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 
 // ✅ Mock the ProtectedRoute component
 vi.mock('../../components/ProtectedRoute', () => ({
-  default: ({ element }) => element, // just render the protected element directly
+  default: ({ element }) => element,
 }));
 
 // ✅ Mock AuthContext to simulate a logged-in user

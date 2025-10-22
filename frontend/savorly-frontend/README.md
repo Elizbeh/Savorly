@@ -52,7 +52,7 @@ savorly-frontend/
 │   ├── App.css               # Global styling
 │   └── index.css
 │
-├── .env.example              # Example environment variables
+├── .env.example             
 ├── package.json
 └── vite.config.js ```
 

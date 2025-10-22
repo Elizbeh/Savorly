@@ -109,18 +109,18 @@ The active and CI/CD-integrated versions of the frontend and backend are maintai
 🧰 Tech Stack
 -------------
 
-| Layer | Technologies |
-| --- | --- |
-| **Frontend** | React.js (Vite), React Router, Context API, CSS3 |
-| **Backend** | Node.js, Express.js |
-| **Database** | MySQL / TiDB |
-| **Authentication** | JWT, bcryptjs, Secure Cookies |
-| **Storage** | Cloudinary |
-| **Email** | Nodemailer (verification) |
-| **Security** | Helmet, XSS-Clean, Rate-Limit |
-| **Testing** | Jest, Supertest |
-| **Deployment** | GitHub Pages (Frontend), Render (Backend) |
-| **CI/CD** | GitHub Actions |
+| Layer             | Technologies                                      |
+| ----------------- | ------------------------------------------------- |
+| **Frontend**      | React.js (Vite), React Router, Context API, CSS3  |
+| **Backend**       | Node.js, Express.js                               |
+| **Database**      | MySQL / TiDB                                      |
+| **Authentication**| JWT, bcryptjs, Secure Cookies                     |
+| **Storage**       | Cloudinary                                        |
+| **Email**         | Nodemailer (verification)                         |
+| **Security**      | Helmet, XSS-Clean, Rate-Limit                     |
+| **Testing**       | Jest, Supertest                                   |
+| **Deployment**    | GitHub Pages (Frontend), Render (Backend)         |
+| **CI/CD**         | GitHub Actions                                    |
 
 * * * * *
 

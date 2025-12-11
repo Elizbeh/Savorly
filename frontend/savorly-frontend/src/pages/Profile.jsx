@@ -6,17 +6,12 @@ import defaultAvatar from '../assets/images/default_avatar.png';
 import { useAuth } from '../contexts/AuthContext';
 import { FaExclamationCircle } from 'react-icons/fa';
 
-const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
-  const [userState, setUserState] = useState({
-    first_name: '',
-    last_name: '',
-    bio: '',
-    avatar_url: ''
-  });
+  const [userState, setUserState] = useState({ first_name: '', last_name: '', bio: '', avatar_url: '' });
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarKey, setAvatarKey] = useState(Date.now());
@@ -25,221 +20,106 @@ const ProfilePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchProfile = async () => {
       try {
-        const response = await api.get('/api/profile', { withCredentials: true });
-        if (response.status !== 200) throw new Error('Failed to fetch profile');
-        const data = response.data;
-        setUserState(data);
-        setUser(data);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setMessage('Error fetching profile. Please try again later.');
+        const res = await api.get('/api/profile', { withCredentials: true });
+        if (res.status !== 200) throw new Error('Fetch failed');
+        setUserState(res.data);
+        setUser(res.data);
+      } catch {
+        setMessage('Error fetching profile. Redirecting to login.');
         navigate('/login');
       }
     };
-    fetchUserProfile();
+    fetchProfile();
   }, [setUser, navigate]);
 
-  useEffect(() => {
-    if (userState.avatar_url) {
-      setAvatarKey(Date.now());
-    }
-  }, [userState.avatar_url]);
-
-  // Auto clear messages after 5 seconds
-  useEffect(() => {
-    if (!message) return;
-    const timer = setTimeout(() => setMessage(''), 5000);
-    return () => clearTimeout(timer);
-  }, [message]);
+  useEffect(() => { if (userState.avatar_url) setAvatarKey(Date.now()); }, [userState.avatar_url]);
+  useEffect(() => { if (!message) return; const timer = setTimeout(() => setMessage(''), 5000); return () => clearTimeout(timer); }, [message]);
 
   const handleSave = async () => {
     try {
       setLoading(true);
       let newAvatarUrl = userState.avatar_url;
-
       if (avatarFile) {
-        // Client-side validation
-        if (!ALLOWED_TYPES.includes(avatarFile.type)) {
-          setMessage('Invalid avatar file type.');
-          setLoading(false);
-          return;
-        }
-        if (avatarFile.size > MAX_AVATAR_SIZE) {
-          setMessage('Avatar file size must be under 5MB.');
-          setLoading(false);
-          return;
-        }
-
+        if (!ALLOWED_TYPES.includes(avatarFile.type)) return setMessage('Invalid avatar type.');
+        if (avatarFile.size > MAX_AVATAR_SIZE) return setMessage('Avatar too large.');
         const formData = new FormData();
         formData.append('avatar', avatarFile);
-
-        const avatarResponse = await api.post('/api/profile/avatar', formData, {
-          withCredentials: true,
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        if (avatarResponse.status !== 200) {
-          throw new Error('Failed to upload avatar');
-        }
-
-        newAvatarUrl = avatarResponse.data.avatar_url;
+        const avatarRes = await api.post('/api/profile/avatar', formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' }});
+        if (avatarRes.status !== 200) throw new Error('Upload failed');
+        newAvatarUrl = avatarRes.data.avatar_url;
         setAvatarFile(null);
       }
-
-      const updatedProfile = {
-        first_name: userState.first_name,
-        last_name: userState.last_name,
-        bio: userState.bio,
-        avatar_url: newAvatarUrl,
-      };
-
-      const updateResponse = await api.put('/api/profile', updatedProfile, { withCredentials: true });
-
-      if (updateResponse.status !== 200) {
-        throw new Error('Failed to update profile');
-      }
-
+      const updateRes = await api.put('/api/profile', { ...userState, avatar_url: newAvatarUrl }, { withCredentials: true });
+      if (updateRes.status !== 200) throw new Error('Update failed');
       const refreshed = await api.get('/api/profile', { withCredentials: true });
-
       setUser(refreshed.data);
       setUserState(refreshed.data);
       setMessage('Profile updated successfully!');
       setIsEditing(false);
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      setMessage('Failed to save profile: ' + error.message);
+    } catch (err) {
+      setMessage('Failed to save profile: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleAvatarChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  if (!file.type.startsWith('image/')) {
-    setMessage('Selected file must be an image.');
-    return;
-  }
-
-  if (file.size > MAX_AVATAR_SIZE) {
-    setMessage('Image must be under 5MB.');
-    return;
-  }
-
-  setAvatarFile(file);
-};
-
-
-  const handleChange = (e) => {
-    setUserState(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith('image/')) return setMessage('File must be an image.');
+    if (file.size > MAX_AVATAR_SIZE) return setMessage('Image must be under 5MB.');
+    setAvatarFile(file);
   };
 
-  const getAvatarUrl = (url) => {
-    if (!url || url.trim() === '') return defaultAvatar;
-    const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}t=${Date.now()}`;
-  };
+  const handleChange = (e) => setUserState(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const getAvatarUrl = (url) => !url ? defaultAvatar : `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
 
   return (
     <div className="profile-page">
-      <h2 className="profile-title">Profile</h2>
+      <h2 className="profile-title">My Profile</h2>
 
       {message && (
-        <div className={`message ${message.includes('Failed') ? 'error' : 'success'}`}>
-          {message.includes('Failed') && <FaExclamationCircle size={24} style={{ marginRight: '10px', color: '#fff' }} />}
+        <div className={`message ${message.includes('Failed') ? 'error' : 'success'}`} role="alert">
+          {message.includes('Failed') && <FaExclamationCircle size={24} className="alert-icon" />}
           <p>{message}</p>
         </div>
       )}
 
       <div className="profile-header">
-        {userState.avatar_url ? (
-          <img
-            key={avatarKey}
-            src={getAvatarUrl(userState.avatar_url)}
-            alt="Profile"
-            className="avatar-image"
-            onError={() => console.warn('Failed to load avatar')}
-          />
-        ) : (
-          <img src={defaultAvatar} alt="Default Avatar" className="avatar-image" />
-        )}
-
-        {isEditing && (
-          <div className="file-input-container">
-            <input
-              id="avatarUpload"
-              type="file"
-              className="file-input"
-              onChange={handleAvatarChange}
-              accept="image/*"
-              disabled={loading}
-            />
-            <label htmlFor="avatarUpload" className="custom-file-label">
-              Choose Avatar
+        <div className="avatar-wrapper">
+          <img key={avatarKey} src={getAvatarUrl(userState.avatar_url)} alt="Profile avatar" className="avatar-image" />
+          {isEditing && (
+            <label htmlFor="avatarUpload" className="avatar-overlay" aria-label="Change avatar">
+              <input id="avatarUpload" type="file" className="file-input" onChange={handleAvatarChange} accept="image/*" disabled={loading} />
+              <span className="avatar-edit-text">Change</span>
             </label>
-            <span className="file-instruction">Click to change avatar</span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      <div className={`profile-info ${isEditing ? 'profile-edit' : 'profile-view'}`}>
-        <label className="input-label">First Name</label>
-        <input
-          type="text"
-          name="first_name"
-          className="text-input"
-          value={userState.first_name || ''}
-          disabled={!isEditing || loading}
-          placeholder="First Name"
-          onChange={handleChange}
-        />
+      <div className={`profile-info ${isEditing ? 'editing' : 'view'}`}>
+        <label className="input-label" htmlFor="first_name">First Name</label>
+        <input id="first_name" type="text" name="first_name" value={userState.first_name || ''} onChange={handleChange} disabled={!isEditing || loading} placeholder="First Name" className="text-input" />
 
-        <label className="input-label">Last Name</label>
-        <input
-          type="text"
-          name="last_name"
-          className="text-input"
-          value={userState.last_name || ''}
-          disabled={!isEditing || loading}
-          placeholder="Last Name"
-          onChange={handleChange}
-        />
+        <label className="input-label" htmlFor="last_name">Last Name</label>
+        <input id="last_name" type="text" name="last_name" value={userState.last_name || ''} onChange={handleChange} disabled={!isEditing || loading} placeholder="Last Name" className="text-input" />
 
-        <label className="input-label">Bio</label>
-        <textarea
-          name="bio"
-          className="bio-input"
-          value={userState.bio || ''}
-          disabled={!isEditing || loading}
-          placeholder="Bio"
-          onChange={handleChange}
-        />
+        <label className="input-label" htmlFor="bio">Bio</label>
+        <textarea id="bio" name="bio" value={userState.bio || ''} onChange={handleChange} disabled={!isEditing || loading} placeholder="Bio" className="bio-input" />
       </div>
 
       <div className="profile-actions">
         {isEditing ? (
           <>
-            <button className="btn save-btn" onClick={handleSave} disabled={loading}>
-              {loading ? 'Saving...' : 'Save'}
-            </button>
-            <button className="btn cancel-btn" onClick={() => setIsEditing(false)} disabled={loading}>
-              Cancel
-            </button>
+            <button className="btn save-btn" onClick={handleSave} disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
+            <button className="btn cancel-btn" onClick={() => setIsEditing(false)} disabled={loading}>Cancel</button>
           </>
         ) : (
-          <button className="btn edit-btn" onClick={() => setIsEditing(true)}>
-            Edit Profile
-          </button>
+          <button className="btn edit-btn" onClick={() => setIsEditing(true)}>Edit Profile</button>
         )}
       </div>
     </div>
   );
 };
-
 export default ProfilePage;

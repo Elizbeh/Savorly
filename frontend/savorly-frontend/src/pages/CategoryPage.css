@@ -1,101 +1,132 @@
+/* ==========================================
+   CATEGORY PAGE
+   ========================================== */
+
 .category-page {
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px 60px;
-  background: #fefefe;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-radius: 12px;
-  font-family: 'Inter', sans-serif;
-  color: #333;
-}
-
-.category-page__description {
-  font-size: 1.3rem;
-  line-height: 1.8;
-  max-width: 850px;
-  margin: 0 auto 40px;
-  color: #555;
-  text-align: center;
-  padding: 0 15px;
-  font-weight: 400;
-}
-
-.category-page__recipes-header {
-  font-size: 2rem;
-  font-weight: 700;
-  text-align: center;
-  color: green;
-  margin-bottom: 24px;
-  border-bottom: 3px solid #e67e22;
-  width: fit-content;
-  padding-bottom: 6px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.category-page__recipe-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 10px;
-  padding: 0 15px;
-  width: auto;
-}
-
-.category-page__recipe-card {
   width: 100%;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  text-align: left;
+  min-height: 100vh;
+  padding: 4rem 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background: var(--bg-secondary);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Category Description */
+.category-page__description {
+  max-width: 900px;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Recipes Header */
+.category-page__recipes-header {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.category-page__recipes-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--gradient-primary);
+  margin: 1rem auto 0;
+  border-radius: 10px;
+}
+
+/* Recipe List Grid */
+.category-page__recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* No Recipes Message */
+.category-page__no-recipes,
+.category-page__loading,
+.category-page__notfound {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* Individual Recipe Card */
+.category-page__recipe-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .category-page__recipe-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.category-page__loading,
-.category-page__notfound,
-.category-page__no-recipes {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #666;
-  margin-top: 40px;
+/* Loading & Not Found */
+.category-page__loading {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--primary-500);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .category-page__recipes-header {
-    font-size: 1.7rem;
+.category-page__notfound {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--error);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media screen and (max-width: 1024px) {
+  .category-page {
+    padding: 3rem 1.5rem;
   }
+  .category-page__recipe-list {
+    gap: 1.5rem;
+  }
+}
 
+@media screen and (max-width: 768px) {
+  .category-page {
+    padding: 2.5rem 1rem;
+  }
   .category-page__description {
     font-size: 1rem;
-    max-width: 100%;
-    padding: 0 10px;
   }
-
+  .category-page__recipes-header {
+    font-size: 2rem;
+  }
   .category-page__recipe-list {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
   }
 }
 
-@media (max-width: 480px) {
-  .category-page__recipes-header {
-    font-size: 1.4rem;
+@media screen and (max-width: 480px) {
+  .category-page {
+    padding: 2rem 0.75rem;
   }
-
   .category-page__description {
     font-size: 0.95rem;
   }
-
+  .category-page__recipes-header {
+    font-size: 1.75rem;
+  }
   .category-page__recipe-list {
     grid-template-columns: 1fr;
-    padding: 0 5px;
+    gap: 1rem;
   }
 }

@@ -1,19 +1,21 @@
+// Login.jsx (React Component)
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Login.css";
-import "font-awesome/css/font-awesome.min.css";
 import savorlyLogo from "../assets/images/logo.png";
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AuthContext";
 import { validateEmail, validatePassword } from "../utils/validation";
 import { loginUser } from "../services/auth";
+import "./Login.css";
 
-const Login = () => {
-  const { user, setUser } = useAuth();
+export default function Login() {
+  const { setUser } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState(null); // local state for triggering navigation
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,50 +23,41 @@ const Login = () => {
     setError("");
 
     if (!validateEmail(email)) {
-      return setError("Invalid email format");
+      return setError("Please enter a valid email address.");
     }
     if (!validatePassword(password)) {
-      return setError("Password must be at least 8 characters long and contain a letter, a number, and a special character");
+      return setError(
+        "Password must be at least 8 characters long and include a letter, a number, and a special character."
+      );
     }
 
     try {
       const userData = await loginUser({ email, password });
-      console.log("Login success:", userData);
-
-      setUser(userData);   
-      console.log("User role:", user.role);
-console.log("Navigating...");
-        // updates global AuthContext
-      setLoggedInUser(userData);   // triggers navigation in useEffect
+      setUser(userData);
+      setLoggedInUser(userData);
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Something went wrong. Please try again later.";
-      console.error("Login error:", err);
-      setError(errorMsg);
+      const msg = err.response?.data?.message || "Login failed. Please try again.";
+      setError(msg);
     }
   };
 
   useEffect(() => {
     if (loggedInUser) {
-      if (loggedInUser.role === 'admin') {
-        console.log("Navigating to admin-dashboard...");
-        navigate("/admin-dashboard");
-      } else {
-        console.log("Navigating to home...");
-        navigate("/home");
-      }
+      navigate(loggedInUser.role === "admin" ? "/admin-dashboard" : "/home");
     }
   }, [loggedInUser, navigate]);
 
   return (
     <div className="login-container">
-      <div className="login-image"></div>
+      <div className="login-image" aria-hidden="true"></div>
+
       <div className="login-form-wrapper">
-        <img src={savorlyLogo} alt="Savorly Logo" className="login-logo" />
+        <Link to="/"><img src={savorlyLogo} alt="Savorly logo" className="login-logo" /></Link>
         <p className="subtitle">Log in to explore delicious recipes!</p>
 
         {error && (
-          <p className="error-message">
-            <i className="fa fa-exclamation-circle error-icon" aria-hidden="true"></i>
+          <p className="error-message" role="alert">
+            <i className="fa fa-exclamation-circle"></i>
             {error}
           </p>
         )}
@@ -72,26 +65,35 @@ console.log("Navigating...");
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <input
-              type="text"
+              id="email"
+              type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
 
           <div className="form-group password-group">
             <input
+              id="password"
               type={passwordVisible ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
             />
-            <i
-              className={`fa ${passwordVisible ? "fa-eye" : "fa-eye-slash"}`}
+
+            <button
+              type="button"
+              className="password-toggle-btn"
               onClick={() => setPasswordVisible(!passwordVisible)}
-            ></i>
+              aria-label={passwordVisible ? "Hide password" : "Show password"}
+            >
+              <i className={`fa ${passwordVisible ? "fa-eye" : "fa-eye-slash"}`}></i>
+            </button>
           </div>
 
           <button type="submit" className="login-btn">Log In</button>
@@ -106,6 +108,4 @@ console.log("Navigating...");
       </div>
     </div>
   );
-};
-
-export default Login;
+}

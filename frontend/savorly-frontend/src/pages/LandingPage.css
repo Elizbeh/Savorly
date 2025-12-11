@@ -1,191 +1,706 @@
+/* ============================================
+   LANDING PAGE
+   ============================================ */
+
+/* Main Container */
 .landing-page {
   display: flex;
   flex-direction: column;
   width: 100%;
-  
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Hero Section */
+/* ============================================
+   HERO SECTION
+   ============================================ */
+
 .hero {
   position: relative;
-  width: 100vw;
-  background: url('../assets/images/banner.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: white;
-
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-}
-
-.landing-page .hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 20px;
-}
-
-.hero h1 {
-  margin-top: 120px;
-  margin-bottom: 20px;
-  color: white;
-  font-size: 30px;
-}
-
-.hero-content {
-  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-/* Typewriting Animation */
-@keyframes typewriter {
-  0% {
-    width: 0;
-    border-right: 4px solid #e0771d; /* Creates the cursor effect */
-  }
-  100% {
-    width: 100%;
-    border-right: 4px solid transparent; /* Hides the cursor after typing */
-  }
+  padding: 2rem;
+  
+  /* Background Image */
+  background: url('../assets/images/banner.png') center center/cover no-repeat;
+  background-attachment: fixed;
+  
+  /* Ensure content is above overlay */
+  isolation: isolate;
 }
 
+/* Dark Overlay for Better Text Readability */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(30, 30, 30, 0.5) 100%
+  );
+  z-index: 1;
+}
+
+/* Hero Content Container */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  width: 100%;
+  padding: 2rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+/* Hero Title */
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.2;
+  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.02em;
+}
+
+/* Hero Subtitle with Typewriter Effect */
 .hero-subtitle {
-  font-size: 20px;
-  color: white;
-  margin-bottom: 30px;
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  color: #f0f0f0;
+  margin: 0 0 3rem 0;
+  line-height: 1.6;
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+  
+  /* Typewriter animation */
   display: inline-block;
-  white-space: nowrap;
   overflow: hidden;
-  width: 0; /* Start with no visible text */
-  border-right: 4px solid #e0771d; /* Simulates a typing cursor */
-  animation: typewriter 3s steps(30) 1s 1 normal both; /* 3s duration, steps for each character */
+  border-right: 3px solid var(--primary-color, #f76408);
+  white-space: nowrap;
+  animation: 
+    typewriter 4s steps(60) 0.5s forwards,
+    blinkCursor 0.75s step-end infinite;
+  max-width: 100%;
 }
 
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+    border-right-color: transparent;
+  }
+}
+
+@keyframes blinkCursor {
+  from, to {
+    border-right-color: transparent;
+  }
+  50% {
+    border-right-color: var(--primary-color, #f76408);
+  }
+}
+
+/* CTA Buttons Container */
 .cta-buttons {
   display: flex;
+  gap: 1.25rem;
   justify-content: center;
-  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
+/* CTA Button Base Styles */
 .cta-btn {
-  background-color: #ff8c42;
-  color: white;
-  padding: 15px 30px;
-  font-size: 18px;
-  border-radius: 30px;
-  border: none;
-  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 50px;
+  border: 2px solid transparent;
+  
+  transition: all 0.3s ease;
   cursor: pointer;
+  white-space: nowrap;
+  
+  /* Ensure proper text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.cta-btn:hover {
-  background-color: #e0771d;
+/* Primary CTA Button */
+.cta-btn.primary {
+  background: linear-gradient(135deg, #ff8c42 0%, #f76408 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(247, 100, 8, 0.4);
 }
 
-/* Features Section */
-.features {
-  padding: 60px 20px;
-  text-align: center;
-  background: #f9f9f9;
+.cta-btn.primary:hover {
+  background: linear-gradient(135deg, #ff9d5c 0%, #ff7a1f 100%);
+  box-shadow: 0 6px 25px rgba(247, 100, 8, 0.5);
+  transform: translateY(-3px);
+}
+
+.cta-btn.primary:active {
+  transform: translateY(-1px);
+}
+
+/* Secondary CTA Button */
+.cta-btn.secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.cta-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateY(-3px);
+}
+
+/* Large CTA Button Variant */
+.cta-btn.large {
+  padding: 1.25rem 3rem;
+  font-size: 1.25rem;
+}
+
+
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  animation: bounce 2s infinite;
+}
+
+.scroll-arrow {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-bottom: 3px solid white;
+  border-right: 3px solid white;
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/* Fade In Up Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   SECTION COMMONS
+   ============================================ */
+
+.section-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .section-title {
-  font-size: 2.5rem;
-  color: #2C3E50;
-  margin-bottom: 40px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  line-height: 1.3;
 }
 
-.feature-list {
+.section-description {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: #5a6c7d;
+  text-align: center;
+  margin: 0 auto 4rem auto;
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+/* ============================================
+   FEATURES SECTION
+   ============================================ */
+
+.features {
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  position: relative;
+}
+
+.feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 40px;
-  justify-items: center;
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.feature {
-  max-width: 300px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0px 5px #5aea66;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Feature Card */
+.feature-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+  
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Animation on scroll - start visible */
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.6s ease-out backwards;
 }
 
-.feature:hover {
-  transform: translateY(-5px);
-  box-shadow:#ff613d73
+/* Stagger animation for cards */
+.feature-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.feature-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.feature-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.feature-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 12px 24px rgba(247, 100, 8, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Feature Icon Wrapper */
+.feature-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem auto;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: linear-gradient(135deg, #fff5f0 0%, #ffe8db 100%);
+  border-radius: 50%;
+  
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .feature-icon {
-  font-size: 40px;
-  color: #ff623d;
-  margin-bottom: 15px;
+  font-size: 2.5rem;
+  color: var(--primary-color, #f76408);
+  filter: drop-shadow(0 2px 4px rgba(247, 100, 8, 0.2));
 }
 
-/* How It Works Section */
+/* Feature Title */
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+/* Feature Description */
+.feature-description {
+  font-size: 1rem;
+  color: #5a6c7d;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ============================================
+   HOW IT WORKS SECTION
+   ============================================ */
+
 .how-it-works {
-  padding:50px 20px;
-  background: #fff;
-  text-align: center;
+  padding: 5rem 2rem;
+  background: white;
+  position: relative;
 }
 
-.steps {
+.steps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 40px;
-  justify-items: center;
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto 4rem auto;
 }
 
-.step {
-  max-width: 300px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0px 5px #5aea66;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Step Card */
+.step-card {
+  position: relative;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  
+  border: 2px solid #e9ecef;
+  
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Animation on scroll - start visible */
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeInUp 0.6s ease-out backwards;
 }
 
-.step:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px #ff613d73;
+/* Stagger animation for steps */
+.step-card:nth-child(1) {
+  animation-delay: 0.1s;
 }
 
+.step-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.step-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.step-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.step-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary-color, #f76408);
+  box-shadow: 
+    0 12px 24px rgba(90, 234, 102, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Step Number Badge */
+.step-number {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 44px;
+  height: 44px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: linear-gradient(135deg, #5aea66 0%, #4cd964 100%);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: 50%;
+  
+  box-shadow: 0 4px 12px rgba(90, 234, 102, 0.3);
+}
+
+/* Step Icon Wrapper */
+.step-icon-wrapper {
+  width: 70px;
+  height: 70px;
+  margin: 1.5rem auto 1.5rem auto;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  background: white;
+  border-radius: 50%;
+  border: 2px solid #e9ecef;
+  
+  transition: all 0.3s ease;
+}
+
+.step-card:hover .step-icon-wrapper {
+  transform: scale(1.1);
+  border-color: var(--primary-color, #f76408);
+}
 
 .step-icon {
-  font-size: 35px;
-  color: #ff623d;
-  margin-bottom: 15px;
+  font-size: 2rem;
+  color: var(--primary-color, #f76408);
+  filter: drop-shadow(0 2px 4px rgba(247, 100, 8, 0.2));
 }
 
+/* Step Title */
+.step-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
 
-@media screen and (max-width: 789px) {
+/* Step Description */
+.step-description {
+  font-size: 1rem;
+  color: #5a6c7d;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ============================================
+   FINAL CTA SECTION
+   ============================================ */
+
+.final-cta {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 24px;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.final-cta-title {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 2rem 0;
+  line-height: 1.3;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* TABLET (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .hero {
+    min-height: 90vh;
+    background-attachment: scroll;
+  }
   
-.section-title {
-  font-size: 22px;
+  .feature-grid,
+  .steps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  
+  .section-container {
+    padding: 0 1.5rem;
+  }
 }
 
-
-.hero h1 {
-  font-size: 24px;
+/* MOBILE (up to 768px) */
+@media screen and (max-width: 768px) {
+  .hero {
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+  }
+  
+  .hero-content {
+    padding: 1rem;
+  }
+  
+  .hero-title {
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    margin-bottom: 2rem;
+    white-space: normal;
+    border-right: none;
+    animation: fadeInUp 1s ease-out 0.5s backwards;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .cta-btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem 2rem;
+  }
+  
+  .features,
+  .how-it-works {
+    padding: 3rem 1.5rem;
+  }
+  
+  .section-description {
+    margin-bottom: 3rem;
+  }
+  
+  .feature-grid,
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .feature-card,
+  .step-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .scroll-indicator {
+    display: none;
+  }
+  
+  .final-cta {
+    padding: 3rem 1.5rem;
+  }
 }
-.cta-btn{
-  width: 100%;
 
+/* SMALL MOBILE (up to 480px) */
+@media screen and (max-width: 480px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .cta-btn {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .section-description {
+    font-size: 0.9375rem;
+  }
+  
+  .feature-card,
+  .step-card {
+    padding: 1.75rem 1.25rem;
+  }
+  
+  .feature-icon-wrapper,
+  .step-icon-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .feature-icon {
+    font-size: 2rem;
+  }
+  
+  .step-icon {
+    font-size: 1.75rem;
+  }
+  
+  .feature-title,
+  .step-title {
+    font-size: 1.25rem;
+  }
+  
+  .feature-description,
+  .step-description {
+    font-size: 0.9375rem;
+  }
 }
 
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Reduce Motion for Users Who Prefer It */
+@media (prefers-reduced-motion: reduce) {
+  .hero-subtitle,
+  .feature-card,
+  .step-card,
+  .cta-btn,
+  .feature-icon-wrapper,
+  .step-icon-wrapper,
+  .scroll-indicator {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .feature-card:hover,
+  .step-card:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .hero-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .feature-card,
+  .step-card {
+    border: 3px solid currentColor;
+  }
+  
+  .cta-btn:focus-visible {
+    outline-width: 4px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .hero {
+    background: none;
+    min-height: auto;
+    page-break-after: always;
+  }
+  
+  .hero-overlay,
+  .scroll-indicator,
+  .cta-buttons {
+    display: none;
+  }
+  
+  .feature-card,
+  .step-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
 }

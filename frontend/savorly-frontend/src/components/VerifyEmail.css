@@ -1,63 +1,135 @@
+/* ============================================
+   VERIFY EMAIL PAGE
+   ============================================ */
+
 .verify-email-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 100px;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+  text-align: center;
+  background: var(--bg-light);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 500px;
+  margin: 4rem auto;
+  transition: all var(--transition-speed) ease;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.spinner,
+.small-spinner {
+  border: 4px solid var(--neutral-200);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+}
+
+.small-spinner {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-text,
+.success-text {
+  font-weight: 700;
+  font-size: 1.125rem;
+  padding: 1rem 2rem;
+  border-radius: var(--card-radius-sm);
+  margin: 1rem 0;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.error-text {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.success-text {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.resend-button {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--color-button-bg);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+  transition: all var(--transition-speed) ease;
+}
+
+.resend-button:hover:not(:disabled) {
+  background: var(--color-button-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-lg);
+}
+
+.resend-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.resend-button:disabled {
+  background-color: var(--color-button-disabled);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 768px) {
+  .verify-email-container {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
   }
-  
-  .loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
   }
-  
-  .spinner,
-  .small-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #f97316;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 12px;
-  }
-  
+
   .small-spinner {
     width: 16px;
     height: 16px;
-    margin-right: 8px;
-    display: inline-block;
-    vertical-align: middle;
   }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  .error-text {
-    color: #e11d48;
-    font-weight: bold;
-  }
-  
+
+  .error-text,
   .success-text {
-    color: #16a34a;
-    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
   }
-  
+
   .resend-button {
-    margin-top: 16px;
-    padding: 8px 16px;
-    background-color: #f97316;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.95rem;
   }
-  
-  .resend-button:disabled {
-    background-color: #facc15;
-    cursor: not-allowed;
-  }
-  
+}

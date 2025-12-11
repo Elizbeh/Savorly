@@ -1,122 +1,242 @@
+/* ============================================
+   HOW-TO TIPS SECTION
+   ============================================ */
+
 .how-to-tips {
-  padding: 50px 20px;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
+  padding: 5rem 0;
   background-color: #e06700;
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
+  margin: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .how-to-tips h2 {
-  font-size: 28px;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 800;
   color: white;
   text-align: center;
-  margin-bottom: 30px;
+  margin: 0 0 3rem 0;
+  padding: 0 1rem;
 }
 
 .tips-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
 }
 
-/* GIF Styling */
+/* GIF Section */
+.tip-gif {
+  width: 100%;
+  max-width: 700px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .tip-gif img {
-  width: 300px;
+  width: 100%;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: block;
 }
 
-/* Tip cards layout */
+/* Tips List */
 .tips-list {
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 1.5rem;
   justify-content: center;
+  align-items: stretch;
+  box-sizing: border-box;
 }
 
+/* Tip Cards */
 .tip-card {
-  width: 180px;
+  flex: 0 1 280px;
+  min-width: 250px;
   background: white;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: left;
-  padding: 15px;
-  transition: transform 0.2s ease;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
 .tip-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .tip-card h3 {
-  font-size: 15px;
-  margin-bottom: 6px;
-  color:  var(--secondary-color);;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  color: #e06700;
+  line-height: 1.3;
 }
 
 .tip-card p {
-  font-size: 13px;
-  color: #161616;
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-size: 0.9375rem;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
 }
 
-/* Scrollable Tips on Small Screens */
-@media screen and (max-width: 768px) {
-   .how-to-tips {
-    padding: 30px 0;
-  
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* TABLET (768px - 1023px) */
+@media screen and (max-width: 1023px) {
+  .how-to-tips {
+    padding: 4rem 0;
   }
 
   .tips-container {
-    flex-direction: column;
-    align-items: center;
+    gap: 2.5rem;
+    padding: 0 1.5rem;
   }
 
-  .tip-gif img {
-    width: 90%;
-    max-width: 300px;
-    margin-bottom: 20px;
+  .tip-gif {
+    max-width: 600px;
   }
 
   .tips-list {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    display: flex;
-    width: 100%;
-    padding: 10px 0;
-    gap: 16px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
+    gap: 1.25rem;
   }
 
   .tip-card {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    width: 200px;
-    min-width: 180px;
-  }
-
-  .tips-list::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tips-list {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    flex: 0 1 calc(50% - 0.625rem);
+    min-width: 240px;
   }
 }
 
+/* MOBILE (up to 768px) */
+@media screen and (max-width: 768px) {
+  .how-to-tips {
+    padding: 3rem 0;
+  }
 
+  .how-to-tips h2 {
+    margin-bottom: 2rem;
+  }
+
+  .tips-container {
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .tip-gif {
+    max-width: 100%;
+  }
+
+  .tip-gif img {
+    max-width: 500px;
+    border-radius: 12px;
+  }
+
+  /* Horizontal scroll for mobile */
+  .tips-list {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1rem;
+    padding: 0.5rem 0 1rem 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+  }
+
+  .tips-list::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .tips-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  .tips-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+  }
+
+  .tips-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .tip-card {
+    flex: 0 0 280px;
+    min-width: 280px;
+    scroll-snap-align: start;
+    padding: 1.25rem;
+  }
+
+  .tip-card h3 {
+    font-size: 1rem;
+  }
+
+  .tip-card p {
+    font-size: 0.875rem;
+  }
+}
+
+/* SMALL MOBILE (up to 480px) */
+@media screen and (max-width: 480px) {
+  .how-to-tips {
+    padding: 2.5rem 0;
+  }
+
+  .tips-container {
+    gap: 1.5rem;
+    padding: 0 0.75rem;
+  }
+
+  .tip-gif img {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .tip-card {
+    flex: 0 0 260px;
+    min-width: 260px;
+    padding: 1rem;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .tip-card {
+    transition: none;
+  }
+
+  .tip-card:hover {
+    transform: none;
+  }
+
+  .tips-list {
+    scroll-behavior: auto;
+  }
+}

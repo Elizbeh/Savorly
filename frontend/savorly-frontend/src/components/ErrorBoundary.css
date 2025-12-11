@@ -1,44 +1,62 @@
-/* ErrorBoundary.css */
-
-.error-wrapper {
+/* Full page wrapper */
+.app-wrapper {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh; position:absolute;
-}
-
-.error-boundary-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  min-height: 100vh;
+  background: #fafafa;
+  padding: 20px;
+}
+
+/* Card-style error container */
+.error-boundary-container {
+  background: #ffffff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
   text-align: center;
-  background-color: #fffdfd;
-  color: #333;
+  max-width: 500px;
+  width: 100%;
+  animation: fadeIn 0.25s ease;
 }
 
 .error-boundary-container h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
+  color: #b91c1c;
 }
 
 .error-boundary-container p {
   margin-bottom: 1.5rem;
-  color: #aa0000;
+  color: #7f1d1d;
+  font-size: 1rem;
 }
 
+/* Button */
 .error-boundary-container button {
-  padding: 0.6rem 1.2rem;
+  padding: 0.7rem 1.4rem;
   font-size: 1rem;
   border: none;
   border-radius: 8px;
   background-color: #dc2626;
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s;
 }
 
 .error-boundary-container button:hover {
   background-color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

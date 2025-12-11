@@ -6,6 +6,8 @@ const isProd = process.env.NODE_ENV === 'production';
 const requireSSL = process.env.DB_REQUIRE_SSL === 'true';
 
 console.log('DB_NAME:', process.env.DB_NAME);
+console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
+
 
 const pool = mysql
   .createPool({
@@ -13,7 +15,7 @@ const pool = mysql
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined,
+    port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
     charset: 'utf8mb4',
     waitForConnections: true,
     connectTimeout: 30000,
@@ -42,5 +44,10 @@ export async function checkDbConnection() {
     throw err;
   }
 }
+
+pool.query("SELECT 1")
+  .then(() => console.log("✅ Node.js connected to MySQL"))
+  .catch(err => console.error("❌ Node.js MySQL connection FAILED:", err));
+
 
 export default pool;

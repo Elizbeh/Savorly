@@ -1,268 +1,523 @@
+/* ============================================
+   ADMIN DASHBOARD 
+   ============================================ */
 
+/* Main Container */
 .admin-dashboard {
-  padding: 0 1rem 2rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: white;
+  max-width: 1400px;
+  padding: 3rem 2rem;
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--bg-secondary);
+  margin: 0 auto;
 }
 
-/* Header Section */
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
 .admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffffcc;
-  padding: 1.5rem;
-  border-radius: var(--card-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
+  background: white;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2.5rem;
+  border-left: 5px solid var(--primary-500);
 }
 
 .admin-header h1 {
-  font-size: 2rem;
-  color: var(--secondary-color);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
   margin: 0;
-  flex: 1;
-  text-align: center;
+  letter-spacing: -0.02em;
 }
-.category-form {
-    margin-bottom: 40px;
-    border: 2px solid rgb(157, 156, 156);
-    padding: 20px;
-    border-bottom-right-radius: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  }
 
+/* ============================================
+   ERROR MESSAGES
+   ============================================ */
 
-
-
-
-
-/* Error Message */
 .error-message {
-  background-color: #f44336;
-  color: white;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+  background: var(--error-light);
+  border-left: 5px solid var(--error);
+  padding: 1.25rem 1.75rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+  animation: slideDown 0.3s ease-out;
 }
 
-/* Form */
-.category-form h2,
-.category-list h2 {
-  text-align: center;
-  color: black;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+.error-message p {
+  color: var(--error-text);
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.error-message p::before {
+  content: '⚠';
+  font-size: 1.25rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   CATEGORY CREATION FORM
+   ============================================ */
+
+.category-form {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--border-light);
+}
+
+.category-form h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 2rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-light);
+}
+
+.category-form form {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .form-label-input {
+  flex: 1;
+  min-width: 280px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  gap: 0.625rem;
 }
 
-.category-form label {
+.form-label-input label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.form-label-input input {
+  padding: 0.875rem 1.25rem;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
-  color: rgb(40, 39, 39);
-  font-weight: bold;
+  border: 2px solid var(--border-medium);
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: inherit;
 }
 
-.category-form input {
-  padding: 0.75rem;
+.form-label-input input:focus {
+  border-color: var(--primary-500);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(255, 138, 101, 0.1);
+}
+
+.form-label-input input::placeholder {
+  color: var(--text-light);
+}
+
+.category-form button[type="submit"] {
+  padding: 0.875rem 2.5rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 70%;
-}
-
-.category-form input:focus {
-  border-color: var(--secondary-color);
-}
-
-.category-form button {
-  background: var(--button-gradient);
+  font-weight: 600;
   color: white;
-  font-size: 1rem;
-  padding: 0.75rem;
+  background: var(--gradient-primary);
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color var(--transition-speed);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-primary);
+  white-space: nowrap;
 }
 
-.category-form button:hover {
-  background-color: var(--cta-btn-hover);
+.category-form button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-primary-lg);
 }
 
-/* Table */
+
+.category-form button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   USER LIST TABLE
+   ============================================ */
+
 .user-list {
-  overflow-x: auto;
+  background: white;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
 }
 
-table {
+.user-list table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Roboto', sans-serif;
+  font-size: 0.9375rem;
 }
 
-table th,
-table td {
-  padding: 1rem;
-  border: 1px solid #ddd;
+/* Table Header */
+.user-list thead {
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+  border-bottom: 2px solid var(--primary-300);
+}
+
+.user-list thead tr th {
+  padding: 1.25rem 1.5rem;
   text-align: left;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary-800);
 }
 
-table th {
-  background-color: rgb(203, 251, 203);
-  color: black;
+/* Table Body */
+.user-list tbody tr {
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.2s ease;
 }
 
-table td {
-  background-color: #fafafa;
+.user-list tbody tr:hover {
+  background: var(--neutral-50);
 }
 
-table tr:nth-child(even) td {
-  background-color: #f1f1f1;
+.user-list tbody tr:last-child {
+  border-bottom: none;
 }
 
-/* Category List */
+.user-list tbody tr td {
+  padding: 1.25rem 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+/* Role Badge */
+.user-list tbody tr td:nth-child(4) {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.user-list tbody tr td:nth-child(4)::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  background: var(--success);
+}
+
+/* Actions Column */
+.user-list tbody tr td:last-child {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.user-list button {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* Promote Button */
+.user-list button:first-child {
+  background: var(--success-light);
+  color: var(--success-dark);
+  border-color: var(--success);
+}
+
+.user-list button:first-child:hover {
+  background: var(--success);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 187, 106, 0.3);
+}
+
+/* Delete Button */
+.user-list button:last-child {
+  background: var(--error-light);
+  color: var(--error-dark);
+  border-color: var(--error);
+}
+
+.user-list button:last-child:hover {
+  background: var(--error);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 83, 80, 0.3);
+}
+
+.user-list button:focus-visible {
+  outline: 3px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   CATEGORY LIST
+   ============================================ */
+
+.category-list {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+}
+
+.category-list h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 2rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border-light);
+}
+
 .category-list ul {
   list-style: none;
   padding: 0;
-
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .category-list li {
-  font-size: 1.1rem;
-  color: black;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 0.75rem;
+  background: var(--neutral-50);
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  border: 2px solid var(--border-light);
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  text-align: center;
 }
 
-/* Buttons */
-button {
-  padding: 0.5rem 1rem;
-  margin-right: 0.75rem;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 2px solid var(--primary-color);
-  cursor: pointer;
-  transition: background-color var(--transition-speed);
-  background: none;
-  color: var(--text-dark);
+.category-list li:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-300);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-button:hover {
-  background-color: var(--primary-color);
-  color: white;
+/* Empty State */
+.category-list li:only-child {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-style: italic;
 }
 
-button:disabled {
-  background-color: #ddd;
-  color: #888;
-  cursor: not-allowed;
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.admin-dashboard > p {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.125rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .admin-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-bottom: 40px;
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* TABLET (768px - 1023px) */
+@media screen and (max-width: 1023px) {
+  .admin-dashboard {
+    padding: 2.5rem 1.5rem;
   }
+  
+  .admin-header,
+  .category-form,
   .category-list {
-    padding-top: 40px;
-    border-top: 2px solid green;
-    margin-top: 40px;
-    border-radius: 40px;
+    padding: 2rem;
   }
-
-  .admin-header h1 {
-    font-size: 1.6rem;
+  
+  .category-form form {
+    flex-direction: column;
+    align-items: stretch;
   }
-
-  .logout-link {
+  
+  .form-label-input {
+    min-width: 100%;
+  }
+  
+  .category-form button[type="submit"] {
     width: 100%;
-    text-align: center;
   }
+}
 
-  table th,
-  table td {
-    font-size: 0.95rem;
-    padding: 0.75rem;
+/* MOBILE (up to 768px) */
+@media screen and (max-width: 768px) {
+  .admin-dashboard {
+    padding: 2rem 1rem;
   }
+  
+  .admin-header {
+    padding: 1.75rem 1.5rem;
+  }
+  
+  .admin-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .category-form,
+  .category-list {
+    padding: 1.5rem;
+  }
+  
+  .category-form h2,
+  .category-list h2 {
+    font-size: 1.5rem;
+  }
+  
+  /* Responsive Table */
+  .user-list {
+    overflow-x: auto;
+  }
+  
+  .user-list table {
+    min-width: 650px;
+  }
+  
+  .user-list thead tr th,
+  .user-list tbody tr td {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .user-list tbody tr td:last-child {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .user-list button {
+    width: 100%;
+  }
+  
+  .category-list ul {
+    grid-template-columns: 1fr;
+  }
+}
 
+/* SMALL MOBILE (up to 480px) */
+@media screen and (max-width: 480px) {
+  .admin-dashboard {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .admin-header {
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+  }
+  
+  .category-form,
+  .category-list,
+  .user-list {
+    border-radius: 12px;
+  }
+  
+  .form-label-input input {
+    padding: 0.75rem 1rem;
+  }
+  
+  .category-form button[type="submit"] {
+    padding: 0.75rem 2rem;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce) {
+  .error-message,
+  .user-list tbody tr,
+  .category-list li,
+  .user-list button,
+  .category-form button {
+    animation: none;
+    transition: none;
+  }
+  
+  .user-list tbody tr:hover,
+  .category-list li:hover,
+  .user-list button:hover,
+  .category-form button:hover {
+    transform: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .admin-header,
   .category-form,
   .user-list,
   .category-list {
-    padding: 1rem;
-  }
-
-  .category-list li {
-    font-size: 1rem;
-  }
-  .category-form {
-    border-color: green;
-  }
-}
-
-@media (max-width: 480px) {
-  .admin-header h1 {
-    font-size: 1.4rem;
-  }
-
-  .logout-link {
-    font-size: 0.9rem;
-    padding: 0.5rem;
-  }
-
-  .category-form h2,
-  .category-list h2 {
-    font-size: 1.3rem;
-  }
-
-  table th,
-  table td {
-    font-size: 0.85rem;
-  }
-
-  button {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-  }
-  .category-form {
-    border-color: green;
-  }
-}
-
-@media (min-width: 768px) {
-
-  .category-list {
-    padding-top: 40px;
-    border-top: 2px solid green;
-    margin-top: 60px;
-    border-radius: 40px;
-  }
-
-  .category-form {
-    margin-top: 60px;
-    margin-bottom: 60px;
-    border: 2px solid green;
-    padding: 20px;
-    border-bottom-right-radius: 200px;
-    display: flex;
-    justify-content: space-around;
-  }
+    border: 3px solid currentColor;
   }
   
+  .user-list button:focus-visible,
+  .category-form button:focus-visible,
+  .form-label-input input:focus {
+    outline-width: 4px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .admin-dashboard {
+    margin-top: 0;
+    padding: 1rem;
+  }
+  
+  .user-list button,
+  .category-form {
+    display: none;
+  }
+  
+  .admin-header,
+  .user-list,
+  .category-list {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+}

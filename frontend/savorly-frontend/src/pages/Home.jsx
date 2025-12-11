@@ -130,7 +130,7 @@ const HomePage = () => {
           </section>
 
           <section className="tips-section" aria-labelledby="tips-heading">
-            <h2 id="tips-heading">How-To Tips</h2>
+
             <HowToTips />
           </section>
         </main>

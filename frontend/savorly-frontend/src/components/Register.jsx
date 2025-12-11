@@ -79,7 +79,7 @@ const Register = () => {
 
       <div className="register-form-section">
         <div className="brand">
-          <img src={logo} alt="Savorly Logo" className="logo" />
+          <Link to="/"><img src={logo} alt="Savorly Logo" className="logo" /></Link>
         </div>
         <p className="register-subtext">Join Savorly and explore amazing recipes!</p>
 
@@ -134,22 +134,26 @@ const Register = () => {
               required
             />
           </div>
-          <div className="form-group password-field">
+          <div className="form-group password-group">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               value={formData.password}
-              onChange={handleChange}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
             />
-            <span
-              className="toggle-password"
+            <button
+              type="button"
+              className="password-toggle-btn"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? "👁️" : "👁️‍🗨️"}
-            </span>
+              <i className={`fa ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+            </button>
           </div>
+
+
           <button type="submit" className="register-btn" disabled={isLoading}>
             {isLoading ? "Signing Up..." : "Sign Up"}
           </button>

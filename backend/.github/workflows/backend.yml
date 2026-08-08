@@ -2,104 +2,221 @@ name: Backend CI/CD
 
 on:
   push:
-    branches:
-      - master
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  build-test-deploy:
+  test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: savorly_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
-      NODE_ENV: development
-      DB_REQUIRE_SSL: true
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      CLIENT_URL: ${{ secrets.CLIENT_URL }}
-      EMAIL_USER: ${{ secrets.EMAIL_USER }}
-      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-      REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-      CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-      LOCAL_HTTPS: false
+      NODE_ENV: test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: savorly_test
+      JWT_SECRET: testsecret
+      CLIENT_URL: http://localhost:5174
+
+      # Dummy credentials used only for CI tests
+      EMAIL_USER: test@example.com
+      EMAIL_PASS: testpass
 
     steps:
-      - name: 🧾 Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: ⚙️ Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
+          cache: npm
 
-      - name: 💾 Cache Node.js dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: 📦 Install dependencies (including dev)
+      - name: Install dependencies
         run: npm ci
 
-      - name: 🐛 Debug environment variables (non-sensitive)
+      - name: Wait for MySQL
         run: |
-          echo "NODE_ENV=$NODE_ENV"
-          echo "DB_HOST=$DB_HOST"
-          echo "DB_USER=$DB_USER"
-          echo "DB_NAME=$DB_NAME"
+          for i in {1..15}; do
+            mysqladmin ping -h 127.0.0.1 -uroot -proot && break
+            sleep 3
+          done
 
-      - name: 🐛 Debug env in test step
-        run: env | grep DB_NAME
-
-      - name: 🛠️ Create DB if not exists
+      - name: Mock email service
         run: |
-          mysql -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD -e "CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;"
+          mkdir -p services/__mocks__
+          echo "module.exports = { sendEmail: async () => true };" > services/__mocks__/emailService.js
 
-        env:
-          MYSQL_PWD: ${{ secrets.DB_PASSWORD }}
-
-      - name: 🧪 Test DB connection
-        run: |
-          node -e "
-            import('mysql2/promise').then(async mysql => {
-              try {
-                const connection = await mysql.createConnection({
-                  host: process.env.DB_HOST,
-                  user: process.env.DB_USER,
-                  password: process.env.DB_PASSWORD,
-                  database: process.env.DB_NAME,
-                  port: process.env.DB_PORT,
-                  ssl: { rejectUnauthorized: true }
-                });
-                console.log('✅ DB connection successful');
-                await connection.end();
-                process.exit(0);
-              } catch (err) {
-                console.error('❌ DB connection failed:', err.message);
-                process.exit(1);
-              }
-            });
-          "
-
-      - name: 🔄 Run DB migrations
+      - name: Run database migrations
         run: npm run migrate
 
-      - name: 🧪 Show DB tables after migration
-        run: |
-          mysql -h $DB_HOST -P $DB_PORT -u $DB_USER -p$DB_PASSWORD -e "SHOW TABLES IN \`${DB_NAME}\`;"
-
-      - name: 🌱 Seed the database
+      - name: Seed database
         run: npm run seed
 
-      - name: 🧪 Run unit tests
+      - name: Run unit tests
         run: npm run test:unit
 
-      - name: 🔌 Run integration tests
+      - name: Run integration tests
         run: npm run test:integration
+
+  docker-build:
+    name: Build and Publish Docker Image
+
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+          labels: |
+            org.opencontainers.image.title=Savorly Backend
+            org.opencontainers.image.description=Node.js backend for the Savorly recipe sharing application
+            org.opencontainers.image.source=https://github.com/Elizbeh/savorly-backend
+
+          tags: |
+            ghcr.io/elizbeh/savorly-backend:latest
+            ghcr.io/elizbeh/savorly-backend:${{ github.sha }}
+
+  deploy:
+    name: Deploy to AWS EC2
+    needs: docker-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            IMAGE="ghcr.io/elizbeh/savorly-backend:${{ github.sha }}"
+            CONTAINER="savorly-api"
+            BACKUP_FILE="$HOME/savorly-previous-image"
+
+            echo "Logging into GHCR..."
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
+              -u "${{ secrets.GHCR_USER }}" \
+              --password-stdin
+
+            echo "Pulling new image..."
+            docker pull "$IMAGE"
+
+            echo "Saving current image for rollback..."
+            if docker inspect "$CONTAINER" >/dev/null 2>&1; then
+              docker inspect "$CONTAINER" \
+                --format '{{.Config.Image}}' > "$BACKUP_FILE"
+              echo "Previous image: $(cat "$BACKUP_FILE")"
+            else
+              echo "No previous container found."
+              rm -f "$BACKUP_FILE"
+            fi
+
+            echo "Stopping current container..."
+            docker stop "$CONTAINER" || true
+
+            echo "Removing current container..."
+            docker rm "$CONTAINER" || true
+
+            echo "Starting new container..."
+            docker run -d \
+              --name "$CONTAINER" \
+              --restart unless-stopped \
+              --env-file ~/savorly.env \
+              -p 5000:5000 \
+              "$IMAGE"
+
+            echo "Checking container..."
+            sleep 5
+            docker ps --filter "name=$CONTAINER"
+
+            echo "Testing API health..."
+            if curl --fail --silent --show-error http://localhost:5000/health; then
+              echo ""
+              echo "Health check passed!"
+              echo "Deployment successful!"
+              rm -f "$BACKUP_FILE"
+            else
+              echo ""
+              echo "Health check FAILED!"
+              echo "Rolling back..."
+
+              docker logs "$CONTAINER" || true
+
+              docker stop "$CONTAINER" || true
+              docker rm "$CONTAINER" || true
+
+              if [ -f "$BACKUP_FILE" ]; then
+                PREVIOUS_IMAGE=$(cat "$BACKUP_FILE")
+
+                echo "Restoring: $PREVIOUS_IMAGE"
+                docker run -d \
+                  --name "$CONTAINER" \
+                  --restart unless-stopped \
+                  --env-file ~/savorly.env \
+                  -p 5000:5000 \
+                  "$PREVIOUS_IMAGE"
+
+                sleep 5
+
+                echo "Checking rollback health..."
+                curl --fail --silent --show-error http://localhost:5000/health
+
+                echo ""
+                echo "Rollback successful."
+                rm -f "$BACKUP_FILE"
+              else
+                echo "No previous image available for rollback."
+                exit 1
+              fi
+
+              exit 1
+            fi           

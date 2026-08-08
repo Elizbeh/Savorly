@@ -32,7 +32,7 @@ app.set('trust proxy', 1);
 const allowedOrigins = [
   ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : []),
    'https://elizbeh.github.io',
-  'https://localhost:5173',
+  'http://localhost:5174',
 ];
 
 const corsOptions = {
@@ -102,6 +102,13 @@ app.post('/test-token', (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('Savorly API is running!');
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'savorly-api',
+  });
 });
 
 app.get('/test-origin', (req, res) => {

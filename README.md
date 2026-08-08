@@ -1,40 +1,92 @@
-🧩 Savorly --- Full-Stack Recipe Management Application
-=====================================================
+# 🧩 Savorly — Full-Stack Recipe Management Application
 
-**Savorly** is a secure, full-stack recipe management web application that allows users to discover, create, save, and share their favorite recipes through an intuitive and responsive interface.
+**Savorly** is a secure, full-stack recipe management web application that allows users to discover, create, save, and share recipes through an intuitive and responsive interface.
 
-This main repository (`savorly/`) contains **the complete project source code** --- both the frontend (React.js) and backend (Node.js + MySQL/TiDB) --- as originally developed during training at Holberton School.\
-The active and CI/CD-integrated versions of the frontend and backend are maintained in their respective repositories below.
+This repository is the **original full-project repository** created during my training at Holberton School. It contains the original frontend and backend source code from the development of Savorly. This code is preserved for reference and is not the actively maintained production codebase.
 
-* * * * *
+The project has since been **refactored into two dedicated repositories** with independent CI/CD pipelines and deployments:
 
-🌐 Live Demo
-------------
+* 🖥️ **Frontend** → React.js + Vite → GitHub Pages
+* ⚙️ **Backend** → Node.js + Express + MySQL → AWS EC2
 
--   **Frontend (React + Vite):**\
-    🔗 <https://Elizbeh.github.io/savorly-frontend>
+> 🚀 **The live application is powered by the separate frontend and backend repositories linked below. This repository serves as the original project reference and gateway to the actively maintained codebases.**
 
--   **Backend API (Node.js + Express + MySQL/TiDB):**\
-    ⚙️ <https://savorly-backend-c6hu.onrender.com>
+---
 
-* * * * *
+## 🌐 Live Application
 
-📦 Repository Links
--------------------
+### 🍳 Savorly
 
-| Layer                         | Repository                                                              | Deployment |
-| ------------------------------| ----------------------------------------------------------------------- | ---------- |
-| **Frontend**                  | [Elizbeh/savorly-frontend](https://github.com/Elizbeh/savorly-frontend) | GitHub Pages      |
-| **Backend**                   | [Elizbeh/savorly-backend](https://github.com/Elizbeh/savorly-backend)   | Render     |
-| **Full Project (this repo)**  | [Elizbeh/Savorly](https://github.com/Elizbeh/Savorly)                   | ---        |
+**Frontend:**
+https://Elizbeh.github.io/savorly-frontend
 
-* * * * *
+**Backend API:**
+https://savorly.duckdns.org
 
-🧱 Project Architecture
------------------------
+The frontend communicates with the production backend through the REST API.
 
-```savorly/
-├── backend/                  # Backend (Node.js + Express + MySQL/TiDB)
+---
+
+## 🔗 Active Repositories
+
+| Component                    | Repository                                                      | Deployment                |
+| ---------------------------- | --------------------------------------------------------------- | ------------------------- |
+| 🖥️ **Frontend**             | [savorly-frontend](https://github.com/Elizbeh/savorly-frontend) | GitHub Pages              |
+| ⚙️ **Backend**               | [savorly-backend](https://github.com/Elizbeh/savorly-backend)   | AWS EC2                   |
+| 🧩 **Original Full Project** | **This repository**                                             | Reference / Documentation |
+
+### 👉 Start here
+
+**Want to see the live application?**
+➡️ [Open Savorly](https://Elizbeh.github.io/savorly-frontend)
+
+**Want to explore the frontend code and deployment?**
+➡️ [Frontend Repository](https://github.com/Elizbeh/savorly-frontend)
+
+**Want to explore the backend, Docker and CI/CD?**
+➡️ [Backend Repository](https://github.com/Elizbeh/savorly-backend)
+
+---
+
+## 🏗️ Current Architecture
+
+```text
+                         SAVORLY
+                            │
+                            ▼
+                  ┌──────────────────┐
+                  │  React Frontend  │
+                  │   Vite + React   │
+                  └────────┬─────────┘
+                           │
+                           │ HTTPS / REST API
+                           ▼
+                  ┌──────────────────┐
+                  │  Node.js Backend │
+                  │ Express + JWT    │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │      MySQL       │
+                  │    Database      │
+                  └──────────────────┘
+
+Frontend → GitHub Pages
+Backend  → Docker → GHCR → AWS EC2
+```
+
+The frontend and backend are now maintained and deployed independently.
+
+---
+
+## 📚 Original Project Structure
+
+The original repository contains the project structure used during development:
+
+```text
+Savorly/
+├── backend/
 │   ├── controllers/
 │   ├── models/
 │   ├── routes/
@@ -45,172 +97,193 @@ The active and CI/CD-integrated versions of the frontend and backend are maintai
 │   ├── server.js
 │   └── package.json
 │
-├── frontend/                 # Folder for frontend
-│   └── savorly-frontend/     # Actual frontend project (React.js + Vite)
+├── frontend/
+│   └── savorly-frontend/
 │       ├── src/
 │       ├── public/
 │       ├── package.json
 │       └── vite.config.js
 │
-└── README.md                 # General project overview (this file)
+└── README.md
 ```
 
-* * * * *
+> **Note:** The actively maintained frontend and backend are now located in their dedicated repositories linked above.
 
-💡 Main Features
-----------------
+---
 
-✅ **Secure Authentication**
+## 💡 Main Features
 
--   Login, Register, and Email Verification
+### 🔐 Authentication
 
--   JWT + Secure HTTP-only cookies
+* User registration and login
+* Email verification
+* JWT authentication
+* Refresh tokens
+* Secure HTTP-only cookies
+* Role-based access control
 
--   Role-based access (User / Admin)
+### 🍲 Recipe Management
 
-✅ **Recipe Management**
+* Create recipes
+* Edit recipes
+* Delete recipes
+* Browse recipes
+* Categories
+* Ingredients
+* Cloudinary image uploads
+* Ratings and comments
 
--   Create, edit, delete, and view recipes
+### 👤 User Features
 
--   Cloudinary integration for image uploads
+* User profiles
+* Profile updates
+* Saved recipes
+* Personalized recipe feed
 
--   Commenting and rating system
+### 🛡️ Security
 
-✅ **User Dashboard**
+* JWT authentication
+* Secure cookies
+* Helmet
+* XSS protection
+* Rate limiting
+* Joi validation
+* Parameterized SQL queries
+* Environment-based configuration
 
--   Profile management (update info and avatar)
+---
 
--   Saved recipes section
+## 🧰 Technology Stack
 
--   Personalized home feed
+### Frontend
 
-✅ **Admin Dashboard**
+* React.js
+* Vite
+* React Router
+* Context API
+* CSS3
 
--   Manage users, categories, and reported content
+### Backend
 
-✅ **Responsive UI & Accessibility**
+* Node.js
+* Express.js
+* MySQL
+* JWT
+* bcryptjs
+* Nodemailer
+* Cloudinary
 
--   Mobile-first layout
+### Testing
 
--   Navigation optimized for keyboard and touch
+* Jest
+* Supertest
 
--   Accessible form elements and semantic markup
+### DevOps
 
-✅ **Security & Deployment**
+* Docker
+* Docker Compose
+* GitHub Actions
+* GitHub Container Registry (GHCR)
+* AWS EC2
+* Automated CI/CD
 
--   Sanitized SQL queries (MySQL2 prepared statements)
+---
 
--   `helmet`, `xss-clean`, `express-rate-limit` middleware
+## 🚀 Current CI/CD Architecture
 
--   CI/CD pipelines for automated testing and deployment
+The project has evolved from a single full-stack repository into independently deployed frontend and backend applications.
 
-* * * * *
+### Frontend
 
-🧰 Tech Stack
--------------
+```text
+Git Push
+   │
+   ▼
+GitHub Actions
+   │
+   ▼
+Build React Application
+   │
+   ▼
+Deploy to GitHub Pages
+```
 
-| Layer             | Technologies                                      |
-| ----------------- | ------------------------------------------------- |
-| **Frontend**      | React.js (Vite), React Router, Context API, CSS3  |
-| **Backend**       | Node.js, Express.js                               |
-| **Database**      | MySQL / TiDB                                      |
-| **Authentication**| JWT, bcryptjs, Secure Cookies                     |
-| **Storage**       | Cloudinary                                        |
-| **Email**         | Nodemailer (verification)                         |
-| **Security**      | Helmet, XSS-Clean, Rate-Limit                     |
-| **Testing**       | Jest, Supertest                                   |
-| **Deployment**    | GitHub Pages (Frontend), Render (Backend)         |
-| **CI/CD**         | GitHub Actions                                    |
+➡️ [Frontend Repository](https://github.com/Elizbeh/savorly-frontend)
 
-* * * * *
+### Backend
 
-⚙️ Setup Overview
------------------
+```text
+Git Push
+   │
+   ▼
+GitHub Actions
+   │
+   ├── Run Tests
+   ├── Run Database Migrations
+   ├── Build Docker Image
+   │
+   ▼
+GitHub Container Registry
+   │
+   ▼
+AWS EC2
+   │
+   ▼
+Docker Container
+```
 
-### 🧩 Local Installation
+➡️ [Backend Repository](https://github.com/Elizbeh/savorly-backend)
 
-1️⃣ **Clone the main repo**
+---
 
-`git clone https://github.com/Elizbeh/Savorly.git
-cd savorly`
+## 📖 Documentation
 
-2️⃣ **Install dependencies** for both layers:
+For the latest implementation and deployment documentation, see:
 
-`cd savorly-end && npm install
-cd ../savorly-backend && npm install`
+### 🖥️ Frontend
 
-3️⃣ **Configure environment variables** in each folder (`.env` files):\
-Frontend → `.env` with `VITE_API_URL` and `VITE_CLIENT_URL`\
-Backend → `.env` with DB credentials, JWT secrets, and Cloudinary keys
+[Frontend README](https://github.com/Elizbeh/savorly-frontend/blob/master/README.md)
 
-4️⃣ **Run the apps**
+### ⚙️ Backend / DevOps
 
-`# Backend
-cd backend
-npm run dev
+[Backend README](https://github.com/Elizbeh/savorly-backend/blob/master/README.md)
 
-# Frontend
-cd ../savorly-frontend
-npm run dev`
+The **backend repository contains the most detailed DevOps documentation**, including Docker, CI/CD, GitHub Container Registry and AWS deployment.
 
-* * * * *
+---
 
-🧪 Continuous Integration & Deployment
---------------------------------------
+## 🎓 Project Evolution
 
-Both the frontend and backend are managed independently for deployment:
+Savorly originally started as a single full-stack project during my Full-Stack development training.
 
--   **Frontend CI/CD:**\
-    GitHub Actions → GitHub Pages (`main` branch)\
-    Builds automatically and deploys static assets via `gh-pages`.
+As the project evolved, I separated the frontend and backend into independent repositories to improve:
 
--   **Backend CI/CD:**\
-    GitHub Actions → Render deployment.\
-    Workflow includes migrations, seeders, and automated tests.
+* Deployment independence
+* CI/CD workflows
+* Environment management
+* Dockerization
+* Cloud deployment
+* Backend scalability
+* DevOps practices
 
-* * * * *
+The result is now a production-style architecture where the frontend and backend are independently built, tested, containerized and deployed.
 
-🔒 Security Highlights
-----------------------
+---
 
--   HTTPS-only communication
+## 🧑‍💻 Author
 
--   Environment-isolated credentials
+**Elizabeth Behaghel**
 
--   Rate limiting and input sanitization
+Full-Stack Developer transitioning into **Cloud & DevOps Engineering**.
 
--   Secure token storage with cookies
+[GitHub Profile](https://github.com/Elizbeh)
 
--   Server-side validation using Joi
+---
 
--   Role-based route protection (Admin/User)
-
-* * * * *
-
-🧭 Documentation Links
-----------------------
-
--   🖥️ [Frontend README (savorly-frontend)](https://github.com/Elizbeh/savorly-frontend/blob/main/README.md)
-
--   ⚙️ [Backend README (savorly-backend)](https://github.com/Elizbeh/savorly-backend/blob/main/README.md)
-
-* * * * *
-
-🧑‍💻 Author
-------------
-
-**Elizabeth**\
-🎓 Full-Stack Developer --- Holberton School Graduate\
-💡 Focused on secure, scalable, and user-friendly web applications\
-🌍 [GitHub Profile](https://github.com/Elizbeh)
-
-* * * * *
-
-📜 License
-----------
+## 📜 License
 
 This project is released under the **MIT License**.
 
-* * * * *
+---
 
-> 💬 *Savorly is the result of a full-stack development training project, later refactored into separate frontend and backend repositories with automated CI/CD integration. This main repository serves as the complete reference and documentation hub for the project.*
+> 💡 **Savorly started as a full-stack development project and evolved into a separately deployed frontend and backend application. This repository remains the original project reference and serves as the gateway to the actively maintained repositories.**

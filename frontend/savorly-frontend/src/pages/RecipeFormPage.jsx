@@ -1,372 +1,500 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './RecipeFormPage.css';
-import { FaTimes } from 'react-icons/fa';
 import api from '../services/api';
-import { FaExclamationCircle } from 'react-icons/fa';
-
 
 const RecipeForm = () => {
   const { id } = useParams();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [prepTime, setPrepTime] = useState('');
-  const [cookTime, setCookTime] = useState('');
-  const [calories, setCalories] = useState('');
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    prepTime: '',
+    cookTime: '',
+    calories: '',
+    servings: '',
+    difficulty: 'Medium'
+  });
+
   const [ingredients, setIngredients] = useState(['']);
+  const [instructions, setInstructions] = useState(['']);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [existingImageUrl, setExistingImageUrl] = useState(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
-  const [errorLoadingCategories, setErrorLoadingCategories] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-
-  const createFormData = () => {
-    const formData = new FormData();
-    if (id) formData.append('id', id)
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('prepTime', prepTime);
-    formData.append('cookTime', cookTime);
-    formData.append('calories', calories);
-
-  
-    ingredients
-      .filter((ingredient) => ingredient.trim() !== '')
-      .forEach((ingredient) => formData.append('ingredients[]', ingredient));
-  
-    selectedCategories.forEach((catId) => formData.append('categories[]', catId));
-  
-    if (image) {
-      formData.append('image', image);
-    }
-  
-    return formData;
-  };
-
-  
-  // Fetch categories on load
+  // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await api.get('/api/categories');
         setCategories(response.data);
         setLoadingCategories(false);
-        console.log('Categories fetched:', response.data);
       } catch (err) {
         console.error(err);
-        setErrorLoadingCategories(true);
+        setError('Failed to load categories');
         setLoadingCategories(false);
       }
     };
-
     fetchCategories();
   }, []);
 
-  // Fetch existing recipe if in edit mode
+  // Fetch existing recipe if editing
   useEffect(() => {
     if (id) {
       const fetchRecipe = async () => {
         try {
           const response = await api.get(`/api/recipes/${id}`);
-          console.log("Fetched recipe data:", response.data);
-          
           const data = response.data;
-          
-          setTitle(data.title || '');
-          setDescription(data.description || '');
-          setPrepTime(data.prep_time || '');
-          setCookTime(data.cook_time || '');
-          setCalories(data.calories || '');
 
-          setIngredients(data.ingredients?.map((ingredient) => ingredient.ingredient_name) || []);
-          setSelectedCategories(data.categories?.map((category) => category.id) || []);
+          setFormData({
+            title: data.title || '',
+            description: data.description || '',
+            prepTime: data.prep_time || '',
+            cookTime: data.cook_time || '',
+            calories: data.calories || '',
+            servings: data.servings || '',
+            difficulty: data.difficulty || 'Medium'
+          });
+
+          setIngredients(data.ingredients?.split('\n') || ['']);
+          setInstructions(data.instructions?.split('\n') || ['']);
+          setSelectedCategories(data.categories?.map(c => c.id) || []);
           setExistingImageUrl(data.image_url);
-          
-          if (data.image_url) {
-            setImagePreview(data.image_url); 
-          }
+          if (data.image_url) setImagePreview(data.image_url);
         } catch (error) {
           console.error('Error fetching recipe:', error);
+          setError('Failed to load recipe');
         }
       };
-  
       fetchRecipe();
     }
   }, [id]);
 
+  // Auto-dismiss messages
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError('');
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleArrayChange = (index, value, array, setArray) => {
+    const newArray = [...array];
+    newArray[index] = value;
+    setArray(newArray);
+  };
+
+  const addArrayItem = (array, setArray) => {
+    setArray([...array, '']);
+  };
+
+  const removeArrayItem = (index, array, setArray) => {
+    setArray(array.filter((_, i) => i !== index));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be under 5MB');
+      return;
+    }
+
+    setImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
   const validateForm = () => {
-    if (title.trim().length < 5) {
-      setErrorMessage('Title must be at least 5 characters long.');
+    if (formData.title.trim().length < 3) {
+      setError('Title must be at least 3 characters');
       return false;
     }
-    if (description.trim().length < 20) {
-      setErrorMessage('Description must be at least 20 characters long.');
+    if (formData.description.trim().length < 20) {
+      setError('Description must be at least 20 characters');
       return false;
     }
-
-    if (!prepTime || prepTime <= 0) {
-      setErrorMessage('Prep time must be greater than 0.');
+    if (!formData.prepTime || formData.prepTime <= 0) {
+      setError('Please enter a valid prep time');
       return false;
     }
-    if (!cookTime || cookTime <= 0) {
-      setErrorMessage('Cook time must be greater than 0.');
+    if (!formData.cookTime || formData.cookTime <= 0) {
+      setError('Please enter a valid cook time');
       return false;
     }
-    if (!calories || calories <= 0) {
-      setErrorMessage('Calories must be greater than 0.');
-      return false;
-    }    
-
-    const filledIngredients = ingredients.filter(ingredient => ingredient.trim() !== '');
+    const filledIngredients = ingredients.filter(i => i.trim());
     if (filledIngredients.length === 0) {
-      setErrorMessage('Please fill in at least one ingredient.');
+      setError('Please add at least one ingredient');
       return false;
     }
-
+    const filledInstructions = instructions.filter(i => i.trim());
+    if (filledInstructions.length === 0) {
+      setError('Please add at least one instruction');
+      return false;
+    }
     if (selectedCategories.length === 0) {
-      setErrorMessage('Please select at least one category.');
+      setError('Please select at least one category');
       return false;
     }
-
-    setErrorMessage('');
     return true;
   };
 
-  const createRecipe = async (formData) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
     setIsLoading(true);
+    setError('');
+
     try {
-      const apiUrl = `/api/recipes${id ? `/${id}` : '/create'}`;
-      const response = id
-        ? await api.put(apiUrl, formData, { withCredentials: true })
-        : await api.post(apiUrl, formData, { withCredentials: true });
+      const data = new FormData();
+      if (id) data.append('id', id);
+
+      Object.keys(formData).forEach(key => {
+        data.append(key, formData[key]);
+      });
+
+      ingredients.filter(i => i.trim()).forEach(i => data.append('ingredients[]', i));
+      instructions.filter(i => i.trim()).forEach(i => data.append('instructions[]', i));
+      selectedCategories.forEach(c => data.append('categories[]', c));
+
+      if (image) data.append('image', image);
+
+      const apiUrl = id ? `/api/recipes/${id}` : '/api/recipes/create';
+      const method = id ? 'put' : 'post';
+
+      const response = await api[method](apiUrl, data, { withCredentials: true });
 
       if (response.status === 200 || response.status === 201) {
-        setConfirmationMessage(id ? 'Recipe updated successfully!' : 'Recipe created successfully!');
-        setShowModal(true);
-      } else {
-        setErrorMessage('Error submitting recipe, try again.');
+        setSuccess(id ? 'Recipe updated successfully!' : 'Recipe created successfully!');
+        setTimeout(() => navigate('/home'), 2000);
       }
-    } catch (error) {
-      console.error('Error submitting recipe:', error);
-      setErrorMessage(`Error: ${error.message || 'Unknown error'}`);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save recipe');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const formData = createFormData();
-    createRecipe(formData);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    navigate('/home');
-  };
-
   return (
-    <div className="recipe-form-container">
-      {/* Background image container */}
-      <div className="background-image"></div>
-
-      <form className="create-recipe-form" onSubmit={handleSubmit}>
-        <h2>{id ? 'Edit Recipe' : 'Create a Recipe'}</h2>
-
-        {/* Error message */}
-        {errorMessage && (
-          <p className="error-message">
-            <FaExclamationCircle />
-            {errorMessage}
-          </p>
-        )}
-
-        {/* Recipe Title */}
-        <label>
-          Title:
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </label>
-
-        {/* Recipe Description */}
-        <label>
-          Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          ></textarea>
-        </label>
-        <div className="time-calorie-inputs">
-          <label>
-            Prep Time (minutes):
-            <input
-              type="number"
-              min="0"
-              value={prepTime}
-              onChange={(e) => setPrepTime(e.target.value)}
-            />
-          </label>
-
-          <label>
-            Cook Time (minutes):
-            <input
-              type="number"
-              min="0"
-              value={cookTime}
-              onChange={(e) => setCookTime(e.target.value)}
-            />
-          </label>
-
-          <label>
-            Calories (kilocalorie):
-            <input
-              type="number"
-              min="0"
-              value={calories}
-              onChange={(e) => setCalories(e.target.value)}
-            />
-          </label>
+    <div className="recipe-form-page">
+      <div className="recipe-form-container">
+        {/* Header */}
+        <div className="form-header">
+          <button onClick={() => navigate(-1)} className="back-btn">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M16 10H4m6-6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back
+          </button>
+          <h1>{id ? 'Edit Recipe' : 'Create New Recipe'}</h1>
+          <p>Share your culinary creation with the community</p>
         </div>
 
-
-        {/* Ingredients */}
-        <label>
-          Ingredients:
-          <div className="ingredient-list">
-            {ingredients.map((ingredient, index) => (
-              ingredient.trim() && (
-                <div key={index} className="ingredient-chip">
-                  {ingredient}
-                  <button
-                    type="button"
-                    className="remove-ingredient-button"
-                    onClick={() => setIngredients(ingredients.filter((_, i) => i !== index))}
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-              )
-            ))}
-          </div>
-
-          <input
-            type="text"
-            value={ingredients[ingredients.length - 1] || ''}
-            onChange={(e) => setIngredients([...ingredients.slice(0, -1), e.target.value])}
-            onKeyDown={(e) => e.key === 'Enter' && setIngredients([...ingredients, ''])}
-            placeholder="Enter ingredient"
-          />
-
-          <button
-            type="button"
-            className="add-ingredient-button"
-            onClick={() => setIngredients([...ingredients, ''])}
-          >
-            + Add Ingredient
-          </button>
-        </label>
-
-        {/* Categories */}
-        <label>
-          Categories:
-          {loadingCategories ? (
-            <p>Loading categories...</p>
-          ) : errorLoadingCategories ? (
-            <p>Error loading categories</p>
-          ) : (
-            <select
-              multiple
-              value={selectedCategories}
-              onChange={(e) =>
-                setSelectedCategories([...e.target.selectedOptions].map((opt) => opt.value))
-              }
-            >
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </label>
-
-        {/* Image Upload */}
-        <label>
-          Image:
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                setIsUploadingImage(true);
-                setImage(file);
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setImagePreview(reader.result);
-                  setIsUploadingImage(false);
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
-          />
-
-          {isUploadingImage && (
-            <div className="spinner" style={{ marginTop: '10px' }}>
-              <div className="loader"></div>
-              <p>Uploading image...</p>
-            </div>
-          )}
-
-          {!isUploadingImage && (imagePreview || existingImageUrl) && (
-            <img
-              src={imagePreview || existingImageUrl}
-              alt="Recipe preview"
-              className="image-preview"
-              style={{
-                maxWidth: '100%',
-                maxHeight: '200px',
-                borderRadius: '8px',
-                objectFit: 'cover',
-                marginTop: '10px'
-              }}
-            />
-          )}
-        </label>
-
-        <button className='submit' type="submit" disabled={isLoading}>
-          {isLoading ? 'Submitting...' : 'Submit Recipe'}
-        </button>
-
-        {/* Confirmation Modal */}
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>{confirmationMessage}</h3>
-              <button onClick={handleCloseModal}>OK</button>
-            </div>
+        {/* Alerts */}
+        {error && (
+          <div className="alert alert-error">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" fill="currentColor"/>
+            </svg>
+            <span>{error}</span>
           </div>
         )}
-      </form>
+
+        {success && (
+          <div className="alert alert-success">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm-1 15l-5-5 1.41-1.41L9 12.17l7.59-7.59L18 6l-9 9z" fill="currentColor"/>
+            </svg>
+            <span>{success}</span>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="recipe-form">
+          {/* Image Upload */}
+          <div className="form-section image-section">
+            <label className="image-upload-label">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+              {imagePreview || existingImageUrl ? (
+                <div className="image-preview-wrapper">
+                  <img src={imagePreview || existingImageUrl} alt="Recipe preview" className="image-preview" />
+                  <div className="image-overlay">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                      <path d="M16 8c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm12-4h-4.59l-2.7-2.7A2 2 0 0019 1H13a2 2 0 00-1.41.59L9 4H4C2.9 4 2 4.9 2 6v20c0 1.1.9 2 2 2h24c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-12 22c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10z" fill="currentColor"/>
+                    </svg>
+                    <span>Change Photo</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="image-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <path d="M24 14c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm18-6H34.59l-3.6-3.6A3 3 0 0028.83 3H19.17a3 3 0 00-2.16.9L13.41 8H6C4.34 8 3 9.34 3 11v30c0 1.66 1.34 3 3 3h36c1.66 0 3-1.34 3-3V11c0-1.66-1.34-3-3-3zm-18 33c-8.28 0-15-6.72-15-15s6.72-15 15-15 15 6.72 15 15-6.72 15-15 15z" fill="currentColor"/>
+                  </svg>
+                  <p>Upload Recipe Photo</p>
+                  <span>Click to browse (Max 5MB)</span>
+                </div>
+              )}
+            </label>
+          </div>
+
+          {/* Basic Info */}
+          <div className="form-section">
+            <h2 className="section-title">Basic Information</h2>
+            <div className="form-group">
+              <label htmlFor="title">Recipe Title *</label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="e.g., Spaghetti Carbonara"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="description">Description *</label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe your recipe..."
+                rows="4"
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="prepTime">Prep Time (min) *</label>
+                <input
+                  id="prepTime"
+                  name="prepTime"
+                  type="number"
+                  min="0"
+                  value={formData.prepTime}
+                  onChange={handleInputChange}
+                  placeholder="15"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="cookTime">Cook Time (min) *</label>
+                <input
+                  id="cookTime"
+                  name="cookTime"
+                  type="number"
+                  min="0"
+                  value={formData.cookTime}
+                  onChange={handleInputChange}
+                  placeholder="30"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="servings">Servings *</label>
+                <input
+                  id="servings"
+                  name="servings"
+                  type="number"
+                  min="1"
+                  value={formData.servings}
+                  onChange={handleInputChange}
+                  placeholder="4"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="calories">Calories (kcal)</label>
+                <input
+                  id="calories"
+                  name="calories"
+                  type="number"
+                  min="0"
+                  value={formData.calories}
+                  onChange={handleInputChange}
+                  placeholder="450"
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="difficulty">Difficulty Level</label>
+              <select
+                id="difficulty"
+                name="difficulty"
+                value={formData.difficulty}
+                onChange={handleInputChange}
+              >
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <div className="form-section">
+            <h2 className="section-title">Ingredients</h2>
+            <div className="array-items">
+              {ingredients.map((ingredient, index) => (
+                <div key={index} className="array-item">
+                  <input
+                    type="text"
+                    value={ingredient}
+                    onChange={(e) => handleArrayChange(index, e.target.value, ingredients, setIngredients)}
+                    placeholder={`Ingredient ${index + 1}`}
+                  />
+                  {ingredients.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn-remove"
+                      onClick={() => removeArrayItem(index, ingredients, setIngredients)}
+                      title="Remove"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="btn-add"
+              onClick={() => addArrayItem(ingredients, setIngredients)}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 5v10M5 10h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Add Ingredient
+            </button>
+          </div>
+
+          {/* Instructions */}
+          <div className="form-section">
+            <h2 className="section-title">Instructions</h2>
+            <div className="array-items">
+              {instructions.map((instruction, index) => (
+                <div key={index} className="array-item numbered">
+                  <span className="item-number">{index + 1}</span>
+                  <textarea
+                    value={instruction}
+                    onChange={(e) => handleArrayChange(index, e.target.value, instructions, setInstructions)}
+                    placeholder={`Step ${index + 1}`}
+                    rows="2"
+                  />
+                  {instructions.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn-remove"
+                      onClick={() => removeArrayItem(index, instructions, setInstructions)}
+                      title="Remove"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="btn-add"
+              onClick={() => addArrayItem(instructions, setInstructions)}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 5v10M5 10h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Add Step
+            </button>
+          </div>
+
+          {/* Categories */}
+          <div className="form-section">
+            <h2 className="section-title">Categories</h2>
+            {loadingCategories ? (
+              <p className="loading-text">Loading categories...</p>
+            ) : (
+              <div className="categories-grid">
+                {categories.map((category) => (
+                  <label key={category.id} className="category-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(category.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedCategories([...selectedCategories, category.id]);
+                        } else {
+                          setSelectedCategories(selectedCategories.filter(c => c !== category.id));
+                        }
+                      }}
+                    />
+                    <span className="checkbox-custom"></span>
+                    <span className="category-name">{category.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <div className="form-actions">
+            <button type="submit" className="btn-submit" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <svg className="spinner" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="50" strokeDashoffset="25"/>
+                  </svg>
+                  {id ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                <>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M15 2H5a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V4a2 2 0 00-2-2zM5 4h10v8H5V4zm0 12v-2h10v2H5z" fill="currentColor"/>
+                  </svg>
+                  {id ? 'Update Recipe' : 'Publish Recipe'}
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,263 +1,564 @@
-🧩 README for `savorly-backend`
--------------------------------
-
 # 🍳 Savorly Backend
 
-Savorly Backend is the secure API powering **Savorly**, a full-stack recipe management web application.
-It provides all backend logic --- authentication, user roles, recipe CRUD, image uploads, email verification, saved recipes, and more --- built with **Node.js**, **Express**, and **MySQL (TiDB)**.
+A secure, production-ready REST API powering **Savorly**, a full-stack recipe-sharing application.
 
-The API is deployed on **Render**, with a fully automated **CI/CD pipeline via GitHub Actions**.
+The backend is built with **Node.js**, **Express.js**, and **MySQL**, and follows modern DevOps practices including:
+
+* 🐳 Docker containerization
+* ⚙️ GitHub Actions CI/CD
+* 🧪 Automated unit and integration testing
+* 🗄️ Automated database migrations
+* 📦 Docker image publishing to GitHub Container Registry (GHCR)
+* ☁️ Automated deployment to AWS EC2
+* 🔄 Automatic deployment rollback on failed health checks
+* 🔐 Environment-based configuration and secrets management
+* 📊 Structured application logging
 
 ---
 
-## 🚀 Live API
+# 🚀 Live Application
 
-**Base URL:** [https://savorly-backend.onrender.com](https://savorly-backend.onrender.com)
+### Frontend
+
+https://elizbeh.github.io/savorly-frontend/
+
+### Production API
+
+https://savorly.duckdns.org
+
+### API Health Check
+
+https://savorly.duckdns.org/health
 
 ---
 
-## 🧱 Architecture Overview
+# 🏗️ Production Architecture
 
+```text
+                         Developer
+                             │
+                             │ git push
+                             ▼
+                      GitHub Repository
+                             │
+                             ▼
+                    GitHub Actions CI/CD
+                             │
+              ┌──────────────┴──────────────┐
+              │                             │
+              ▼                             ▼
+       Run Tests & DB                Build Docker Image
+        Migrations                         │
+              │                            ▼
+              │                    GitHub Container
+              │                       Registry
+              │                            │
+              └──────────────┬─────────────┘
+                             │
+                             ▼
+                         AWS EC2
+                             │
+                             ▼
+                    Docker Container
+                    savorly-api :5000
+                             │
+                             ▼
+                       Savorly API
+                             │
+                    ┌────────┴────────┐
+                    │                 │
+                    ▼                 ▼
+                 MySQL           Cloudinary
+               Database          Image Storage
 ```
+
+---
+
+# 🔄 CI/CD Pipeline
+
+Every push to `master` or `dev` triggers the GitHub Actions pipeline.
+
+The pipeline performs:
+
+```text
+Push to GitHub
+      │
+      ▼
+Checkout Repository
+      │
+      ▼
+Install Dependencies
+      │
+      ▼
+Start MySQL Service
+      │
+      ▼
+Run Database Migrations
+      │
+      ▼
+Seed Test Database
+      │
+      ▼
+Run Unit Tests
+      │
+      ▼
+Run Integration Tests
+      │
+      ▼
+Build Docker Image
+      │
+      ▼
+Publish Image to GHCR
+      │
+      ▼
+Deploy to AWS EC2
+      │
+      ▼
+Pull Image by Commit SHA
+      │
+      ▼
+Start New Container
+      │
+      ▼
+Health Check
+      │
+      ├── PASS ──► Deployment Successful
+      │
+      └── FAIL ──► Automatic Rollback
+```
+
+### Deployment strategy
+
+Production Docker images are tagged with the Git commit SHA:
+
+```text
+ghcr.io/elizbeh/savorly-backend:<commit-sha>
+```
+
+The `latest` tag is also published.
+
+Using commit SHA tags makes deployments traceable and allows the previous production image to be restored automatically if a new deployment fails its health check.
+
+---
+
+# 🔄 Automatic Rollback
+
+The production deployment includes a health-check-based rollback mechanism.
+
+Before replacing the running container, the currently deployed image is saved.
+
+After deployment:
+
+```text
+New container starts
+       │
+       ▼
+GET /health
+       │
+   ┌───┴───┐
+   │       │
+  PASS    FAIL
+   │       │
+   ▼       ▼
+Keep     Stop new
+new      container
+version      │
+             ▼
+        Restore previous
+           image
+             │
+             ▼
+        Health check
+```
+
+This prevents a broken Docker image from remaining in production.
+
+---
+
+# 🐳 Docker Architecture
+
+Local development uses Docker Compose:
+
+```text
+              Docker Compose
+
+       ┌────────────────────────┐
+       │        Backend         │
+       │  Node.js + Express API │
+       └───────────┬────────────┘
+                   │
+                   ▼
+       ┌────────────────────────┐
+       │        MySQL 8         │
+       │       Database         │
+       └────────────────────────┘
+
+       ┌────────────────────────┐
+       │   Migration Service    │
+       │     npm run migrate    │
+       └────────────────────────┘
+```
+
+The migration process initializes and updates the database schema before the application runs.
+
+---
+
+# 📁 Project Structure
+
+```text
 savorly-backend/
+│
 ├── config/
-│   ├── db.js                # MySQL/TiDB connection pool
-│   ├── logger.js            # Winston logger configuration
-│
-├── controllers/             # Core business logic
-│   ├── authController.js
-│   ├── loginController.js
-│   ├── verifyEmailController.js
-│   ├── recipeController.js
-│   ├── profileController.js
-│   ├── categoryController.js
-│   ├── savedRecipesController.js
-│   └── adminController.js
-│
+├── controllers/
 ├── middleware/
-│   ├── authenticate.js      # JWT auth + secure cookies
-│   ├── isAdmin.js           # Role-based access control
-│   ├── upload.js            # Cloudinary upload handler
-│   └── validateInput.js     # Joi input validation
-│
-├── models/                  # Database query logic
-│   ├── userModel.js
-│   ├── recipeModel.js
-│   ├── categoryModel.js
-│   ├── commentModel.js
-│   └── ratingModel.js
-│
+├── migrations/
+├── models/
 ├── routes/
-│   ├── authRoutes.js
-│   ├── adminRoutes.js
-│   ├── recipeRoutes.js
-│   ├── categoryRoutes.js
-│   ├── profileRoutes.js
-│   └── savedRecipeRoutes.js
-│
-├── migrations/              # Migration and seeding scripts
-│   ├── runMigrations.js
-│   └── seedDatabase.js
-│
+├── services/
 ├── tests/
 │   ├── unit/
 │   └── integration/
 │
-├── server.js                # Express app entry point
+├── Dockerfile
+├── docker-compose.yml
+├── server.js
 └── package.json
 ```
 
-* * * * *
+---
 
-⚙️ Core Features
-----------------
+# ✨ Features
 
-✅ **Secure Authentication**
+## Authentication
 
--   JWT-based login/register
+* JWT authentication
+* Refresh tokens
+* Secure HTTP cookies
+* Email verification
+* Password hashing with bcrypt
 
--   Secure cookies for refresh tokens
+## Recipe Management
 
--   Email verification with token system
+* Create recipes
+* Update recipes
+* Delete recipes
+* Recipe categories
+* Ingredients
+* Image uploads with Cloudinary
 
--   Rate-limiting on login and registration
+## User Features
 
-✅ **User Management**
+* User profiles
+* Saved recipes
+* Ratings
+* Comments
 
--   CRUD operations for users (admin-restricted)
+---
 
--   Role management (user/admin promotion)
+# 🔐 Security
 
-✅ **Recipe Management**
+The API implements several security measures:
 
--   Create, read, update, and delete recipes
+* Helmet security headers
+* XSS protection
+* Rate limiting
+* Joi request validation
+* Secure cookies
+* JWT authentication
+* Parameterized SQL queries
+* CORS configuration
+* Environment-based secrets
 
--   Cloudinary image upload (via Multer & Streamifier)
+Production secrets are stored outside the repository and injected into the Docker container through environment configuration.
 
--   Comment and rating features
+---
 
-✅ **Profile & Saved Recipes**
+# 🗄️ Database
 
--   Manage profile (bio, avatar)
+The backend uses MySQL with:
 
--   Save and unsave recipes
+* Connection pooling
+* Automated migrations
+* Database seeding
+* Test database isolation
+* Migration checks for existing columns
 
--   View saved recipes
+Database migrations can be executed with:
 
-✅ **Security**
+```bash
+npm run migrate
+```
 
--   `helmet`, `xss-clean`, `express-rate-limit` middleware
+---
 
--   Sanitized SQL queries (using `mysql2` prepared statements)
+# 🧪 Testing
 
--   HTTPS-only cookies in production
+Testing is automated using:
 
--   Password hashing via `bcryptjs`
+* Jest
+* Supertest
 
-✅ **Automated Database Setup**
+The CI pipeline runs:
 
--   Migrations and seeders for TiDB/MySQL
+```text
+Unit Tests
+     │
+     ▼
+Integration Tests
+     │
+     ▼
+Docker Build
+```
 
--   Auto-creation of the database in CI/CD workflow
+A Docker image is only published after the test stage succeeds.
 
-✅ **Testing**
+---
 
--   `jest` + `supertest` for unit and integration testing
+# 📊 Logging
 
-✅ **CI/CD on GitHub Actions**
+Application logging is handled with **Winston**.
 
--   Builds, tests, migrates, and deploys automatically to Render
+The backend provides structured logging for:
 
--   Secure use of GitHub Secrets for environment variables
+* Database connections
+* Authentication events
+* CORS requests
+* Validation errors
+* Application errors
+* Deployment/runtime debugging
 
-* * * * *
+---
 
-🧪 CI/CD Pipeline
------------------
+# 🐳 Running Locally with Docker
 
-GitHub Actions workflow runs on every push to the `master` branch:
+Build and start the application:
 
--   ✅ Checkout code
+```bash
+docker compose up --build
+```
 
--   ⚙️ Set up Node.js (v18)
+This starts the required local services.
 
--   💾 Install dependencies
+Stop containers:
 
--   🛠️ Create database if not exists
+```bash
+docker compose down
+```
 
--   🔄 Run migrations & seed data
+View running containers:
 
--   🧪 Execute unit and integration tests
+```bash
+docker ps
+```
 
--   🚀 Deploy automatically to **Render**
+View backend logs:
 
-See workflow file: `.github/workflows/backend-ci.yml`
+```bash
+docker logs savorly-api
+```
 
-* * * * *
+---
 
-🛠️ Local Development
----------------------
+# 💻 Local Development
 
-### 1️⃣ Clone the repo
+Clone the repository:
 
-`git clone https://github.com/Elizbeh/savorly-backend.git
-cd savorly-backend`
+```bash
+git clone https://github.com/Elizbeh/savorly-backend.git
+cd savorly-backend
+```
 
-### 2️⃣ Install dependencies
+Install dependencies:
 
-`npm install`
+```bash
+npm install
+```
 
-### 3️⃣ Configure environment
+Create a `.env` file:
 
-Create a `.env` file in the project root:
+```env
+NODE_ENV=development
+PORT=5001
 
-`NODE_ENV=development
-PORT=8080
-DB_HOST=your-tidb-host
-DB_PORT=4000
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=savorly
-JWT_SECRET=your-jwt-secret
-REFRESH_TOKEN_SECRET=your-refresh-token-secret
-EMAIL_USER=your-email@example.com
-EMAIL_PASS=your-email-password
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-CLIENT_URL=https://Elizbeh.github.io/savorly-end`
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=savorly_db
 
-### 4️⃣ Run migrations & seed data
+JWT_SECRET=your_secret
+REFRESH_TOKEN_SECRET=your_refresh_secret
 
-`npm run migrate
-npm run seed`
+EMAIL_USER=your_email
+EMAIL_PASS=your_password
 
-### 5️⃣ Start development server
+CLIENT_URL=http://localhost:5173
 
-`npm run dev`
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
 
-Your API will be available at\
-👉 `http://localhost:8080`
+Run migrations:
 
-* * * * *
+```bash
+npm run migrate
+```
 
-🧩 API Routes Overview
-----------------------
+Seed the database:
 
-| Endpoint                | Method            | Description             | Auth             |
-| ------------------------| ----------------- | ------------------------| ---------------- |
-| `/api/auth/register`    | POST              | Register new user       | No               |
-| `/api/auth/login`       | POST              | Login and receive token | No               |
-| `/api/auth/verify-email`| GET               | Email verification      | No               |
-| `/api/auth/user`        | GET               | Get logged user         | ✅               |
-| `/api/recipes`          | GET               | Get all recipes         | No               |
-| `/api/recipes/create`   | POST              | Create a recipe         | ✅               |
-| `/api/profile`          | GET/PUT           | Get or update profile   | ✅               |
-| `/api/saved`            | GET/POST/DELETE   | Manage saved recipes    | ✅               |
-| `/api/categories`       | GET/POST          | Fetch or create category| ✅ (POST admin)  |
-| `/api/admin/users`      | GET/DELETE/PUT    | Manage users            | ✅ (admin only)  |
+```bash
+npm run seed
+```
 
-* * * * *
+Start the development server:
 
-🧰 Tech Stack
--------------
+```bash
+npm run dev
+```
 
--   **Backend:** Node.js, Express.js
+---
 
--   **Database:** MySQL / TiDB
+# 📦 Docker Image
 
--   **Auth:** JWT + Secure Cookies
+Production images are published to GitHub Container Registry:
 
--   **Storage:** Cloudinary (image uploads)
+```text
+ghcr.io/elizbeh/savorly-backend
+```
 
--   **Email:** Nodemailer (verification emails)
+Example:
 
--   **Testing:** Jest, Supertest
+```bash
+docker pull ghcr.io/elizbeh/savorly-backend:latest
+```
 
--   **Security:** Helmet, XSS-Clean, Rate-Limit
+Production deployments use immutable commit SHA tags:
 
--   **Logging:** Winston
+```text
+ghcr.io/elizbeh/savorly-backend:<commit-sha>
+```
 
--   **CI/CD:** GitHub Actions + Render
+---
 
-* * * * *
+# 📚 API Overview
 
-🧑‍💻 Author
-------------
+| Endpoint                 | Method             | Description          |
+| ------------------------ | ------------------ | -------------------- |
+| `/api/auth/register`     | POST               | Register a user      |
+| `/api/auth/login`        | POST               | Login                |
+| `/api/auth/verify-email` | GET                | Verify email         |
+| `/api/recipes`           | GET                | Retrieve recipes     |
+| `/api/recipes/create`    | POST               | Create a recipe      |
+| `/api/profile`           | GET / PUT          | Manage user profile  |
+| `/api/categories`        | GET / POST         | Manage categories    |
+| `/api/saved-recipes`     | GET / POST         | Manage saved recipes |
+| `/api/admin/users`       | GET / PUT / DELETE | User administration  |
+| `/health`                | GET                | API health check     |
 
-**Elizabeth [@Elizbeh](https://github.com/Elizbeh)**\
-Full-Stack Developer | Focused on secure, scalable web apps.\
-📧 Contact: *available upon request*
+---
 
-* * * * *
+# 🛠️ Technology Stack
 
-📜 License
-----------
+### Backend
 
-This project is licensed under the **MIT License**.
+* Node.js
+* Express.js
 
-* * * * *
+### Database
 
-> 💡 *This backend forms part of the full Savorly web application, with the frontend built in React and hosted on GitHub Pages.*
+* MySQL
+* TiDB Cloud
+
+### Authentication
+
+* JWT
+* HTTP Cookies
+* bcrypt
+
+### Storage
+
+* Cloudinary
+
+### Email
+
+* Nodemailer
+
+### Testing
+
+* Jest
+* Supertest
+
+### DevOps & Cloud
+
+* Docker
+* Docker Compose
+* GitHub Actions
+* GitHub Container Registry
+* AWS EC2
+* SSH-based automated deployment
+* Health-check-based rollback
+
+### Security
+
+* Helmet
+* XSS protection
+* Express Rate Limit
+* Joi validation
+* CORS
+
+### Logging
+
+* Winston
+
+---
+
+# 🔗 Related Repositories
+
+### Frontend
+
+https://github.com/Elizbeh/savorly-frontend
+
+### Original Full Project
+
+https://github.com/Elizbeh/Savorly
+
+---
+
+# 👩‍💻 Author
+
+**Elizabeth Behaghel**
+
+Full-Stack Developer transitioning into **Cloud & DevOps Engineering**.
+
+GitHub:
+
+https://github.com/Elizbeh
+
+---
+
+# 📄 License
+
+MIT License.
+
+---
+
+# 🚧 Future Improvements
+
+Planned DevOps improvements include:
+
+* Infrastructure as Code with Terraform
+* Kubernetes deployment
+* Prometheus and Grafana monitoring
+* Docker image vulnerability scanning
+* Centralized log management
+* Blue/Green deployments
+* Improved observability and alerting
+
+---
+
+> Savorly demonstrates modern backend engineering and DevOps practices through containerization, automated testing, CI/CD, GitHub Container Registry, AWS deployment, health checks, and automatic rollback.
 >
-> 🔗 Frontend: https://Elizbeh.github.io/savorly-frontend
+> **Frontend:** https://elizbeh.github.io/savorly-frontend/
+>
+> **Production API:** https://savorly.duckdns.org

@@ -1,706 +1,291 @@
-/* ============================================
-   LANDING PAGE
-   ============================================ */
+/* ===================== GLOBAL ===================== */
 
-/* Main Container */
+
 .landing-page {
-  display: flex;
-  flex-direction: column;
   width: 100%;
-  min-height: 100vh;
   overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+
 }
 
-/* ============================================
-   HERO SECTION
-   ============================================ */
-
-.hero {
+/* ===================== HERO ===================== */
+.landing-page .landing-hero {
   position: relative;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: calc(var(--navbar-height) + 70px) 24px 60px;
   text-align: center;
-  padding: 2rem;
+  background: linear-gradient(135deg, rgba(33,33,33,0.4), rgba(33,33,33,0.6)),
+              url('../assets/images/banner.png') center/cover no-repeat;
+  color: white;
   
-  /* Background Image */
-  background: url('../assets/images/banner.png') center center/cover no-repeat;
-  background-attachment: fixed;
-  
-  /* Ensure content is above overlay */
-  isolation: isolate;
 }
 
-/* Dark Overlay for Better Text Readability */
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(30, 30, 30, 0.5) 100%
-  );
-  z-index: 1;
-}
-
-/* Hero Content Container */
-.hero-content {
+.landing-page .landing-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 900px;
-  width: 100%;
-  padding: 2rem;
-  animation: fadeInUp 1s ease-out;
-}
-
-/* Hero Title */
-.hero-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 800;
+  max-width: 800px;
   color: #ffffff;
-  margin: 0 0 1.5rem 0;
-  line-height: 1.2;
-  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
-  letter-spacing: -0.02em;
 }
 
-/* Hero Subtitle with Typewriter Effect */
-.hero-subtitle {
-  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
-  color: #f0f0f0;
-  margin: 0 0 3rem 0;
-  line-height: 1.6;
-  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
-  
-  /* Typewriter animation */
+.landing-page .landing-hero-badge {
   display: inline-block;
-  overflow: hidden;
-  border-right: 3px solid var(--primary-color, #f76408);
-  white-space: nowrap;
-  animation: 
-    typewriter 4s steps(60) 0.5s forwards,
-    blinkCursor 0.75s step-end infinite;
-  max-width: 100%;
+  padding: 8px 24px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  font-size: 0.9rem;
+  color: white;
+  margin-bottom: 0;
+
 }
 
-@keyframes typewriter {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-    border-right-color: transparent;
-  }
+.landing-page .landing-hero-title {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
 }
 
-@keyframes blinkCursor {
-  from, to {
-    border-right-color: transparent;
-  }
-  50% {
-    border-right-color: var(--primary-color, #f76408);
-  }
+.landing-page .landing-gradient-text {
+  background: linear-gradient(135deg, var(--primary-500), var(--accent-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* CTA Buttons Container */
-.cta-buttons {
+.landing-page .landing-hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 32px;
+  line-height: 1.6;
+  color: #FFF;
+}
+
+.landing-page .landing-hero-actions {
   display: flex;
-  gap: 1.25rem;
+  gap: 16px;
   justify-content: center;
-  align-items: center;
   flex-wrap: wrap;
-  margin-top: 2rem;
+  margin-bottom: 40px;
 }
 
-/* CTA Button Base Styles */
-.cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  
-  padding: 1rem 2.5rem;
-  font-size: 1.125rem;
+/* Hero Buttons */
+.landing-page .btn-landing {
+  padding: 14px 32px;
+  border-radius: 12px;
   font-weight: 600;
   text-decoration: none;
-  border-radius: 50px;
-  border: 2px solid transparent;
-  
   transition: all 0.3s ease;
-  cursor: pointer;
-  white-space: nowrap;
-  
-  /* Ensure proper text rendering */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Primary CTA Button */
-.cta-btn.primary {
-  background: linear-gradient(135deg, #ff8c42 0%, #f76408 100%);
+.landing-page .btn-landing.primary {
+  background: var(--primary-500);
   color: white;
-  box-shadow: 0 4px 15px rgba(247, 100, 8, 0.4);
 }
 
-.cta-btn.primary:hover {
-  background: linear-gradient(135deg, #ff9d5c 0%, #ff7a1f 100%);
-  box-shadow: 0 6px 25px rgba(247, 100, 8, 0.5);
-  transform: translateY(-3px);
+.landing-page .btn-landing.primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-2px);
 }
 
-.cta-btn.primary:active {
-  transform: translateY(-1px);
+.landing-page .btn-landing.secondary {
+  background: white;
+  color: var(--primary-500);
+  border: 2px solid white;
 }
 
-/* Secondary CTA Button */
-.cta-btn.secondary {
-  background: transparent;
+.landing-page .btn-landing.secondary:hover {
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  border-color: var(--primary-500);
+  background: var(--primary-500);
 }
 
-.cta-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: white;
-  transform: translateY(-3px);
+/* Hero Stats */
+.landing-page .landing-hero-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
 }
 
-/* Large CTA Button Variant */
-.cta-btn.large {
-  padding: 1.25rem 3rem;
-  font-size: 1.25rem;
+.landing-page .landing-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.585);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
 }
 
-
-
-/* Scroll Indicator */
-.scroll-indicator {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  animation: bounce 2s infinite;
+.landing-page .landing-stat-item.animate-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.scroll-arrow {
-  display: block;
-  width: 24px;
-  height: 24px;
-  border-bottom: 3px solid white;
-  border-right: 3px solid white;
-  transform: rotate(45deg);
-  opacity: 0.7;
+.landing-page .landing-stat-value {
+  font-weight: 800;
+  font-size: 1.5rem;
 }
 
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  40% {
-    transform: translateX(-50%) translateY(-10px);
-  }
-  60% {
-    transform: translateX(-50%) translateY(-5px);
-  }
+.landing-page .landing-stat-label {
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff;
 }
 
-/* Fade In Up Animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ===================== FEATURES ===================== */
+.landing-page .landing-features-section {
+  padding: 100px 24px;
+  background: var(--neutral-50);
 }
 
-/* ============================================
-   SECTION COMMONS
-   ============================================ */
-
-.section-container {
+.landing-page .landing-section-container {
   max-width: 1200px;
-  width: 100%;
   margin: 0 auto;
-  padding: 0 2rem;
 }
 
-.section-title {
+.landing-page .landing-section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.landing-page .landing-section-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--neutral-100);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.landing-page .landing-section-title {
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  text-align: center;
-  line-height: 1.3;
+  margin-bottom: 12px;
 }
 
-.section-description {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  color: #5a6c7d;
+.landing-page .landing-section-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Features Grid */
+.landing-page .landing-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+/* Feature Cards */
+.landing-page .landing-feature-card {
+  padding: 40px 24px;
+  background: white;
+  border-radius: 16px;
+  border: 2px solid var(--border-light);
   text-align: center;
-  margin: 0 auto 4rem auto;
-  max-width: 700px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.landing-page .landing-feature-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.landing-page .landing-feature-card:hover {
+  border-color: var(--primary-500);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.landing-page .landing-feature-icon {
+  margin-bottom: 20px;
+  color: var(--primary-500);
+}
+
+.landing-page .landing-feature-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.landing-page .landing-feature-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
-/* ============================================
-   FEATURES SECTION
-   ============================================ */
-
-.features {
-  padding: 5rem 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  position: relative;
+/* ===================== STEPS ===================== */
+.landing-page .landing-steps-section {
+  padding: 50px 24px;
+  background: var(--neutral-50);
 }
 
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Feature Card */
-.feature-card {
+.landing-page .landing-step-card {
+  padding: 40px 24px;
   background: white;
   border-radius: 16px;
-  padding: 2.5rem 2rem;
+  border: 2px solid var(--border-light);
   text-align: center;
-  
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.07),
-    0 1px 3px rgba(0, 0, 0, 0.06);
-  
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Animation on scroll - start visible */
-  opacity: 1;
-  transform: translateY(0);
-  animation: fadeInUp 0.6s ease-out backwards;
-}
-
-/* Stagger animation for cards */
-.feature-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.feature-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.feature-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.feature-card.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 
-    0 12px 24px rgba(247, 100, 8, 0.15),
-    0 4px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* Feature Icon Wrapper */
-.feature-icon-wrapper {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1.5rem auto;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  background: linear-gradient(135deg, #fff5f0 0%, #ffe8db 100%);
-  border-radius: 50%;
-  
-  transition: transform 0.3s ease;
-}
-
-.feature-card:hover .feature-icon-wrapper {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.feature-icon {
-  font-size: 2.5rem;
-  color: var(--primary-color, #f76408);
-  filter: drop-shadow(0 2px 4px rgba(247, 100, 8, 0.2));
-}
-
-/* Feature Title */
-.feature-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
-}
-
-/* Feature Description */
-.feature-description {
-  font-size: 1rem;
-  color: #5a6c7d;
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* ============================================
-   HOW IT WORKS SECTION
-   ============================================ */
-
-.how-it-works {
-  padding: 5rem 2rem;
-  background: white;
-  position: relative;
-}
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2.5rem;
-  max-width: 1200px;
-  margin: 0 auto 4rem auto;
-}
-
-/* Step Card */
-.step-card {
-  position: relative;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  
-  border: 2px solid #e9ecef;
-  
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Animation on scroll - start visible */
-  opacity: 1;
-  transform: translateY(0);
-  animation: fadeInUp 0.6s ease-out backwards;
-}
-
-/* Stagger animation for steps */
-.step-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.step-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.step-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.step-card.animate-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.step-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--primary-color, #f76408);
-  box-shadow: 
-    0 12px 24px rgba(90, 234, 102, 0.15),
-    0 4px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* Step Number Badge */
-.step-number {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  
-  width: 44px;
-  height: 44px;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  background: linear-gradient(135deg, #5aea66 0%, #4cd964 100%);
-  color: white;
-  font-size: 1.25rem;
-  font-weight: 700;
-  border-radius: 50%;
-  
-  box-shadow: 0 4px 12px rgba(90, 234, 102, 0.3);
-}
-
-/* Step Icon Wrapper */
-.step-icon-wrapper {
-  width: 70px;
-  height: 70px;
-  margin: 1.5rem auto 1.5rem auto;
-  
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  background: white;
-  border-radius: 50%;
-  border: 2px solid #e9ecef;
-  
   transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
 }
 
-.step-card:hover .step-icon-wrapper {
-  transform: scale(1.1);
-  border-color: var(--primary-color, #f76408);
+.landing-page .landing-step-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.step-icon {
-  font-size: 2rem;
-  color: var(--primary-color, #f76408);
-  filter: drop-shadow(0 2px 4px rgba(247, 100, 8, 0.2));
+.landing-page .landing-step-card:hover {
+  border-color: var(--primary-500);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Step Title */
-.step-title {
-  font-size: 1.5rem;
+.landing-page .landing-step-number {
+  font-size: 1.2rem;
   font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
+  color: var(--primary-500);
+  margin-bottom: 12px;
 }
 
-/* Step Description */
-.step-description {
-  font-size: 1rem;
-  color: #5a6c7d;
-  line-height: 1.7;
-  margin: 0;
+.landing-page .landing-step-icon {
+  margin-bottom: 16px;
+  color: var(--accent-500);
 }
 
-/* ============================================
-   FINAL CTA SECTION
-   ============================================ */
-
-.final-cta {
+/* ===================== CTA ===================== */
+.landing-page .landing-cta-section {
+  padding: 80px 24px;
+  background: var(--primary-light);
+  margin: 2em;
   text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 24px;
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.07),
-    0 1px 3px rgba(0, 0, 0, 0.06);
+  border-radius: 10px
 }
 
-.final-cta-title {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
+.landing-page .landing-cta-title {
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
-  color: #2c3e50;
-  margin: 0 0 2rem 0;
-  line-height: 1.3;
+  margin-bottom: 16px;
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
-/* TABLET (768px - 1024px) */
-@media screen and (max-width: 1024px) {
-  .hero {
-    min-height: 90vh;
-    background-attachment: scroll;
-  }
-  
-  .feature-grid,
-  .steps-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-  }
-  
-  .section-container {
-    padding: 0 1.5rem;
-  }
-}
-
-/* MOBILE (up to 768px) */
-@media screen and (max-width: 768px) {
-  .hero {
-    min-height: 100vh;
-    padding: 1.5rem 1rem;
-  }
-  
-  .hero-content {
-    padding: 1rem;
-  }
-  
-  .hero-title {
-    margin-bottom: 1rem;
-  }
-  
-  .hero-subtitle {
-    margin-bottom: 2rem;
-    white-space: normal;
-    border-right: none;
-    animation: fadeInUp 1s ease-out 0.5s backwards;
-  }
-  
-  .cta-buttons {
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-  }
-  
-  .cta-btn {
-    width: 100%;
-    max-width: 400px;
-    padding: 1rem 2rem;
-  }
-  
-  .features,
-  .how-it-works {
-    padding: 3rem 1.5rem;
-  }
-  
-  .section-description {
-    margin-bottom: 3rem;
-  }
-  
-  .feature-grid,
-  .steps-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-  
-  .feature-card,
-  .step-card {
-    padding: 2rem 1.5rem;
-  }
-  
-  .scroll-indicator {
-    display: none;
-  }
-  
-  .final-cta {
-    padding: 3rem 1.5rem;
-  }
-}
-
-/* SMALL MOBILE (up to 480px) */
-@media screen and (max-width: 480px) {
-  .hero-title {
-    font-size: 1.75rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-  
-  .cta-btn {
-    padding: 0.875rem 1.75rem;
-    font-size: 1rem;
-  }
-  
-  .section-title {
-    font-size: 1.75rem;
-  }
-  
-  .section-description {
-    font-size: 0.9375rem;
-  }
-  
-  .feature-card,
-  .step-card {
-    padding: 1.75rem 1.25rem;
-  }
-  
-  .feature-icon-wrapper,
-  .step-icon-wrapper {
-    width: 60px;
-    height: 60px;
-  }
-  
-  .feature-icon {
-    font-size: 2rem;
-  }
-  
-  .step-icon {
-    font-size: 1.75rem;
-  }
-  
-  .feature-title,
-  .step-title {
-    font-size: 1.25rem;
-  }
-  
-  .feature-description,
-  .step-description {
-    font-size: 0.9375rem;
-  }
-}
-
-/* ============================================
-   ACCESSIBILITY ENHANCEMENTS
-   ============================================ */
-
-/* Reduce Motion for Users Who Prefer It */
-@media (prefers-reduced-motion: reduce) {
-  .hero-subtitle,
-  .feature-card,
-  .step-card,
-  .cta-btn,
-  .feature-icon-wrapper,
-  .step-icon-wrapper,
-  .scroll-indicator {
-    animation: none !important;
-    transition: none !important;
-  }
-  
-  .feature-card:hover,
-  .step-card:hover {
-    transform: none;
-  }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .hero-overlay {
-    background: rgba(0, 0, 0, 0.8);
-  }
-  
-  .feature-card,
-  .step-card {
-    border: 3px solid currentColor;
-  }
-  
-  .cta-btn:focus-visible {
-    outline-width: 4px;
-  }
-}
-
-/* Print Styles */
-@media print {
-  .hero {
-    background: none;
-    min-height: auto;
-    page-break-after: always;
-  }
-  
-  .hero-overlay,
-  .scroll-indicator,
-  .cta-buttons {
-    display: none;
-  }
-  
-  .feature-card,
-  .step-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-    page-break-inside: avoid;
-  }
+.landing-page .landing-cta-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 32px;
+  color: var(--text-primary);
 }

@@ -1,234 +1,511 @@
 /* ============================================
-   RECIPE FORM PAGE - 50/50 LAYOUT
+   RECIPE FORM
    ============================================ */
 
-/* Main Container (desktop: side-by-side, mobile: form only) */
+.recipe-form-page {
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--bg-secondary);
+  padding: 40px 24px;
+}
+
 .recipe-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.form-header {
+  margin-bottom: 32px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: white;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+}
+
+.back-btn:hover {
+  border-color: var(--primary-500);
+  color: var(--primary-500);
+}
+
+.form-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.form-header p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.alert {
   display: flex;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
 }
 
-/* ===========================
-   LEFT SIDE IMAGE (DESKTOP)
-   =========================== */
-.background-image {
-  flex: 1;
-  background: url('../assets/images/blackmanjuice.avif') center center / cover no-repeat;
-  height: 100%;
-  display: block;
+.alert svg {
+  flex-shrink: 0;
 }
 
-/* Hide image ON TABLET + MOBILE */
-@media (max-width: 1023px) {
-  .background-image {
-    display: none;
+.alert-error {
+  background: var(--error-light);
+  border: 1px solid #FFCDD2;
+  color: var(--error);
+}
+
+.alert-success {
+  background: var(--success-light);
+  border: 1px solid #C8E6C9;
+  color: var(--success);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 /* ============================================
-   RIGHT SIDE FORM
+   FORM
    ============================================ */
-.create-recipe-form {
-  flex: 1;
+
+.recipe-form {
   display: flex;
   flex-direction: column;
-  padding: 2rem;
-  background: var(--color-form-background);
-  overflow-y: auto;
-  height: 100vh;
+  gap: 24px;
 }
 
-/* ------------------------------
-   PAGE TITLE
-   ------------------------------ */
-.create-recipe-form h2 {
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.create-recipe-form h2::after {
-  content: '';
-  display: block;
-  width: 80px;
-  height: 5px;
-  background: var(--gradient-primary);
-  margin: 1rem auto 0;
-  border-radius: 10px;
-}
-
-/* ------------------------------
-   ERROR MESSAGE
-   ------------------------------ */
-.error-message {
-  display: flex;
-  gap: 0.75rem;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  background: var(--error-light);
-  border-left: 5px solid var(--error);
-  border-radius: 12px;
-  color: var(--error-text);
-  font-size: 0.937rem;
-  animation: slideInLeft 0.4s ease-out;
-}
-
-
-/* ------------------------------
-   FORM LABELS + INPUTS
-   ------------------------------ */
-.create-recipe-form label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-top: 1.5rem;
-  color: var(--text-primary);
-  display: block;
-}
-
-.create-recipe-form textarea {
-  resize: none;
-}
-
-.create-recipe-form input,
-.create-recipe-form textarea,
-.create-recipe-form select,
-.create-recipe-form input[type="file"] {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-medium);
-  border-radius: 10px;
-  color: var(--text-primary);
-  transition: 0.2s ease;
-}
-
-.create-recipe-form input:focus,
-.create-recipe-form textarea:focus,
-.create-recipe-form select:focus {
-  border-color: var(--primary-500);
-  background: var(--bg-primary);
-  box-shadow: 0 0 0 4px rgba(255,138,101,0.15);
-}
-
-/* ------------------------------
-   TIME / CALORIE GRID
-   ------------------------------ */
-.time-calorie-inputs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
-  margin-top: 1.5rem;
-}
-
-@media (max-width: 1023px) {
-  .time-calorie-inputs {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ------------------------------
-   INGREDIENT TAGS
-   ------------------------------ */
-.ingredient-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1rem 0;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 10px;
-}
-
-.ingredient-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.form-section {
   background: white;
-  padding: 0.5rem 1rem;
-  border: 2px solid var(--primary-200);
-  border-radius: 20px;
-  font-weight: 500;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
 }
 
-.remove-ingredient-button {
-  width: 20px;
-  height: 20px;
-  background: var(--error);
-  border-radius: 50%;
-  border: none;
-  color: white;
-  font-size: 0.7rem;
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-light);
+}
+
+/* ============================================
+   IMAGE UPLOAD
+   ============================================ */
+
+.image-section {
+  padding: 0;
+  overflow: hidden;
+}
+
+.image-upload-label {
   cursor: pointer;
+  display: block;
 }
 
-.add-ingredient-button {
-  margin-top: 0.7rem;
-  padding: 0.7rem 1.3rem;
-  background: var(--primary-100);
-  border: 2px solid var(--primary-300);
-  border-radius: 10px;
-  cursor: pointer;
+.image-preview-wrapper {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
 }
 
-/* ------------------------------
-   IMAGE PREVIEW
-   ------------------------------ */
 .image-preview {
   width: 100%;
-  max-height: 300px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 12px;
-  margin-top: 1rem;
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+}
+
+.image-upload-label:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  background: var(--neutral-50);
+  border: 2px dashed var(--border-medium);
+  border-radius: var(--radius-md);
+  margin: 24px;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.image-placeholder:hover {
+  border-color: var(--primary-500);
+  background: var(--neutral-100);
+}
+
+.image-placeholder p {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 16px 0 4px 0;
+}
+
+.image-placeholder span {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   FORM FIELDS
+   ============================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 4px rgba(232, 93, 63, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+/* ============================================
+   ARRAY ITEMS (Ingredients/Instructions)
+   ============================================ */
+
+.array-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.array-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.array-item input,
+.array-item textarea {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.array-item input:focus,
+.array-item textarea:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 4px rgba(232, 93, 63, 0.1);
+}
+
+.array-item.numbered {
+  align-items: flex-start;
+}
+
+.item-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-500);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 50%;
+  margin-top: 12px;
+}
+
+.btn-remove {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--error-light);
+  border: none;
+  border-radius: 50%;
+  color: var(--error);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-remove:hover {
+  background: var(--error);
+  color: white;
+  transform: scale(1.1);
+}
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--neutral-50);
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  background: var(--neutral-100);
+  border-color: var(--primary-500);
+  color: var(--primary-500);
+}
+
+/* ============================================
+   CATEGORIES
+   ============================================ */
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--neutral-50);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-checkbox:hover {
+  background: var(--neutral-100);
+  border-color: var(--primary-500);
+}
+
+.category-checkbox input {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-medium);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.category-checkbox input:checked + .checkbox-custom {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+}
+
+.category-checkbox input:checked + .checkbox-custom::after {
+  content: '✓';
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.category-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   SUBMIT BUTTON
+   ============================================ */
+
+.form-actions {
+  background: white;
+  padding: 24px 32px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 32px;
+  background: var(--primary-500);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: var(--primary-600);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-/* ------------------------------
-   SUBMIT BUTTON
-   ------------------------------ */
-button.submit {
-  width: 100%;
-  margin-top: 2rem;
-  padding: 1.15rem;
-  background: var(--gradient-primary);
-  border-radius: 12px;
-  color: white;
-  font-weight: 700;
-  font-size: 1.15rem;
-  cursor: pointer;
-  border: none;
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* ------------------------------
-   MODAL
-   ------------------------------ */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.spinner {
+  animation: spin 0.8s linear infinite;
 }
 
-.modal-content {
-  background: var(--bg-elevated);
-  padding: 2rem;
-  border-radius: 18px;
-  text-align: center;
-  width: 90%;
-  max-width: 450px;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* ------------------------------
-   ANIMATIONS
-   ------------------------------ */
-@keyframes slideInLeft {
-  from { transform: translateX(-15px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .recipe-form-page {
+    padding: 24px 16px;
+  }
+
+  .form-section {
+    padding: 24px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-preview-wrapper {
+    height: 200px;
+  }
+
+  .array-item.numbered {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .item-number {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-section {
+    padding: 20px 16px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

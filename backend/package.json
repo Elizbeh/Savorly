@@ -9,12 +9,10 @@
     "migrate": "node ./migrations/runMigrations.js",
     "seed": "node ./migrations/seedDatabase.js",
     "start": "node server.js",
-    "test": "cross-env NODE_ENV=development jest --watch",
-    "test:unit": "cross-env NODE_ENV=development jest tests/unit",
-    "test:integration": "cross-env NODE_ENV=development jest --testPathPattern=tests/integration --detectOpenHandles",
-    "test:ci": "cross-env NODE_ENV=development jest --coverage",
-    "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
+    "test": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest",
+    "test:unit": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest tests/unit",
+    "test:integration": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest tests/integration",
+    "test:ci": "cross-env NODE_ENV=test DOTENV_CONFIG_PATH=.env.test jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -35,7 +33,6 @@
     "mysql2": "^3.14.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.10.0",
-    "package-lock.json": "^1.0.0",
     "streamifier": "^0.1.1",
     "winston": "^3.17.0",
     "xss-clean": "^0.1.4"
@@ -44,7 +41,6 @@
     "@babel/core": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
     "@eslint/js": "^9.31.0",
-    "@types/jsonwebtoken": "^9.0.7",
     "babel-jest": "^29.7.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "cross-env": "^7.0.3",

@@ -7,8 +7,10 @@ import LandingPage from './pages/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
 import RecipeDetail from './components/RecipeDetail';
+import RecipeList from "./components/RecipeList";
 import HomePage from './pages/Home';
 import RecipeForm from './pages/RecipeFormPage';
+import UserRecipesPage from "./pages/UserRecipesPage";
 import ProfilePage from './pages/Profile';
 import SavedRecipes from './pages/SavedRecipes';
 import VerifyEmail from "./components/VerifyEmail";
@@ -42,13 +44,7 @@ const AppContent = () => {
       )}
 
       {/* Apply padding top if navbar visible */}
-      <main
-        style={{
-          paddingTop: !hideNavbarAndFooter
-            ? "var(--navbar-height)"
-            : 0
-        }}
-      >
+      <main className="main-app">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
@@ -58,8 +54,10 @@ const AppContent = () => {
           <Route path="/home" element={<ProtectedRoute element={<HomePage />} />} />
           <Route path="/admin-dashboard" element={<ProtectedRoute element={<AdminDashboard />} requiredRole="admin"/>} />
           <Route path="/categories/:categoryId" element={<CategoryPage />} />
+          <Route path="/recipes" element={<ProtectedRoute element={<RecipeList />} />} />
           <Route path="/create-recipe" element={<ProtectedRoute element={<RecipeForm />} />} />
           <Route path="/recipe-form/:id" element={<ProtectedRoute element={<RecipeForm />} />} />
+          <Route path="/my-recipes" element={<UserRecipesPage />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} />
           <Route path="/saved-recipes" element={<ProtectedRoute element={<SavedRecipes />} />} />

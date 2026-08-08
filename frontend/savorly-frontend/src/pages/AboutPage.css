@@ -3,139 +3,177 @@
    ========================================== */
 
 .about-page {
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   min-height: 100vh;
-  background: var(--bg-secondary);
+  padding: calc(var(--navbar-height)) 24px 40px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 0 1rem;
-  font-family: 'Inter', sans-serif;
-  color: var(--text-primary)
+  color: var(--text-primary);
 }
+
+/* ==========================================
+   CONTAINER
+   ========================================== */
 
 .about-container {
-  max-width: 900px;
-  background: var(--bg-elevated);
-  padding: 3rem 2rem;
-  border-radius: 20px;
-  box-shadow: var(--shadow-2xl);
+  width: 100%;
+  max-width: 960px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 26px;
 }
 
-/* Header */
-.about-header h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 800;
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.about-header {
   text-align: center;
-  
-  margin-bottom: 1rem;
-  letter-spacing: -0.5px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.about-header h1 {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 0;
+  position: relative;
 }
 
 .about-header h1::after {
-  content: '';
+  content: "";
   display: block;
-  width: 80px;
+  width: 70px;
   height: 4px;
-  background: var(--gradient-primary);
-  margin: 1rem auto 0;
+  margin: 0px auto 0;
   border-radius: 10px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-500),
+    var(--accent-500)
+  );
 }
 
-/* Content Section */
+/* ==========================================
+   CONTENT SECTION
+   ========================================== */
+
 .about-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  font-size: 1rem;
+  gap: 40px;
+  font-size: 1.05rem;
   line-height: 1.8;
   color: var(--text-secondary);
 }
 
+/* Paragraph rhythm */
 .about-content p {
   margin: 0;
+  max-width: 720px;
 }
 
+/* Section headings */
 .about-content h3 {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  margin-top: 1.5rem;
-  color: var(--primary-600);
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  position: relative;
 }
+
+/* Subtle accent line under headings */
+.about-content h3::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  border-radius: 6px;
+  background: var(--primary-500);
+}
+
+/* ==========================================
+   FEATURE LIST
+   ========================================== */
 
 .about-content ul {
-  margin: 0.75rem 0 0 1.25rem;
+  list-style: none;
   padding: 0;
-  list-style-type: disc;
+  margin: 20px 0 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  color: var(--text-primary);
+  gap: 16px;
 }
 
 .about-content ul li {
+  position: relative;
+  padding-left: 32px;
   font-size: 1rem;
-  line-height: 1.6;
+  color: var(--text-primary);
 }
 
-/* Last Paragraph / Contact */
+/* Custom bullet */
+.about-content ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary-500);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+/* ==========================================
+   CONTACT SECTION
+   ========================================== */
+
 .about-content p.last {
-  margin-top: 1.5rem;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .about-content p.last a {
   color: var(--primary-500);
   font-weight: 600;
   text-decoration: none;
-  transition: color 0.3s ease;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-base);
 }
 
 .about-content p.last a:hover {
-  color: var(--primary-700);
-  text-decoration: underline;
+  border-bottom: 2px solid var(--primary-500);
 }
 
-/* Responsive */
-@media screen and (max-width: 768px) {
-  .about-page {
-    padding: 0  1rem;
-  }
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  
 
   .about-container {
-    padding: 2.5rem 1.5rem;
+    gap: 40px;
   }
 
+  .about-content {
+    gap: 32px;
+  }
+
+  .about-content h3 {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 480px) {
   .about-header h1 {
     font-size: 2rem;
   }
 
-  .about-content h3 {
-    font-size: 1.25rem;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .about-page {
-    padding: 0;
-  }
-
-  .about-container {
-    padding: 2rem 1rem;
-  }
-
-  .about-header h1 {
-    font-size: 1.75rem;
-  }
-
-  .about-content h3 {
-    font-size: 1.125rem;
-  }
-
-  .about-content ul li {
-    font-size: 0.95rem;
+  .about-content {
+    font-size: 0.98rem;
   }
 }

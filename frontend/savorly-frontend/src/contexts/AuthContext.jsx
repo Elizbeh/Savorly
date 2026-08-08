@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.get("/api/auth/user");
       setUser(data);
     } catch (err) {
-      console.error("Auth fetch error:", err.response?.data || err.message);
+      if (err.response?.status !== 401) {
+        console.error("Auth fetch error:", err.response?.data || err.message);
+      }
       setUser(null);
     } finally {
       setIsLoading(false);

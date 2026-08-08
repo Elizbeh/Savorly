@@ -1,8 +1,15 @@
+
+
+html, body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 /* ============================================
    ACCESSIBILITY UTILITIES
    ============================================ */
-
-/* Visually Hidden - Hides content visually but keeps it accessible to screen readers */
+   
+/* Visually Hidden - hides content visually but keeps it accessible to screen readers */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -17,8 +24,8 @@
 
 /* Focus Visible - Better focus indicators for keyboard navigation */
 *:focus-visible {
-  outline: 2px solid var(--primary-color, #f76408);
-  outline-offset: 2px;
+  outline: 3px solid var(--primary-500);
+  outline-offset: 3px;
 }
 
 /* Remove default focus outline when not using keyboard */
@@ -29,24 +36,25 @@
 /* Skip Link Styles */
 .skip-to-content {
   position: absolute;
-  top: -100%;
+  top: -120px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--primary-color, #f76408);
-  color: white;
+  background: var(--primary-500);
+  color: var(--text-on-primary);
   padding: 0.75rem 1.5rem;
   text-decoration: none;
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   font-weight: 600;
-  z-index: 1002;
-  transition: top 0.3s ease;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: top var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .skip-to-content:focus {
-  top: 0;
+  top: 16px;
 }
 
 /* Ensure main content has proper ID for skip link */
 main#main-content {
-  scroll-margin-top: calc(var(--navbar-height, 80px) + 1rem);
+  scroll-margin-top: calc(var(--navbar-height) + 1rem);
 }

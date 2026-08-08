@@ -9,6 +9,7 @@ import api from '../services/api';
 const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const navRef = useRef(null);
   
   const location = useLocation();
@@ -16,6 +17,16 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
   const { user, logout } = useAuth();
 
   const isLandingPage = location.pathname === "/";
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch user profile
   useEffect(() => {
@@ -47,7 +58,6 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
     if (isMobileMenuOpen) {
       toggleMobileMenu();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   // Close mobile menu when clicking outside
@@ -60,7 +70,7 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
 
     if (isMobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+      document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -71,7 +81,6 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
     };
   }, [isMobileMenuOpen, toggleMobileMenu]);
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       await logout();
@@ -81,14 +90,12 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
     }
   };
 
-  // Handle link click (close mobile menu)
   const handleLinkClick = () => {
     if (isMobileMenuOpen) {
       toggleMobileMenu();
     }
   };
 
-  // Handle keyboard navigation for mobile menu
   const handleKeyDown = (event) => {
     if (event.key === 'Escape' && isMobileMenuOpen) {
       toggleMobileMenu();
@@ -97,152 +104,104 @@ const Navbar = ({ isMobileMenuOpen, toggleMobileMenu }) => {
 
   return (
     <>
-      {/* Skip to main content link for accessibility */}
       <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>
 
       <nav 
-        className="navbar" 
+        className={`navbar ${scrolled ? 'scrolled' : ''}`}
         ref={navRef}
         role="navigation"
         aria-label="Main navigation"
         onKeyDown={handleKeyDown}
       >
-        {/* Logo Section */}
-        <div className="nav-left">
-          {isLandingPage ? (
-            <span className="logo" aria-label="Savorly Logo">
-              <img src={logo} alt="" className="logo-icon" aria-hidden="true" />
-              <span className="logo-text visually-hidden">Savorly</span>
-            </span>
-          ) : (
-            <Link 
-              to="/home" 
-              className="logo" 
-              onClick={handleLinkClick}
-              aria-label="Go to home page"
-            >
-              <img src={logo} alt="" className="logo-icon" aria-hidden="true" />
-              <span className="logo-text visually-hidden">Savorly</span>
-            </Link>
-          )}
-        </div>
-
-        {/* Navigation Links */}
-        {!isLandingPage && (
-          <div 
-            className={`nav-links ${isMobileMenuOpen ? "active" : ""}`}
-            role="menu"
-            aria-label="Main menu"
-            aria-hidden={!isMobileMenuOpen && window.innerWidth <= 768}
-          >
-            <Link 
-              to="/create-recipe" 
-              onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="Create a new recipe"
-            >
-              Create Recipe
-            </Link>
-            
-            <Link 
-              to="/saved-recipes" 
-              onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="View your saved recipes"
-            >
-              Saved Recipes
-            </Link>
-            
-            <Link 
-              to="/about" 
-              onClick={handleLinkClick}
-              role="menuitem"
-              aria-label="Learn about us"
-            >
-              About Us
-            </Link>
-            
-            {/* Admin Link - Only for admin users */}
-            {user?.role === 'admin' && 
-              location.pathname !== '/admin-dashboard' && 
-              !location.pathname.startsWith('/admin') && (
-                <Link 
-                  to="/admin-dashboard" 
-                  onClick={handleLinkClick}
-                  role="menuitem"
-                  aria-label="Go to admin dashboard"
-                >
-                  Admin
-                </Link>
+        <div className="navbar-container">
+          {/* Logo */}
+          <div className="nav-brand">
+            {isLandingPage ? (
+              <span className="logo" aria-label="Savorly">
+                <img src={logo} alt="Savorly logo" className="logo-icon" />
+              </span>
+            ) : (
+              <Link to="/home" className="logo" onClick={handleLinkClick}>
+                <img src={logo} alt="Savorly logo" className="logo-icon" />
+              </Link>
             )}
+          </div>
 
-            {/* Logout Button - Mobile Only */}
-            {userProfile && (
+          {/* Desktop Navigation */}
+          {!isLandingPage && (
+            <>
+              <ul className={`nav-menu ${isMobileMenuOpen ? "active" : ""}`}>
+                <li>
+                  <Link to="/create-recipe" onClick={handleLinkClick}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 5v14m-7-7h14"/>
+                    </svg>
+                    Create
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/saved-recipes" onClick={handleLinkClick}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Saved
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about" onClick={handleLinkClick}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M12 16v-4m0-4h.01"/>
+                    </svg>
+                    About
+                  </Link>
+                </li>
+                {user?.role === 'admin' && !location.pathname.startsWith('/admin') && (
+                  <li>
+                    <Link to="/admin-dashboard" onClick={handleLinkClick} className="admin-link">
+                      Admin
+                    </Link>
+                  </li>
+                )}
+              </ul>
+
+              {/* Right Section */}
+              <div className="nav-actions">
+                {!isLoading && userProfile && (
+                  <>
+                    <Link to="/profile" className="user-avatar-link" onClick={handleLinkClick}>
+                      <img
+                        src={userProfile.avatar_url || defaultAvatar}
+                        alt={userProfile.username}
+                        className="user-avatar"
+                      />
+                    </Link>
+                    <button onClick={handleLogout} className="logout-button" type="button">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14l5-5-5-5m5 5H9"/>
+                      </svg>
+                      <span className="logout-text">Logout</span>
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Mobile Menu Button */}
               <button
-                onClick={handleLogout}
-                className="logout-btn"
-                role="menuitem"
-                aria-label="Log out of your account"
+                className={`mobile-menu-btn ${isMobileMenuOpen ? "active" : ""}`}
+                onClick={toggleMobileMenu}
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
                 type="button"
               >
-                Logout
+                <span></span>
+                <span></span>
+                <span></span>
               </button>
-            )}
-          </div>
-        )}
-
-        {/* Right Section - Avatar (Only show on authenticated pages) */}
-        {!isLandingPage && (
-          <div className="navbar-right">
-            {!isLoading && userProfile ? (
-              <div className="user-info">
-                <Link 
-                  to="/profile" 
-                  onClick={handleLinkClick}
-                  aria-label={`View profile for ${userProfile.username || 'user'}`}
-                >
-                  <img
-                    src={userProfile.avatar_url || defaultAvatar}
-                    alt={`${userProfile.username || 'User'}'s avatar`}
-                    className="user-avatar"
-                    loading="lazy"
-                  />
-                </Link>
-              </div>
-            ) : !isLoading ? (
-              <Link 
-                to="/profile" 
-                onClick={handleLinkClick}
-                aria-label="View your profile"
-              >
-                <img 
-                  src={defaultAvatar} 
-                  alt="Default user avatar" 
-                  className="user-avatar"
-                  loading="lazy"
-                />
-              </Link>
-            ) : null}
-          </div>
-        )}
-
-        {/* Hamburger Menu Button - Mobile Only */}
-        {!isLandingPage && (
-          <button
-            className={`hamburger ${isMobileMenuOpen ? "open" : ""}`}
-            onClick={toggleMobileMenu}
-            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-            type="button"
-          >
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </button>
-        )}
+            </>
+          )}
+        </div>
       </nav>
     </>
   );

@@ -4,8 +4,10 @@ node_modules/
 # Ignore .env file containing sensitive data
 .env
 .env.production
+.env.test
 # Ignore log files
 *.log
+
 
 # Ignore Mac system files
 .DS_Store
@@ -25,3 +27,4 @@ savorly.sql
 .qodo
 backend/cert/
 Testhub/
+awscloud-pract

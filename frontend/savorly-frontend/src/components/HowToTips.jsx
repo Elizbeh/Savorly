@@ -4,49 +4,53 @@ import './HowToTips.css';
 const tips = [
   {
     id: 1,
-    title: "How to Perfectly Chop Onions",
-    description: "Use a sharp knife and cut off the root end last to avoid tears.",
+    title: "Chop Onions Without Tears",
+    description: "Use a sharp knife and keep the root end intact until the very last cut — it holds the onion together and slows the release of irritants.",
   },
   {
     id: 2,
-    title: "Keep Herbs Fresh Longer",
-    description: "Store herbs like flowers in a glass of water in the fridge.",
+    title: "Keep Fresh Herbs Longer",
+    description: "Trim the stems and stand them upright in a glass of water. Cover loosely with a bag and refrigerate — they'll last up to two weeks.",
   },
   {
     id: 3,
-    title: "Avoid Overcrowding Your Pan",
-    description: "Cook in batches to ensure proper browning and flavor.",
+    title: "Don't Crowd the Pan",
+    description: "Give ingredients room to breathe. Overcrowding drops the pan temperature, causing steaming instead of browning.",
   },
   {
     id: 4,
-    title: "Use Room Temperature Ingredients",
-    description: "Helps ingredients blend better for fluffier cakes and breads.",
+    title: "Use Room-Temperature Ingredients",
+    description: "Cold butter or eggs straight from the fridge can break emulsions. Let dairy and eggs rest at room temperature for 30 minutes before baking.",
   },
   {
     id: 5,
-    title: "Clean Cast Iron Properly",
-    description: "Avoid soap; use salt and water to scrub gently.",
+    title: "Care for Your Cast Iron",
+    description: "Skip the soap. Scrub with coarse salt and a little oil while still warm, then dry thoroughly and apply a thin layer of oil before storing.",
   },
 ];
-
 
 const HowToTips = () => {
   return (
     <section className="how-to-tips">
-      <h2>Cooking Tips & Tricks</h2>
-      <div className="tips-container">
-        <div className="tip-gif">
-          <img
-            src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2plbWhpOHc0YW5uNnY4Mm1mdnMyaGljdmlhbmJoNmJzMG11aGZsMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l46Cp115fRF3tQ5P2/giphy.gif"
-            alt="Cooking Tip"
-          />
+      <div className="how-to-tips__inner">
+        <div className="how-to-tips__header">
+          <span className="how-to-tips__label">Pro Tips</span>
+          <h2 className="how-to-tips__title">Cooking Tips & Tricks</h2>
+          <p className="how-to-tips__subtitle">
+            Simple techniques that make a real difference in the kitchen.
+          </p>
         </div>
 
-        <div className="tips-list">
+        <div className="tips-grid">
           {tips.map((tip) => (
             <div key={tip.id} className="tip-card">
-              <h3>{tip.title}</h3>
-              <p>{tip.description}</p>
+              <span className="tip-card__number">
+                {String(tip.id).padStart(2, '0')}
+              </span>
+              <div className="tip-card__body">
+                <h3 className="tip-card__title">{tip.title}</h3>
+                <p className="tip-card__desc">{tip.description}</p>
+              </div>
             </div>
           ))}
         </div>

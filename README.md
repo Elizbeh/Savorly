@@ -74,6 +74,11 @@ The frontend communicates with the production backend through the REST API.
 
 Frontend → GitHub Pages
 Backend  → Docker → GHCR → AWS EC2
+                         ↑
+                    Terraform
+                         │
+                    Amazon S3
+                  (remote state)
 ```
 
 The frontend and backend are now maintained and deployed independently.
@@ -180,12 +185,16 @@ Savorly/
 
 ### DevOps
 
-* Docker
-* Docker Compose
-* GitHub Actions
-* GitHub Container Registry (GHCR)
-* AWS EC2
-* Automated CI/CD
+- Docker
+- Docker Compose
+- GitHub Actions
+- GitHub Container Registry (GHCR)
+- AWS EC2
+- Terraform
+- Amazon S3 (Terraform remote state)
+- Infrastructure as Code (IaC)
+- Automated CI/CD
+- Health-check-based deployment rollback
 
 ---
 
@@ -230,6 +239,13 @@ AWS EC2
    │
    ▼
 Docker Container
+   │
+   ▼
+Health Check
+   │
+   ├── PASS → Deployment successful
+   │
+   └── FAIL → Automatic rollback
 ```
 
 ➡️ [Backend Repository](https://github.com/Elizbeh/savorly-backend)
@@ -248,7 +264,7 @@ For the latest implementation and deployment documentation, see:
 
 [Backend README](https://github.com/Elizbeh/savorly-backend/blob/master/README.md)
 
-The **backend repository contains the most detailed DevOps documentation**, including Docker, CI/CD, GitHub Container Registry and AWS deployment.
+The backend repository contains the most detailed DevOps documentation, including Docker, CI/CD, GitHub Container Registry, AWS deployment, Terraform Infrastructure as Code, remote Terraform state, health checks and automatic rollback.
 
 ---
 
